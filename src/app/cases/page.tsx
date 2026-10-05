@@ -9,7 +9,7 @@ const CASES_LIST = [
     category: 'Infraestrutura de Telecomunicações',
     location: 'Região Metropolitana de São Paulo',
     timeframe: 'Entregue em 35 dias (100% no prazo)',
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80',
+    image: '/imagem_torre.png',
     description:
       'Execução de fundação de alta capacidade para suporte a torre autoportante metálica de 42 metros de altura. O projeto exigiu escavação controlada, armação pesada de aço e concretagem maciça contínua com FCK 35MPa para absorver cargas dinâmicas de vento.',
     highlights: [
@@ -51,22 +51,10 @@ const CASES_LIST = [
 export default function CasesPage() {
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
-      {/* Lista de Cases com Cabeçalho Clean Institucional */}
+      {/* Lista de Cases Direta */}
       <section className="pt-8 pb-20 sm:pt-12 sm:pb-28 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           
-          <div className="max-w-3xl mb-12 sm:mb-16">
-            <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-bold block mb-2">
-              Portfólio em Campo
-            </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1B2639] tracking-tight">
-              Cases de Sucesso &amp; Obras Entregues
-            </h1>
-            <p className="mt-3 text-base text-slate-600 leading-relaxed">
-              Conheça algumas das intervenções e obras executadas pela MCH com rigor técnico, controle de qualidade e pontualidade rigorosa.
-            </p>
-          </div>
-
           <div className="space-y-24">
           {CASES_LIST.map((item, idx) => (
             <motion.div
