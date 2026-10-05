@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Link } from './Link';
 import { useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,18 +38,49 @@ export const Header: React.FC = () => {
     <header className={`sticky top-0 z-40 w-full bg-[#1B2639]/90 backdrop-blur-md border-b border-white/10 transition-transform duration-300 ${
       isHidden ? '-translate-y-full' : 'translate-y-0'
     }`}>
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo Minimalista MCH */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <span className="text-2xl font-extrabold tracking-tight text-white font-mono">
-              MCH
-            </span>
-            <div className="h-4 w-[1px] bg-[#9F9F9F]/40" />
-            <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-medium hidden sm:inline-block">
-              Engenharia &amp; Imobiliária
-            </span>
-          </Link>
+          {/* Logo no formato do exemplo com animação na abertura */}
+          <motion.div
+            initial={{ opacity: 0, x: -25, scale: 0.96 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center shrink-0"
+          >
+            <Link
+              href="/"
+              className="flex items-center group relative select-none"
+              aria-label="MCH Engenharia &amp; Imobiliária"
+            >
+              {/* Bloco Arquitetônico do Emblema M (formato do exemplo anexado) */}
+              <div className="h-14 sm:h-16 w-14 sm:w-16 bg-[#E6E6E6] rounded flex items-center justify-center p-2.5 shadow-sm transition-all duration-300 group-hover:bg-white group-hover:shadow-lg shrink-0 relative overflow-hidden">
+                {/* Reflexo / Sweep Shine ao abrir o site */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none"
+                  initial={{ x: '-120%' }}
+                  animate={{ x: '220%' }}
+                  transition={{ duration: 1.1, delay: 0.7, ease: 'easeInOut' }}
+                />
+                <img
+                  src="/logo-emblem.png"
+                  alt="Emblema MCH"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Logotipo Tipográfico: MCH ENGENHARIA & IMOBILIÁRIA */}
+              <div className="ml-3 sm:ml-4 flex items-center overflow-hidden">
+                <motion.img
+                  initial={{ opacity: 0, filter: 'blur(3px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
+                  src="/logos/logotipo_header.png"
+                  alt="MCH Engenharia &amp; Imobiliária"
+                  className="h-6 sm:h-7 md:h-8 lg:h-8.5 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90"
+                />
+              </div>
+            </Link>
+          </motion.div>
 
           {/* Navegação Desktop com Links Reais */}
           <nav className="hidden lg:flex items-center gap-8 ml-auto">

@@ -4,27 +4,23 @@ import { Link } from './Link';
 import { useLocation } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
-  const location = useLocation();
-  
-  if (location.pathname !== '/') {
-    return null;
-  }
-  
   return (
     <footer className="bg-[#1B2639] text-white border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
           {/* Col 1: Brand Info */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl font-extrabold tracking-tight text-white font-mono">
-                MCH
-              </span>
-              <div className="h-4 w-[1px] bg-[#9F9F9F]/40" />
-              <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-medium">
-                Engenharia &amp; Imobiliária
-              </span>
-            </div>
+          <div className="lg:col-span-5 space-y-5">
+            <Link
+              href="/"
+              className="inline-block group transition-transform duration-300 hover:opacity-95"
+              aria-label="MCH Engenharia &amp; Imobiliária"
+            >
+              <img
+                src="/logos/logotipo_footer_white.png"
+                alt="MCH Engenharia &amp; Imobiliária"
+                className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            </Link>
             <p className="text-sm text-slate-300 leading-relaxed max-w-sm">
               Entregamos bases sólidas e infraestrutura de ponta. Excelência técnica em obras civis, fundações para telecomunicações e reformas prediais B2B.
             </p>

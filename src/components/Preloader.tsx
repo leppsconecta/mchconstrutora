@@ -55,19 +55,18 @@ export const Preloader: React.FC<PreloaderProps> = ({ onFinish }) => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{
           opacity: isOpening ? 0 : 1,
-          scale: isOpening ? 1.05 : [0.98, 1.03, 0.98]
+          scale: isOpening ? 1.05 : [0.98, 1.02, 0.98]
         }}
         transition={{
           opacity: { duration: 0.3 },
           scale: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }
         }}
       >
-        <div className="text-4xl sm:text-5xl font-extrabold tracking-widest text-white font-mono">
-          MCH
-        </div>
-        <div className="text-xs uppercase tracking-[0.3em] text-[#9F9F9F] mt-2 font-medium">
-          Engenharia &amp; Imobiliária
-        </div>
+        <img
+          src="/logos/logotipo_footer_white.png"
+          alt="MCH Engenharia &amp; Imobiliária"
+          className="h-12 sm:h-16 w-auto object-contain drop-shadow-[0_4px_20px_rgba(255,255,255,0.15)]"
+        />
       </motion.div>
     </div>
   );
