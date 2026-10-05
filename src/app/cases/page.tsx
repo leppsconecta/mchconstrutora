@@ -49,32 +49,24 @@ const CASES_LIST = [
 
 export default function CasesPage() {
   return (
-    <div className="bg-white text-[#1B2639]">
-      {/* Header Banner com Fotografia */}
-      <section
-        className="relative py-28 sm:py-36 bg-cover bg-center text-white"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=2000&q=80")'
-        }}
-      >
-        <div className="absolute inset-0 bg-[#1B2639]/80" />
-        <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-          <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-3">
-            Portfólio em Campo
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Cases de Sucesso &amp; Obras Entregues
-          </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed">
-            Conheça algumas das intervenções e obras executadas pela MCH com rigor técnico, controle de qualidade e pontualidade rigorosa.
-          </p>
-        </div>
-      </section>
+    <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
+      {/* Lista de Cases com Cabeçalho Clean Institucional */}
+      <section className="pt-8 pb-20 sm:pt-12 sm:pb-28 bg-white">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          
+          <div className="max-w-3xl mb-12 sm:mb-16">
+            <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-bold block mb-2">
+              Portfólio em Campo
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1B2639] tracking-tight">
+              Cases de Sucesso &amp; Obras Entregues
+            </h1>
+            <p className="mt-3 text-base text-slate-600 leading-relaxed">
+              Conheça algumas das intervenções e obras executadas pela MCH com rigor técnico, controle de qualidade e pontualidade rigorosa.
+            </p>
+          </div>
 
-      {/* Lista de Cases Detalhados com Layout Split Limpo */}
-      <section className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 space-y-24">
+          <div className="space-y-24">
           {CASES_LIST.map((item, idx) => (
             <div
               key={idx}
@@ -152,7 +144,8 @@ export default function CasesPage() {
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
+  </div>
   );
 }

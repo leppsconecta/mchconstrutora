@@ -14,8 +14,8 @@ export default function QuemSomosPage() {
             {/* Imagem (Lado Esquerdo) */}
             <div className="relative rounded-2xl overflow-hidden shadow-2xl min-h-[400px] lg:h-full group">
                <img
-                  src="/quem-somos-team.jpg"
-                  alt="Equipe de Engenheiros e Técnicos da MCH em um canteiro de obras de sucesso"
+                  src="/quem-somos-projetos.jpg"
+                  alt="Projetos técnicos, plantas de engenharia e planejamento sobre a mesa - MCH"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out"
                />
                <div className="absolute inset-0 bg-[#1B2639]/10 group-hover:bg-transparent transition-colors duration-[2s]" />
