@@ -1,5 +1,6 @@
 import React from 'react';
 import { Radio, Building, HardHat, CheckCircle2, Clock, ShieldCheck, MapPin, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 
 const CASES_LIST = [
@@ -68,17 +69,21 @@ export default function CasesPage() {
 
           <div className="space-y-24">
           {CASES_LIST.map((item, idx) => (
-            <div
+            <motion.div
               key={idx}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center"
             >
               {/* Imagem do Case */}
               <div className="lg:col-span-6">
-                <div className="rounded-xl overflow-hidden shadow-md aspect-[4/3]">
+                <div className="rounded-xl overflow-hidden shadow-md aspect-[4/3] group">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                 </div>
               </div>
@@ -121,7 +126,7 @@ export default function CasesPage() {
                   <span>{item.timeframe}</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

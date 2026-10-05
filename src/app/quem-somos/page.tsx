@@ -1,6 +1,30 @@
 import React from 'react';
 import { Shield, Award, Users, CheckCircle2, ArrowRight, Radio, Building2, Home } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const cardItemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1]
+    }
+  }
+};
 
 export default function QuemSomosPage() {
   return (
@@ -69,32 +93,50 @@ export default function QuemSomosPage() {
             </div>
           </div>
 
-          {/* Pilares Institucionais - Cards Azul Marinho */}
-          <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300">
+          {/* Pilares Institucionais - Cards Azul Marinho Animados em Fila */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            <motion.div
+              variants={cardItemVariants}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            >
               <Shield className="w-8 h-8 text-cyan-400" />
               <h3 className="text-xl font-bold text-white">Segurança &amp; Normas</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 Rigor absoluto com normas regulamentadoras NR-18 e NR-35. Zero concessões quando o assunto é integridade física e operacional no canteiro.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300">
+            <motion.div
+              variants={cardItemVariants}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            >
               <Award className="w-8 h-8 text-cyan-400" />
               <h3 className="text-xl font-bold text-white">Pontualidade Absoluta</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 Planejamento executivo e cumprimento rigoroso de cronogramas. Entregamos exatamente o que nos comprometemos, sem atrasos ou surpresas.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300">
+            <motion.div
+              variants={cardItemVariants}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            >
               <Users className="w-8 h-8 text-cyan-400" />
               <h3 className="text-xl font-bold text-white">Time Próprio</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 Capacidade produtiva e técnica 100% controlada com mão de obra qualificada da própria MCH, reduzindo retrabalhos e elevando o acabamento.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Sede e Atendimento */}
           <div className="mt-16 p-8 sm:p-10 rounded-2xl bg-[#F8F9FA] border border-slate-200/60 flex flex-col md:flex-row gap-8 items-center justify-between">
