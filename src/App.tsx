@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import Preloader from './components/Preloader';
 import Header from './components/Header';
@@ -75,6 +75,16 @@ export default function App() {
             <Route path="/quem-somos" element={<QuemSomosPage />} />
             <Route path="/contato" element={<ContatoPage />} />
             <Route path="/torres" element={<TorresPage />} />
+
+            {/* Rotas amigáveis e atalhos */}
+            <Route path="/telecom" element={<Navigate to="/torres" replace />} />
+            <Route path="/torres-telecom" element={<Navigate to="/torres" replace />} />
+            <Route path="/sobre" element={<Navigate to="/quem-somos" replace />} />
+            <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
+            <Route path="/obras" element={<Navigate to="/construtora" replace />} />
+            <Route path="/projetos" element={<Navigate to="/cases" replace />} />
+            <Route path="/imoveis" element={<Navigate to="/imobiliaria" replace />} />
+
             {/* Fallback */}
             <Route path="*" element={<HomePage />} />
           </Routes>
