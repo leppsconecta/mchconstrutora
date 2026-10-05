@@ -29,26 +29,38 @@ function ScrollToTop() {
 }
 
 /**
- * Smooth Scroll with Lenis
+ * Smooth Scroll com Lenis (Inércia ultra suave e fluida)
  */
 function SmoothScrollSetup() {
+  const { pathname } = useLocation();
+
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+      duration: 1.6, // Inércia mais longa e sedosa
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.1,
+      touchMultiplier: 1.6,
+      infinite: false,
     });
 
+    lenis.scrollTo(0, { immediate: true });
+
+    let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

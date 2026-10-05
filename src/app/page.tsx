@@ -58,16 +58,6 @@ export default function HomePage() {
         {/* EM SEGUIDA O TEXTO SUBINDO (Sequência Escalada com Slide Up) */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-start mt-20 sm:mt-0">
           <div className="max-w-2xl text-left">
-            {/* Tag de Autoridade Minimalista */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="inline-block text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold mb-6"
-            >
-              MCH Engenharia &amp; Imobiliária
-            </motion.div>
-
             {/* H1 Principal com Peso e Legibilidade - Discreto e Reduzido */}
             <motion.h1
               initial={{ opacity: 0, x: -40 }}
