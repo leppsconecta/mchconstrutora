@@ -19,7 +19,7 @@ export default function ImobiliariaPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#1B2639]/95 via-[#1B2639]/80 to-[#1B2639]/95 lg:bg-gradient-to-r lg:from-[#1B2639] lg:via-[#1B2639]/85 lg:to-transparent" />
           
           <div className="relative z-10 max-w-xl text-left">
-            <span className="text-xs uppercase tracking-widest text-cyan-400 font-semibold block mb-3">
+            <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-3">
               MCH Imobiliária
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-white leading-tight">
@@ -61,7 +61,7 @@ export default function ImobiliariaPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             {/* Box 1: Para Proprietários */}
             <div className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-6 shadow-xl hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group/card flex flex-col">
-              <span className="text-xs uppercase tracking-widest text-cyan-400 font-semibold block">
+              <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block">
                 Para Proprietários
               </span>
               <h2 className="text-2xl font-bold text-white tracking-tight">
@@ -72,11 +72,11 @@ export default function ImobiliariaPage() {
               </p>
               <ul className="space-y-3 text-sm text-slate-300 pt-4 border-t border-white/10">
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
                   <span>Avaliação baseada no mercado</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
                   <span>Segurança jurídica e documental</span>
                 </li>
               </ul>
@@ -84,7 +84,7 @@ export default function ImobiliariaPage() {
 
             {/* Box 2: Para Compradores */}
             <div className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-6 shadow-xl hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group/card flex flex-col">
-              <span className="text-xs uppercase tracking-widest text-cyan-400 font-semibold block">
+              <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block">
                 Para Compradores
               </span>
               <h2 className="text-2xl font-bold text-white tracking-tight">
@@ -95,11 +95,11 @@ export default function ImobiliariaPage() {
               </p>
               <ul className="space-y-3 text-sm text-slate-300 pt-4 border-t border-white/10">
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
                   <span>Habite-se 100% regularizado</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
                   <span>Materiais de primeira linha</span>
                 </li>
               </ul>
@@ -129,7 +129,7 @@ export default function ImobiliariaPage() {
           </p>
           <Link
             href="/contato"
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-md text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-cyan-400 hover:bg-cyan-300 transition-colors shadow-xl"
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-md text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-colors shadow-xl"
           >
             <span>Falar com um Consultor MCH</span>
             <ArrowRight className="w-4 h-4" />

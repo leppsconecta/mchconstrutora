@@ -4,6 +4,12 @@ import { Link } from './Link';
 import { useLocation } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
+  const location = useLocation();
+
+  if (location.pathname !== '/') {
+    return null;
+  }
+
   return (
     <footer className="bg-[#1B2639] text-white border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20">

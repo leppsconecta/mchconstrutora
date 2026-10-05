@@ -27,7 +27,7 @@ export default function TorresPage() {
         </div>
       </section>
 
-      {/* Nossos Profissionais em Campo (Cards) */}
+      {/* Nossos Profissionais em Campo (Cards em Azul Marinho) */}
       <section className="py-24 bg-[#F8F9FA] text-[#1B2639]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
            <div className="text-center max-w-3xl mx-auto mb-16">
@@ -41,80 +41,81 @@ export default function TorresPage() {
            </div>
 
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
-               <div className="w-14 h-14 mx-auto bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-700 mb-6">
+             <div className="bg-[#1B2639] text-white p-8 rounded-2xl shadow-xl border border-white/10 hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 text-center">
+               <div className="w-14 h-14 mx-auto bg-white/10 rounded-xl flex items-center justify-center text-cyan-400 mb-6 border border-white/10">
                  <HardHat className="w-7 h-7" />
                </div>
-               <h3 className="text-lg font-bold mb-2">Engenheiros Civis</h3>
-               <p className="text-sm text-slate-500">Supervisão in loco, emissão de ART, controle de qualidade e gestão rigorosa de cronograma.</p>
+               <h3 className="text-lg font-bold mb-2 text-white">Engenheiros Civis</h3>
+               <p className="text-sm text-slate-300 leading-relaxed">Supervisão in loco, emissão de ART, controle de qualidade e gestão rigorosa de cronograma.</p>
              </div>
 
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
-               <div className="w-14 h-14 mx-auto bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-700 mb-6">
+             <div className="bg-[#1B2639] text-white p-8 rounded-2xl shadow-xl border border-white/10 hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 text-center">
+               <div className="w-14 h-14 mx-auto bg-white/10 rounded-xl flex items-center justify-center text-cyan-400 mb-6 border border-white/10">
                  <Bolt className="w-7 h-7" />
                </div>
-               <h3 className="text-lg font-bold mb-2">Eletricistas</h3>
-               <p className="text-sm text-slate-500">Aterramentos, infraestrutura de calhas e toda a passagem elétrica necessária para a base.</p>
+               <h3 className="text-lg font-bold mb-2 text-white">Eletricistas</h3>
+               <p className="text-sm text-slate-300 leading-relaxed">Aterramentos, infraestrutura de calhas e toda a passagem elétrica necessária para a base.</p>
              </div>
 
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
-               <div className="w-14 h-14 mx-auto bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-700 mb-6">
+             <div className="bg-[#1B2639] text-white p-8 rounded-2xl shadow-xl border border-white/10 hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 text-center">
+               <div className="w-14 h-14 mx-auto bg-white/10 rounded-xl flex items-center justify-center text-cyan-400 mb-6 border border-white/10">
                  <Building2 className="w-7 h-7" />
                </div>
-               <h3 className="text-lg font-bold mb-2">Pedreiros & Armadores</h3>
-               <p className="text-sm text-slate-500">Execução pesada: lajes, fundações de concreto usinado, ferragens e estruturas definitivas.</p>
+               <h3 className="text-lg font-bold mb-2 text-white">Pedreiros &amp; Armadores</h3>
+               <p className="text-sm text-slate-300 leading-relaxed">Execução pesada: lajes, fundações de concreto usinado, ferragens e estruturas definitivas.</p>
              </div>
 
-             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
-               <div className="w-14 h-14 mx-auto bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-700 mb-6">
+             <div className="bg-[#1B2639] text-white p-8 rounded-2xl shadow-xl border border-white/10 hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 text-center">
+               <div className="w-14 h-14 mx-auto bg-white/10 rounded-xl flex items-center justify-center text-cyan-400 mb-6 border border-white/10">
                  <Users className="w-7 h-7" />
                </div>
-               <h3 className="text-lg font-bold mb-2">Carpinteiros & Equipe</h3>
-               <p className="text-sm text-slate-500">Montagem precisa de formas para concretagem, topografia, nivelamento e suporte civil contínuo.</p>
+               <h3 className="text-lg font-bold mb-2 text-white">Carpinteiros &amp; Equipe</h3>
+               <p className="text-sm text-slate-300 leading-relaxed">Montagem precisa de formas para concretagem, topografia, nivelamento e suporte civil contínuo.</p>
              </div>
            </div>
         </div>
       </section>
 
-      {/* Conteúdo Institucional & Impacto */}
-      <section className="py-24 bg-white text-[#1B2639]">
+      {/* Conteúdo Institucional & Impacto (Seção em Azul Marinho, sem o texto roof top) */}
+      <section className="py-24 bg-[#1B2639] text-white border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
            <div className="text-center max-w-3xl mx-auto mb-20">
-             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-6">
+             <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-2">Engenharia e Execução</span>
+             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-6 text-white">
                O que nós executamos no terreno
              </h2>
-             <p className="text-slate-600 leading-relaxed text-lg">
+             <p className="text-slate-300 leading-relaxed text-lg font-light">
                A expansão de antenas exige uma base infraestrutural que não permite falhas. Nós somos a construtora responsável pela fundação e obra civil que sustenta essas tecnologias.
              </p>
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-             <div className="space-y-6 group cursor-default">
-               <div className="w-16 h-16 bg-[#1B2639] rounded-2xl flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300 shadow-xl">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             <div className="bg-[#151D2C] p-8 rounded-2xl border border-white/10 space-y-6 group hover:border-cyan-400/40 hover:-translate-y-1 transition-all duration-300 shadow-xl">
+               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300 border border-white/10 shadow-lg">
                  <Signal className="w-8 h-8" />
                </div>
-               <h3 className="text-2xl font-bold tracking-tight">Implantação Civil (Greenfield)</h3>
-               <p className="text-slate-600 leading-relaxed">
+               <h3 className="text-2xl font-bold tracking-tight text-white">Implantação Civil (Greenfield)</h3>
+               <p className="text-slate-300 leading-relaxed text-sm">
                  Obras civis turn-key para novos sites. Preparamos o terreno, as fundações profundas e a concretagem pesada para suportar fisicamente as novas torres.
                </p>
              </div>
              
-             <div className="space-y-6 group cursor-default">
-               <div className="w-16 h-16 bg-[#1B2639] rounded-2xl flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300 shadow-xl">
+             <div className="bg-[#151D2C] p-8 rounded-2xl border border-white/10 space-y-6 group hover:border-cyan-400/40 hover:-translate-y-1 transition-all duration-300 shadow-xl">
+               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300 border border-white/10 shadow-lg">
                  <Zap className="w-8 h-8" />
                </div>
-               <h3 className="text-2xl font-bold tracking-tight">Adequações em Topos (Roof-Top)</h3>
-               <p className="text-slate-600 leading-relaxed">
+               <h3 className="text-2xl font-bold tracking-tight text-white">Adequações em Topos de Edifícios</h3>
+               <p className="text-slate-300 leading-relaxed text-sm">
                  Obras de reforço estrutural em prédios e galpões. Executamos as adequações civis e bases metálicas para que a estrutura atual aguente a carga da antena.
                </p>
              </div>
              
-             <div className="space-y-6 group cursor-default">
-               <div className="w-16 h-16 bg-[#1B2639] rounded-2xl flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300 shadow-xl">
+             <div className="bg-[#151D2C] p-8 rounded-2xl border border-white/10 space-y-6 group hover:border-cyan-400/40 hover:-translate-y-1 transition-all duration-300 shadow-xl">
+               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300 border border-white/10 shadow-lg">
                  <ShieldCheck className="w-8 h-8" />
                </div>
-               <h3 className="text-2xl font-bold tracking-tight">Sinalização e Acabamento</h3>
-               <p className="text-slate-600 leading-relaxed">
+               <h3 className="text-2xl font-bold tracking-tight text-white">Sinalização e Acabamento</h3>
+               <p className="text-slate-300 leading-relaxed text-sm">
                  Construção de alambrados, muretas, calçadas, impermeabilização e preparação final da base, deixando tudo pronto para os engenheiros de telecomunicações operarem.
                </p>
              </div>
@@ -123,7 +124,7 @@ export default function TorresPage() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-24 bg-[#1B2639] border-t border-white/10">
+      <section className="py-24 bg-[#151D2C] border-t border-white/10">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-extrabold text-white mb-6">Precisa de uma construtora para sua base telecom?</h2>
           <p className="text-slate-300 mb-10 text-lg">
