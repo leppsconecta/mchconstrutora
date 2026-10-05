@@ -18,26 +18,12 @@ const LOGOS_ROW_2 = [
 ];
 
 const LogoItem = ({ src }: { src: string }) => (
-  <div className="group relative w-40 h-20 mx-6 sm:mx-10 flex-shrink-0 cursor-pointer">
-    {/* Imagem original colorida (Visível no Hover) */}
+  <div className="relative w-40 h-20 mx-6 sm:mx-10 flex-shrink-0 flex items-center justify-center">
+    {/* Logotipo com as cores originais 100% visíveis sem máscara */}
     <img 
       src={src} 
       alt="Partner Logo" 
-      className="absolute inset-0 w-full h-full object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 drop-shadow-sm" 
-    />
-    {/* Máscara Azul Marinho (Visível por Padrão) */}
-    <div 
-      className="absolute inset-0 bg-[#1B2639] group-hover:opacity-0 transition-opacity duration-300"
-      style={{
-        maskImage: `url(${src})`,
-        WebkitMaskImage: `url(${src})`,
-        maskSize: 'contain',
-        WebkitMaskSize: 'contain',
-        maskRepeat: 'no-repeat',
-        WebkitMaskRepeat: 'no-repeat',
-        maskPosition: 'center',
-        WebkitMaskPosition: 'center'
-      }}
+      className="w-full h-full object-contain hover:scale-105 transition-transform duration-300 drop-shadow-sm" 
     />
   </div>
 );

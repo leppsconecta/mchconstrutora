@@ -1,29 +1,56 @@
 import React from 'react';
-import { Signal, Zap, ShieldCheck, ArrowRight, Radio, HardHat, Bolt, Users, Building2 } from 'lucide-react';
+import { Signal, Zap, ShieldCheck, ArrowRight, HardHat, Bolt, Users, Building2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 
 export default function TorresPage() {
   return (
     <div className="min-h-screen bg-[#1B2639] text-white selection:bg-cyan-500 selection:text-[#1B2639]">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=2560&q=85)' }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1B2639] via-[#1B2639]/80 to-transparent" />
+      {/* Split Hero Section: Texto e Sombra no Lado Esquerdo + Imagem Anexada Limpa no Lado Direito */}
+      <section className="relative flex flex-col lg:flex-row overflow-hidden bg-[#1B2639] lg:h-[500px] border-b border-white/10">
         
-        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/50 border border-cyan-800/50 text-cyan-400 font-semibold tracking-widest uppercase text-xs mb-6">
-              <Radio className="w-4 h-4" />
-              <span>Base Civil e Infraestrutura</span>
-            </div>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 text-white">
-              Infraestrutura para Telecom
+        {/* Lado Esquerdo (50%): Imagem Telecom + Texto e Sombra */}
+        <div className="relative w-full lg:w-1/2 flex items-center px-6 sm:px-12 lg:px-14 py-16 lg:py-0 overflow-hidden group z-10 lg:shadow-[25px_0_50px_rgba(0,0,0,0.7)]">
+          {/* Imagem de Fundo (Torre Telecom) */}
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-[6s] ease-out group-hover:scale-105"
+            style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=2560&q=85)' }}
+          />
+          
+          {/* Sombra / Overlay Escuro de Alto Contraste e Profundidade */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1B2639] via-[#1B2639]/85 to-[#1B2639]/60 lg:bg-gradient-to-r lg:from-[#1B2639] lg:via-[#1B2639]/90 lg:to-[#1B2639]/40 z-[1]" />
+          
+          {/* Sombra Interna (Vignette) para reforçar a profundidade e sombra na imagem com texto */}
+          <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.85)] z-[2] pointer-events-none" />
+
+          {/* Conteúdo com Sombra Projetada */}
+          <div className="relative z-10 max-w-lg text-left">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+              Infraestrutura <br className="hidden sm:inline" /> para Telecom
             </h1>
-            <p className="text-lg sm:text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
-              Nós ajudamos a construir o futuro da conectividade. A MCH não fabrica nem opera as antenas, mas somos a força construtora que <strong>executa toda a infraestrutura civil e as fundações</strong> que permitem que as torres operem com máxima segurança no Brasil.
+            
+            <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-light mb-7 max-w-md drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              A força construtora que executa as fundações profundas, lajes maciças e adequações estruturais que sustentam as torres com máxima segurança no Brasil.
             </p>
-          </motion.div>
+
+            <Link
+              href="/contato"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#1B2639] bg-cyan-400 hover:bg-cyan-300 transition-colors shadow-2xl hover:shadow-cyan-400/20"
+            >
+              <span>Falar com a Engenharia</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Lado Direito (50%): Imagem Anexada Limpa (Foto Real do Canteiro e Laje de Concreto) */}
+        <div className="relative w-full lg:w-1/2 h-[280px] sm:h-[360px] lg:h-full overflow-hidden border-t lg:border-t-0 lg:border-l border-white/10 group">
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-[6s] ease-out group-hover:scale-105"
+            style={{ backgroundImage: 'url(/imagem_torre.png)' }}
+          />
+          {/* Suave vinheta nas bordas para integração arquitetônica com o tema escuro */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1B2639]/60 via-transparent to-transparent lg:bg-gradient-to-l lg:from-[#1B2639]/40 lg:to-transparent" />
         </div>
       </section>
 
