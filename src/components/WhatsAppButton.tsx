@@ -29,98 +29,100 @@ export const WhatsAppButton: React.FC = () => {
     <div 
       ref={menuRef} 
       className="fixed bottom-6 right-6 z-50 group" 
-      onMouseEnter={() => setIsOpen(true)} 
-      onMouseLeave={() => setIsOpen(false)}
     >
       
-      {/* Pop-up Menu */}
+      {/* Pop-up Menu Wrapper - pb-4 cria uma "ponte" invisível para o mouse não perder o hover no gap */}
       <div 
-        className={`absolute bottom-full right-0 mb-4 w-72 bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 transition-all duration-300 origin-bottom-right overflow-hidden flex flex-col ${
-          isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+        className={`absolute bottom-full right-0 pb-4 w-72 transition-all duration-300 origin-bottom-right ${
+          isOpen 
+            ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' 
+            : 'opacity-0 scale-95 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:pointer-events-auto'
         }`}
       >
-        <div className="bg-[#1B2639] px-5 py-4 text-white">
-          <h4 className="text-sm font-extrabold tracking-wide uppercase">Canais de Contato</h4>
-          <p className="text-xs text-slate-300 mt-0.5">Selecione para falar ou copie o dado</p>
-        </div>
-        
-        <div className="p-2 space-y-1 bg-white">
+        <div className="bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden flex flex-col">
+          <div className="bg-[#1B2639] px-5 py-4 text-white">
+            <h4 className="text-sm font-extrabold tracking-wide uppercase">Canais de Contato</h4>
+            <p className="text-xs text-slate-300 mt-0.5">Selecione para falar ou copie o dado</p>
+          </div>
           
-          {/* WhatsApp (Clica e Abre / Copia) */}
-          <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
-            <a href="https://wa.me/5511966454023" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 flex-1 group/item">
-              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover/item:bg-emerald-500 group-hover/item:text-white transition-colors">
-                <MessageCircle className="w-4 h-4" />
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-[#1B2639]">WhatsApp</div>
-                <div className="text-[11px] text-slate-500">(11) 96645-4023</div>
-              </div>
-            </a>
-            <button
-              onClick={(e) => handleCopy('(11) 96645-4023', 'whatsapp', e)}
-              className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
-              title="Copiar WhatsApp"
-            >
-              {copied === 'whatsapp' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-            </button>
-          </div>
-
-          {/* E-mail (Somente Copia, não abre href) */}
-          <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
-            <div 
-              onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
-              className="flex items-center gap-3 flex-1 group/item cursor-pointer"
-            >
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">
-                <Mail className="w-4 h-4" />
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-[#1B2639]">E-mail Corporativo</div>
-                <div className="text-[11px] text-slate-500 truncate w-[130px]" title="Clique para copiar">contato@mchengenharia.com.br</div>
-              </div>
+          <div className="p-2 space-y-1 bg-white">
+            
+            {/* WhatsApp (Clica e Abre / Copia) */}
+            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
+              <a href="https://wa.me/5511966454023" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 flex-1 group/item">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover/item:bg-emerald-500 group-hover/item:text-white transition-colors">
+                  <MessageCircle className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-[#1B2639]">WhatsApp</div>
+                  <div className="text-[11px] text-slate-500">(11) 96645-4023</div>
+                </div>
+              </a>
+              <button
+                onClick={(e) => handleCopy('(11) 96645-4023', 'whatsapp', e)}
+                className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
+                title="Copiar WhatsApp"
+              >
+                {copied === 'whatsapp' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              </button>
             </div>
-            <button
-              onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
-              className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
-              title="Copiar E-mail"
-            >
-              {copied === 'email' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-            </button>
-          </div>
 
-          {/* Endereço (Clica e Abre Mapa / Copia) */}
-          <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
-            <a 
-              href="https://maps.google.com/?q=Av.+dos+Ipês,+155+-+Portal+dos+Ipês,+Cajamar+-+SP,+07790-840" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="flex items-center gap-3 flex-1 group/item"
-            >
-              <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover/item:bg-slate-600 group-hover/item:text-white transition-colors">
-                <MapPin className="w-4 h-4" />
+            {/* E-mail (Somente Copia, não abre href) */}
+            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
+              <div 
+                onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
+                className="flex items-center gap-3 flex-1 group/item cursor-pointer"
+              >
+                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-[#1B2639]">E-mail Corporativo</div>
+                  <div className="text-[11px] text-slate-500 truncate w-[130px]" title="Clique para copiar">contato@mchengenharia.com.br</div>
+                </div>
               </div>
-              <div className="text-left">
-                <div className="text-xs font-bold text-[#1B2639]">Sede Operacional</div>
-                <div className="text-[11px] text-slate-500 line-clamp-1 w-[130px]" title="Av. dos Ipês, 155 - Cajamar, SP">Cajamar - SP</div>
-              </div>
-            </a>
-            <button
-              onClick={(e) => handleCopy('Av. dos Ipês, 155 - 2º Andar - Portal dos Ipês, Cajamar - SP, 07790-840', 'endereco', e)}
-              className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
-              title="Copiar Endereço Completo"
-            >
-              {copied === 'endereco' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-            </button>
-          </div>
+              <button
+                onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
+                className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
+                title="Copiar E-mail"
+              >
+                {copied === 'email' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </div>
 
+            {/* Endereço (Clica e Abre Mapa / Copia) */}
+            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
+              <a 
+                href="https://maps.google.com/?q=Av.+dos+Ipês,+155+-+Portal+dos+Ipês,+Cajamar+-+SP,+07790-840" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center gap-3 flex-1 group/item"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover/item:bg-slate-600 group-hover/item:text-white transition-colors">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-[#1B2639]">Sede Operacional</div>
+                  <div className="text-[11px] text-slate-500 line-clamp-1 w-[130px]" title="Av. dos Ipês, 155 - Cajamar, SP">Cajamar - SP</div>
+                </div>
+              </a>
+              <button
+                onClick={(e) => handleCopy('Av. dos Ipês, 155 - 2º Andar - Portal dos Ipês, Cajamar - SP, 07790-840', 'endereco', e)}
+                className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
+                title="Copiar Endereço Completo"
+              >
+                {copied === 'endereco' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* Main Button (Toggles Menu on Click for Mobile, also works with Hover on Desktop) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-14 h-14 bg-white text-[#1B2639] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:scale-110 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 border border-slate-100"
+        className="flex items-center justify-center w-14 h-14 bg-white text-[#1B2639] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:scale-110 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 border border-slate-100 relative"
         aria-label="Atendimento"
       >
         <svg
