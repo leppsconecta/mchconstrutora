@@ -5,7 +5,11 @@ import {
   ArrowRight,
   Hammer,
   Ruler,
-  Key
+  Key,
+  Wrench,
+  Zap,
+  Paintbrush,
+  Sparkles
 } from 'lucide-react';
 import { Link } from '../../components/Link';
 
@@ -41,7 +45,8 @@ export default function ConstrutoraPage() {
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
 
       {/* =========================================================================
-          1. CONTEÚDO PRINCIPAL (SPLIT LIMPO - IMAGEM E APRESENTAÇÃO)
+          SEÇÃO 1: CONSTRUÇÃO DE CASAS DO BÁSICO AO ACABAMENTO
+          (Imagem na Esquerda | Texto na Direita)
           ========================================================================= */}
       <section className="pt-8 pb-16 sm:pt-12 sm:pb-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -105,9 +110,110 @@ export default function ConstrutoraPage() {
       </section>
 
       {/* =========================================================================
-          2. ETAPAS: O CAMINHO QUE SEGUIMOS
+          SEÇÃO 2: SERVIÇOS PREDIAIS & MANUTENÇÃO (SEÇÃO AZUL MARINHO + CARDS BRANCOS)
+          (Texto na Esquerda | Imagem na Direita)
           ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#F8F9FA] border-t border-slate-200/70">
+      <section className="py-16 sm:py-24 bg-[#1B2639] text-white border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            
+            {/* Texto (Lado Esquerdo) */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="space-y-2">
+                <span className="inline-block text-xs uppercase tracking-widest text-cyan-300 font-bold px-3 py-1 rounded-full bg-white/10 backdrop-blur-md">
+                  Manutenção &amp; Facilities
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                  Serviços Prediais &amp; Reparos Especializados
+                </h2>
+              </div>
+
+              <p className="text-base text-slate-300 leading-relaxed">
+                Dispomos de corpo técnico próprio e qualificado para manutenção preventiva e corretiva, pequenos reparos e conservação contínua de residências, edifícios e ambientes comerciais.
+              </p>
+
+              {/* Grid 2x2 com os 4 Serviços em Cards Brancos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div className="p-4 rounded-xl bg-white text-[#1B2639] border border-slate-100 shadow-md space-y-1.5 hover:shadow-lg transition-all">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#1B2639]/10 flex items-center justify-center text-[#1B2639]">
+                      <Wrench className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-bold text-[#1B2639]">Encanador &amp; Hidráulica</h3>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Caça-vazamentos, bombas pressurizadoras, caixas d’água e tubulações de esgoto/água quente.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white text-[#1B2639] border border-slate-100 shadow-md space-y-1.5 hover:shadow-lg transition-all">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#1B2639]/10 flex items-center justify-center text-[#1B2639]">
+                      <Zap className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-bold text-[#1B2639]">Eletricista &amp; Elétrica</h3>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Quadros de distribuição, cabeamento estruturado, iluminação técnica e balanceamento de carga.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white text-[#1B2639] border border-slate-100 shadow-md space-y-1.5 hover:shadow-lg transition-all">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#1B2639]/10 flex items-center justify-center text-[#1B2639]">
+                      <Paintbrush className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-bold text-[#1B2639]">Pintor &amp; Restauração</h3>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Pintura interna e externa, tratamento de trincas, umidade, aplicação de texturas e vernizes.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white text-[#1B2639] border border-slate-100 shadow-md space-y-1.5 hover:shadow-lg transition-all">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#1B2639]/10 flex items-center justify-center text-[#1B2639]">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-bold text-[#1B2639]">Limpeza Pós-Obra</h3>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Higienização profunda especializada pós-reforma, limpeza de vidros e conservação predial.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/contato"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-cyan-300 transition-all shadow-xl hover:shadow-2xl"
+                >
+                  <span>Solicitar Atendimento Predial</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Imagem (Lado Direito) */}
+            <div className="lg:col-span-6">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group border border-white/10">
+                <img
+                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80"
+                  alt="Serviços prediais e manutenção técnica especializada da MCH"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SEÇÃO 3: RESUMO DAS ETAPAS DO PROCESSO (CARDS NA COR AZUL MARINHO)
+          ========================================================================= */}
+      <section className="py-16 sm:py-24 bg-white border-t border-slate-200/70">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           
           <div className="max-w-2xl mx-auto text-center mb-14 space-y-2">
@@ -128,22 +234,22 @@ export default function ConstrutoraPage() {
               return (
                 <div
                   key={idx}
-                  className="p-6 rounded-xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all space-y-4"
+                  className="p-6 rounded-xl bg-[#1B2639] text-white border border-slate-700/60 shadow-lg hover:-translate-y-1 hover:shadow-2xl transition-all space-y-4"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 rounded-lg bg-[#1B2639]/5 flex items-center justify-center text-[#1B2639]">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-cyan-300">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-400">
+                    <span className="text-xs font-mono font-bold text-cyan-400">
                       ETAPA {s.step}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-[#1B2639]">
+                  <h3 className="text-base font-bold text-white">
                     {s.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                     {s.desc}
                   </p>
                 </div>
