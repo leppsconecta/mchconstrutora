@@ -10,15 +10,15 @@ export const Preloader: React.FC<PreloaderProps> = ({ onFinish }) => {
   const [isRemoved, setIsRemoved] = useState(false);
 
   useEffect(() => {
-    // 1.5s gentle pulse, then trigger opening animation
+    // Faster pulse, then trigger opening animation
     const timer = setTimeout(() => {
       setIsOpening(true);
-    }, 1500);
+    }, 400);
 
     const completionTimer = setTimeout(() => {
       setIsRemoved(true);
       if (onFinish) onFinish();
-    }, 2400);
+    }, 1200);
 
     return () => {
       clearTimeout(timer);

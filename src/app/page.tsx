@@ -1,14 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useSpring, AnimatePresence } from 'framer-motion';
-import { HardHat, Radio, Building2, ArrowRight, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
+import { HardHat, Radio, Building2, ArrowRight, ShieldCheck, Clock, CheckCircle2, Home } from 'lucide-react';
 import { Link } from '../components/Link';
 import { Marquee } from '../components/Marquee';
 
-const heroImages = [
-  'https://images.unsplash.com/photo-1541888086225-61f0a202d5d8?auto=format&fit=crop&w=2560&q=85',
-  'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=2560&q=85',
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2560&q=85'
-];
+const heroImage = '/hero-bg.jpg';
 
 export default function HomePage() {
   // Parallax interativo com mouse suave para a Hero
@@ -31,14 +27,7 @@ export default function HomePage() {
   const parallaxX = useSpring(mousePos.x * 14, { stiffness: 60, damping: 20 });
   const parallaxY = useSpring(mousePos.y * 14, { stiffness: 60, damping: 20 });
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="bg-white text-[#1B2639]">
@@ -50,24 +39,18 @@ export default function HomePage() {
         ref={heroRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#1B2639]"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#1B2639] group"
       >
-        {/* CARROSSEL AUTOMÁTICO DE IMAGENS */}
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={currentImageIndex}
-            initial={{ scale: 1.05, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${heroImages[currentImageIndex]})`,
-              x: parallaxX,
-              y: parallaxY
-            }}
-          />
-        </AnimatePresence>
+        {/* IMAGEM ESTÁTICA ÚNICA COM LEVE ZOOM AO PASSAR O MOUSE E PARALLAX */}
+        <motion.div
+          className="absolute inset-0 bg-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] ease-out"
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            backgroundPosition: 'right 30% center', // Ajusta para garantir que a torre do lado direito apareça bem
+            x: parallaxX,
+            y: parallaxY
+          }}
+        />
         
         {/* Overlay escuro em gradiente da esquerda para direita para destacar o texto */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#1B2639]/95 via-[#1B2639]/40 to-transparent" />
@@ -92,7 +75,7 @@ export default function HomePage() {
               transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]"
             >
-              Bases sólidas para grandes projetos.
+              Nós executamos infraestrutura para torres e antenas 3G.
             </motion.h1>
 
             {/* Subtítulo Solicitado - Discreto e Reduzido */}
@@ -102,7 +85,7 @@ export default function HomePage() {
               transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="mt-6 text-base sm:text-lg text-slate-200 font-normal leading-relaxed max-w-lg"
             >
-              Rigor técnico e segurança máxima em obras civis, infraestrutura de telecomunicações e adequações corporativas.
+              Especialistas na construção e fundação pesada de bases para telecomunicações. Entregamos excelência civil, segurança irrestrita e máximo rigor técnico direto no canteiro de obras.
             </motion.p>
 
             {/* Ações / Links Reais */}
@@ -273,61 +256,70 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          4. SECÇÃO DE CASES DE SUCESSO (Split Screen Elegante & Minimalista)
+          4. SOBRE NOSSA EXPERIÊNCIA (+10 ANOS)
           ========================================================================= */}
-      <section className="py-24 sm:py-32 bg-white">
+      <section className="py-24 sm:py-32 bg-[#1B2639] text-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Lado Esquerdo: Grande Imagem de Obra com Cantos Levemente Arredondados */}
-            <div className="lg:col-span-6">
-              <div className="relative rounded-xl overflow-hidden shadow-lg aspect-[4/3] group">
+            {/* Lado Esquerdo: Imagem Planejamento de Obra */}
+            <div className="lg:col-span-6 order-2 lg:order-1">
+              <div className="relative rounded-xl overflow-hidden shadow-2xl aspect-[4/3] group border border-white/10">
                 <img
-                  src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80"
-                  alt="Execução estrutural e obra no canteiro MCH"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80"
+                  alt="Planejamento de Obra MCH"
+                  className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-[1.5s] ease-out opacity-90"
                 />
+                <div className="absolute inset-0 bg-[#1B2639]/10 mix-blend-multiply group-hover:bg-transparent transition-colors duration-[1.5s]" />
               </div>
             </div>
 
-            {/* Lado Direito: Texto com Experiência no Terreno e Prazos */}
-            <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block">
-                Experiência no Terreno
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1B2639] tracking-tight">
-                Cumprimento rigoroso de cronogramas e excelência operacional.
-              </h2>
-              <p className="text-base text-slate-600 leading-relaxed">
-                Nossa autoridade é consolidada diretamente no canteiro de obras. Ao longo de anos de atuação técnica, desenvolvemos processos consolidados de gestão de risco, controle tecnológico de materiais e segurança irrestrita para nossos colaboradores e parceiros.
-              </p>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Entendemos que atrasos em infraestrutura civil ou telecomunicações geram prejuízos em cadeia. Por isso, a MCH mantém supervisão de engenheiros seniores in loco, assegurando entrega pontual e conformidade irretocável com as normas vigentes.
-              </p>
+            {/* Lado Direito: Texto com Experiência */}
+            <div className="lg:col-span-6 space-y-8 order-1 lg:order-2">
+              <div>
+                <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-2">
+                  História e Solidez
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                  + 10 anos de experiência
+                </h2>
+                <p className="mt-4 text-base text-slate-300 leading-relaxed">
+                  Consolidamos nossa marca unindo a visão estratégica do mercado imobiliário com a execução técnica de alto padrão da construção civil. Uma década de resultados sólidos.
+                </p>
+              </div>
 
-              {/* Indicadores Minimalistas */}
-              <div className="pt-4 grid grid-cols-2 gap-6 border-t border-slate-100">
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-[#1B2639] shrink-0 mt-0.5" />
+              {/* Tópicos Minimalistas */}
+              <div className="space-y-6 pt-4 border-t border-white/10">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
+                    <HardHat className="w-5 h-5 text-white" />
+                  </div>
                   <div>
-                    <div className="text-sm font-bold text-[#1B2639]">Pontualidade Absoluta</div>
-                    <div className="text-xs text-slate-500">Cronogramas executivos sincronizados</div>
+                    <h3 className="text-lg font-bold text-white mb-1">Construção</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      Gerenciamento e execução de obras civis e infraestruturas complexas. Do projeto estrutural ao acabamento final, garantimos máxima qualidade e segurança.
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-[#1B2639] shrink-0 mt-0.5" />
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
+                    <Home className="w-5 h-5 text-white" />
+                  </div>
                   <div>
-                    <div className="text-sm font-bold text-[#1B2639]">Segurança Certificada</div>
-                    <div className="text-xs text-slate-500">Padrões NR-18 e NR-35 em campo</div>
+                    <h3 className="text-lg font-bold text-white mb-1">Imobiliária</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      Inteligência de mercado para aquisição, venda e gestão de ativos imobiliários, conectando os melhores negócios aos nossos clientes com transparência.
+                    </p>
                   </div>
                 </div>
               </div>
-
+              
               <div className="pt-2">
                 <Link
-                  href="/cases"
-                  className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-[#1B2639] hover:text-slate-600 transition-colors"
+                  href="/quem-somos"
+                  className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white hover:text-slate-300 transition-colors"
                 >
-                  <span>Explorar Nossos Cases Completos</span>
+                  <span>Conhecer nossa história completa</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

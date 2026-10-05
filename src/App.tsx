@@ -4,6 +4,7 @@ import Lenis from 'lenis';
 import Preloader from './components/Preloader';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { WhatsAppButton } from './components/WhatsAppButton';
 
 // Real Pages (Next.js App Router Structure)
 import HomePage from './app/page';
@@ -12,6 +13,7 @@ import ImobiliariaPage from './app/imobiliaria/page';
 import CasesPage from './app/cases/page';
 import QuemSomosPage from './app/quem-somos/page';
 import ContatoPage from './app/contato/page';
+import TorresPage from './app/torres/page';
 
 /**
  * Scroll to top on every route transition
@@ -72,6 +74,7 @@ export default function App() {
             <Route path="/cases" element={<CasesPage />} />
             <Route path="/quem-somos" element={<QuemSomosPage />} />
             <Route path="/contato" element={<ContatoPage />} />
+            <Route path="/torres" element={<TorresPage />} />
             {/* Fallback */}
             <Route path="*" element={<HomePage />} />
           </Routes>
@@ -79,6 +82,9 @@ export default function App() {
 
         {/* Rodapé Minimalista com Morada e Ressalva Visual */}
         <Footer />
+        
+        {/* Botão Flutuante do WhatsApp */}
+        <WhatsAppButton />
       </div>
     </BrowserRouter>
   );

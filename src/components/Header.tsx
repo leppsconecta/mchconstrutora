@@ -25,6 +25,7 @@ export const Header: React.FC = () => {
 
   const navLinks = [
     { label: 'Home', href: '/' },
+    { label: 'Torres Telecom', href: '/torres' },
     { label: 'Construtora', href: '/construtora' },
     { label: 'Imobiliária', href: '/imobiliaria' },
     { label: 'Cases', href: '/cases' },
@@ -50,35 +51,25 @@ export const Header: React.FC = () => {
           </Link>
 
           {/* Navegação Desktop com Links Reais */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8 ml-auto">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
+              const isHighlight = link.label === 'Torres Telecom';
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium tracking-wide transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-white after:origin-left after:transition-transform after:duration-300 ${
-                    isActive
-                      ? 'text-white font-semibold after:scale-x-100'
-                      : 'text-slate-300 hover:text-white after:scale-x-0 hover:after:scale-x-100'
-                  }`}
+                  className={`text-sm tracking-wide transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:origin-left after:transition-transform after:duration-300 ${
+                    isHighlight 
+                      ? 'text-cyan-400 font-bold hover:text-cyan-300 after:bg-cyan-400' 
+                      : (isActive ? 'text-white font-semibold after:bg-white' : 'text-slate-300 font-medium hover:text-white after:bg-white')
+                  } ${isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'}`}
                 >
                   {link.label}
                 </Link>
               );
             })}
           </nav>
-
-          {/* CTA Minimalista */}
-          <div className="hidden sm:flex items-center">
-            <Link
-              href="/contato"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-xs font-semibold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-all active:scale-[0.98]"
-            >
-              <span>Falar com Especialista</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#1B2639]" />
-            </Link>
-          </div>
 
           {/* Mobile Menu Button */}
           <div className="flex lg:hidden items-center">
@@ -99,13 +90,16 @@ export const Header: React.FC = () => {
           <nav className="flex flex-col space-y-3">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
+              const isHighlight = link.label === 'Torres 5,6G';
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-base font-medium py-2 transition-colors ${
-                    isActive ? 'text-white font-bold' : 'text-slate-300 hover:text-white'
+                  className={`text-base py-2 transition-colors ${
+                    isHighlight
+                      ? 'text-cyan-400 font-bold'
+                      : (isActive ? 'text-white font-bold' : 'text-slate-300 font-medium hover:text-white')
                   }`}
                 >
                   {link.label}
@@ -113,16 +107,7 @@ export const Header: React.FC = () => {
               );
             })}
           </nav>
-          <div className="pt-4 border-t border-white/10">
-            <Link
-              href="/contato"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-md text-xs font-semibold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-all text-center"
-            >
-              <span>Falar com Especialista</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+
         </div>
       )}
     </header>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Info, Send, CheckCircle2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Info, Send, CheckCircle2, Instagram, Facebook, Linkedin } from 'lucide-react';
 
 export default function ContatoPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -19,27 +19,7 @@ export default function ContatoPage() {
 
   return (
     <div className="bg-white text-[#1B2639]">
-      {/* Header Banner com Fotografia */}
-      <section
-        className="relative py-24 sm:py-32 bg-cover bg-center text-white"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1541888946425-d0fbb18615f3?auto=format&fit=crop&w=2000&q=80")'
-        }}
-      >
-        <div className="absolute inset-0 bg-[#1B2639]/80" />
-        <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-          <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-3">
-            Atendimento Técnico &amp; Comercial
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Fale com a Engenharia da MCH
-          </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed">
-            Envie as diretrizes do seu projeto estrutural, obra civil ou demanda de infraestrutura para análise técnica e formulação de proposta.
-          </p>
-        </div>
-      </section>
+
 
       {/* Conteúdo de Contato Clean */}
       <section className="py-20 sm:py-28 bg-white">
@@ -90,12 +70,25 @@ export default function ContatoPage() {
               <div className="space-y-4 text-sm text-slate-700">
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-[#1B2639]" />
-                  <span><strong>Telefone Comercial:</strong> (11) 97120-0000</span>
+                  <span><strong>Telefone Comercial:</strong> (11) 96645-4023</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-[#1B2639]" />
                   <span><strong>E-mail Técnico:</strong> contato@mchengenharia.com.br</span>
                 </div>
+              </div>
+
+              {/* Redes Sociais */}
+              <div className="pt-6 border-t border-slate-100 flex items-center gap-4">
+                <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors">
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors">
+                  <Linkedin className="w-5 h-5" />
+                </a>
               </div>
             </div>
 
