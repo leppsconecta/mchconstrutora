@@ -20,13 +20,13 @@ export default function ImobiliariaPage() {
           
           <div className="relative z-10 max-w-xl text-left">
             <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-3">
-              MCH Imobiliária
+              Construtora &amp; Incorporação
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-white leading-tight">
               Seu Novo Lar, <br /> Nossa Construção
             </h1>
             <p className="text-sm sm:text-base text-slate-300 max-w-lg leading-relaxed font-light">
-              Conectamos famílias aos melhores imóveis e investidores a projetos de alto valor agregado na região de Cajamar e polo metropolitano de São Paulo.
+              Conectamos famílias aos melhores imóveis e projetos de alto valor agregado na região de Cajamar e polo metropolitano de São Paulo.
             </p>
           </div>
         </div>
@@ -34,7 +34,7 @@ export default function ImobiliariaPage() {
         {/* Lado Direito: Vídeo Recortado (40%) */}
         <div className="relative w-full lg:w-[40%] h-[260px] sm:h-[300px] lg:h-full border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
           <video 
-            src="https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/sign/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4?token=eyJraWQiOiIyZGMxOWFmZC0wNDI5LTQ1M2EtYWYyOS0yZjI2NDc2NDYxZTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJtY2hjb25zdHJ1dG9yYV9pbW9iaWxpYXJpYS9Qcm9qZXRvIDIgLSBDYWxpYW5kcmFzIDIgLSBNYWNoYWRvLm1wNCIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3OTEyMTc5MzgsImV4cCI6MTc5MTgyMjczOH0.05O8mFwF55vHze9UkXpT_IeRYAU-jlA48O3mTOiBqZ0"
+            src="https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4"
             autoPlay 
             loop 
             muted 
@@ -45,7 +45,7 @@ export default function ImobiliariaPage() {
         </div>
       </section>
 
-      {/* Serviços Imobiliários */}
+      {/* Serviços Construtora */}
       <section className="py-24 sm:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           
@@ -54,7 +54,7 @@ export default function ImobiliariaPage() {
                Soluções Diretas e Transparentes
              </h2>
              <p className="mt-4 text-slate-600 leading-relaxed text-lg">
-               Seja para vender um lote ou comprar a casa dos sonhos, conte com a expertise técnica da MCH Engenharia garantindo segurança em cada transação.
+               Seja para adquirir um lote ou construir a casa dos sonhos, conte com a expertise técnica da Engenharia garantindo segurança em cada etapa.
              </p>
           </div>
 
@@ -131,7 +131,7 @@ export default function ImobiliariaPage() {
             href="/contato"
             className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-md text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-colors shadow-xl"
           >
-            <span>Falar com um Consultor MCH</span>
+            <span>Falar com a Construtora</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -124,7 +124,7 @@ export default function ConstrutoraPage() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group">
                 <img
                   src="/casa-alto-padrao.jpg"
-                  alt="Casa de alto padrão construída pela MCH"
+                  alt="Casa de alto padrão construída"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
@@ -140,7 +140,7 @@ export default function ConstrutoraPage() {
             >
               <div className="space-y-2">
                 <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-bold block">
-                  MCH Construtora &amp; Incorporadora
+                  Construtora &amp; Reformas
                 </span>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1B2639] tracking-tight leading-tight">
                   Construção de Casas do Básico ao Acabamento
@@ -259,7 +259,7 @@ export default function ConstrutoraPage() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group border border-white/10">
                 <img
                   src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80"
-                  alt="Serviços prediais e manutenção técnica especializada da MCH"
+                  alt="Serviços prediais e manutenção técnica especializada"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>

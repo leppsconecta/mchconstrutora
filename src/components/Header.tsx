@@ -26,9 +26,9 @@ export const Header: React.FC = () => {
 
   const navLinks = [
     { label: 'Home', href: '/' },
-    { label: 'Torres Telecom', href: '/torres' },
-    { label: 'Construtora', href: '/construtora' },
-    { label: 'Imobiliária', href: '/imobiliaria' },
+    { label: 'Telecomunicações', href: '/torres' },
+    { label: 'Reformas', href: '/reformas' },
+    { label: 'Construtora', href: '/imobiliaria' },
     { label: 'Cases', href: '/cases' },
     { label: 'Quem Somos', href: '/quem-somos' },
     { label: 'Contato', href: '/contato' }
@@ -40,45 +40,23 @@ export const Header: React.FC = () => {
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo no formato do exemplo com animação na abertura */}
+          {/* Logo único e branco sem container */}
           <motion.div
-            initial={{ opacity: 0, x: -25, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center shrink-0"
           >
             <Link
               href="/"
-              className="flex items-center group relative select-none"
-              aria-label="MCH Engenharia &amp; Imobiliária"
+              className="flex items-center group relative select-none py-1"
+              aria-label="Machado Construtora &amp; Incorporadora"
             >
-              {/* Bloco Arquitetônico do Emblema M (formato do exemplo anexado) */}
-              <div className="h-14 sm:h-16 w-14 sm:w-16 bg-[#E6E6E6] rounded flex items-center justify-center p-2.5 shadow-sm transition-all duration-300 group-hover:bg-white group-hover:shadow-lg shrink-0 relative overflow-hidden">
-                {/* Reflexo / Sweep Shine ao abrir o site */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none"
-                  initial={{ x: '-120%' }}
-                  animate={{ x: '220%' }}
-                  transition={{ duration: 1.1, delay: 0.7, ease: 'easeInOut' }}
-                />
-                <img
-                  src="/logo-emblem.png"
-                  alt="Emblema MCH"
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-
-              {/* Logotipo Tipográfico: MCH ENGENHARIA & IMOBILIÁRIA */}
-              <div className="ml-3 sm:ml-4 flex items-center overflow-hidden">
-                <motion.img
-                  initial={{ opacity: 0, filter: 'blur(3px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
-                  src="/logos/logotipo_header.png"
-                  alt="MCH Engenharia &amp; Imobiliária"
-                  className="h-6 sm:h-7 md:h-8 lg:h-8.5 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90"
-                />
-              </div>
+              <img
+                src="/logos/logotipo_machado_header.png"
+                alt="Machado Construtora &amp; Incorporadora"
+                className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
           </motion.div>
 
@@ -86,7 +64,7 @@ export const Header: React.FC = () => {
           <nav className="hidden lg:flex items-center gap-8 ml-auto">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
-              const isHighlight = link.label === 'Torres Telecom';
+              const isHighlight = link.label === 'Telecomunicações';
               return (
                 <Link
                   key={link.href}
@@ -122,7 +100,7 @@ export const Header: React.FC = () => {
           <nav className="flex flex-col space-y-3">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
-              const isHighlight = link.label === 'Torres 5,6G';
+              const isHighlight = link.label === 'Telecomunicações';
               return (
                 <Link
                   key={link.href}

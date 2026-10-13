@@ -65,7 +65,7 @@ export default function HomePage() {
               transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]"
             >
-              Nós executamos infraestrutura para torres e antenas 3G.
+              Nós executamos infraestrutura para torres e antenas 6G.
             </motion.h1>
 
             {/* Subtítulo Solicitado - Discreto e Reduzido */}
@@ -256,7 +256,7 @@ export default function HomePage() {
               <div className="relative rounded-xl overflow-hidden shadow-2xl aspect-[4/3] group border border-white/10">
                 <img
                   src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80"
-                  alt="Planejamento de Obra MCH"
+                  alt="Planejamento de Obra"
                   className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-[1.5s] ease-out opacity-90"
                 />
                 <div className="absolute inset-0 bg-[#1B2639]/10 mix-blend-multiply group-hover:bg-transparent transition-colors duration-[1.5s]" />
@@ -273,7 +273,7 @@ export default function HomePage() {
                   + 10 anos de experiência
                 </h2>
                 <p className="mt-4 text-base text-slate-300 leading-relaxed">
-                  Consolidamos nossa marca unindo a visão estratégica do mercado imobiliário com a execução técnica de alto padrão da construção civil. Uma década de resultados sólidos.
+                  Consolidamos nossa atuação unindo a visão estratégica da construção civil e incorporação com a execução técnica de alto padrão e reformas corporativas. Uma década de resultados sólidos.
                 </p>
               </div>
 
@@ -281,24 +281,24 @@ export default function HomePage() {
               <div className="space-y-6 pt-4 border-t border-white/10">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
-                    <HardHat className="w-5 h-5 text-white" />
+                    <Building2 className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Construção</h3>
+                    <h3 className="text-lg font-bold text-white mb-1">Reformas</h3>
                     <p className="text-sm text-slate-300 leading-relaxed">
-                      Gerenciamento e execução de obras civis e infraestruturas complexas. Do projeto estrutural ao acabamento final, garantimos máxima qualidade e segurança.
+                      Reformas prediais e adequações completas corporativas B2B, abrangendo toda a parte civil, hidráulica, elétrica e acabamentos especializados.
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
-                    <Home className="w-5 h-5 text-white" />
+                    <HardHat className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Imobiliária</h3>
+                    <h3 className="text-lg font-bold text-white mb-1">Construtora</h3>
                     <p className="text-sm text-slate-300 leading-relaxed">
-                      Inteligência de mercado para aquisição, venda e gestão de ativos imobiliários, conectando os melhores negócios aos nossos clientes com transparência.
+                      Gerenciamento e execução de obras civis, casas de alto padrão e infraestruturas complexas do projeto estrutural ao acabamento definitivo.
                     </p>
                   </div>
                 </div>
