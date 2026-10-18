@@ -10,58 +10,8 @@ import {
   Key
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
-const STEPS = [
-  {
-    step: '01',
-    title: 'Planejamento & Projetos',
-    desc: 'Análise do terreno, compatibilização de projetos estruturais e arquitetônicos e orçamento fechado sem custos surpresa.',
-    icon: Ruler
-  },
-  {
-    step: '02',
-    title: 'Fundação & Estrutura',
-    desc: 'Terraplenagem, fundações profundas e concretagem executadas exclusivamente por equipe própria e engenheiros no canteiro.',
-    icon: Hammer
-  },
-  {
-    step: '03',
-    title: 'Instalações Técnicas',
-    desc: 'Sistemas elétricos, redes hidrossanitárias certificadas e impermeabilização multicamadas com rigor técnico.',
-    icon: HardHat
-  },
-  {
-    step: '04',
-    title: 'Acabamentos & Chaves',
-    desc: 'Assentamento de porcelanatos, esquadrias nobres, pintura fina e entrega da casa 100% pronta para morar.',
-    icon: Key
-  }
-];
-
-const MAINTENANCE_SERVICES = [
-  {
-    title: 'Encanador & Hidráulica',
-    desc: 'Caça-vazamentos, bombas pressurizadoras, caixas d’água e tubulações de esgoto/água quente.',
-    icon: Wrench
-  },
-  {
-    title: 'Eletricista & Elétrica',
-    desc: 'Quadros de distribuição, cabeamento estruturado, iluminação técnica e balanceamento de carga.',
-    icon: Zap
-  },
-  {
-    title: 'Pintor & Restauração',
-    desc: 'Pintura interna e externa, tratamento de trincas, umidade, aplicação de texturas e vernizes.',
-    icon: Paintbrush
-  },
-  {
-    title: 'Limpeza Pós-Obra',
-    desc: 'Higienização profunda especializada pós-reforma, limpeza de vidros e conservação predial.',
-    icon: Sparkles
-  }
-];
-
-// Variantes para animações em fila suaves (stagger)
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -80,7 +30,7 @@ const cardItemVariants = {
     y: 0,
     transition: {
       duration: 0.55,
-      ease: [0.22, 1, 0.36, 1]
+      ease: [0.22, 1, 0.36, 1] as const
     }
   }
 };
@@ -93,34 +43,87 @@ const stepCardVariants = {
     scale: 1,
     transition: {
       duration: 0.65,
-      ease: [0.22, 1, 0.36, 1]
+      ease: [0.22, 1, 0.36, 1] as const
     }
   }
 };
 
 export default function ReformasPage() {
+  const { t } = useLanguage();
+
+  const maintenanceServices = [
+    {
+      title: t.reformas.service1Title,
+      desc: t.reformas.service1Desc,
+      icon: Wrench
+    },
+    {
+      title: t.reformas.service2Title,
+      desc: t.reformas.service2Desc,
+      icon: Zap
+    },
+    {
+      title: t.reformas.service3Title,
+      desc: t.reformas.service3Desc,
+      icon: Paintbrush
+    },
+    {
+      title: t.reformas.service4Title,
+      desc: t.reformas.service4Desc,
+      icon: Sparkles
+    }
+  ];
+
+  const steps = [
+    {
+      step: '01',
+      title: t.reformas.step1Title,
+      desc: t.reformas.step1Desc,
+      icon: Ruler
+    },
+    {
+      step: '02',
+      title: t.reformas.step2Title,
+      desc: t.reformas.step2Desc,
+      icon: Hammer
+    },
+    {
+      step: '03',
+      title: t.reformas.step3Title,
+      desc: t.reformas.step3Desc,
+      icon: HardHat
+    },
+    {
+      step: '04',
+      title: t.reformas.step4Title,
+      desc: t.reformas.step4Desc,
+      icon: Key
+    }
+  ];
+
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
 
-      {/* =========================================================================
-          SEÇÃO 1: SERVIÇOS PREDIAIS & MANUTENÇÃO (IMAGEM + INFORMAÇÕES PÓS-OBRA E REPAROS)
-          ========================================================================= */}
+      {/* SEÇÃO 1: SERVIÇOS PREDIAIS & MANUTENÇÃO */}
       <section className="py-10 sm:py-14 bg-[#1B2639] text-white border-t border-white/10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
             
-            {/* Texto e Cards de Informações (Lado Esquerdo) */}
-            <div className="lg:col-span-6 space-y-5 flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                  Serviços Prediais &amp; Reparos Especializados
-                </h2>
-                <p className="mt-3 text-base text-slate-300 leading-relaxed">
-                  Dispomos de corpo técnico próprio e qualificado para manutenção preventiva e corretiva, pequenos reparos e conservação contínua de residências, edifícios e ambientes comerciais.
+            {/* Informações (Lado Esquerdo) */}
+            <div className="lg:col-span-6 space-y-6 flex flex-col justify-between py-1">
+              <div className="space-y-3">
+                <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block">
+                  {t.reformas.heroTag}
+                </span>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                  {t.reformas.heroTitle}
+                </h1>
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-light">
+                  {t.reformas.heroSubtitle}
                 </p>
               </div>
 
-              {/* Grid 2x2 com os 4 Serviços em Cards Brancos Animados em Fila (Stagger) */}
+              {/* Cards de Especialidades */}
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
@@ -128,7 +131,7 @@ export default function ReformasPage() {
                 viewport={{ once: true, amount: 0.15 }}
                 className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1"
               >
-                {MAINTENANCE_SERVICES.map((serv, idx) => {
+                {maintenanceServices.map((serv, idx) => {
                   const Icon = serv.icon;
                   return (
                     <motion.div
@@ -153,7 +156,7 @@ export default function ReformasPage() {
 
             </div>
 
-            {/* Imagem (Lado Direito) alinhada no topo com o texto e na base com os cards */}
+            {/* Imagem (Lado Direito) */}
             <motion.div
               initial={{ opacity: 0, x: 28 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -174,9 +177,7 @@ export default function ReformasPage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          SEÇÃO 2: RESUMO DAS ETAPAS DO PROCESSO CONSTRUTIVO (ETAPAS 01 A 04)
-          ========================================================================= */}
+      {/* SEÇÃO 2: RESUMO DAS ETAPAS DO PROCESSO CONSTRUTIVO */}
       <section className="py-10 sm:py-14 bg-white border-t border-slate-200/70 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           
@@ -188,17 +189,17 @@ export default function ReformasPage() {
             className="max-w-2xl mx-auto text-center mb-8 sm:mb-10 space-y-2"
           >
             <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-bold block">
-              Processo Construtivo
+              {t.reformas.processTag}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1B2639] tracking-tight">
-              Os caminhos que seguimos em sua obra
+              {t.reformas.processTitle}
             </h2>
             <p className="text-sm text-slate-600">
-              Metodologia clara para garantir prazo, economia e a qualidade de cada detalhe da sua casa.
+              {t.reformas.processSubtitle}
             </p>
           </motion.div>
 
-          {/* Cards das 4 etapas animados em sequência com efeito stagger */}
+          {/* Cards das 4 etapas */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -206,7 +207,7 @@ export default function ReformasPage() {
             viewport={{ once: true, amount: 0.15 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {STEPS.map((s, idx) => {
+            {steps.map((s, idx) => {
               const Icon = s.icon;
               return (
                 <motion.div
@@ -220,7 +221,7 @@ export default function ReformasPage() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <span className="text-xs font-mono font-bold text-cyan-400">
-                      ETAPA {s.step}
+                      {t.reformas.stepWord} {s.step}
                     </span>
                   </div>
 

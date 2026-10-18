@@ -9,35 +9,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
+import { useLanguage } from '../../contexts/LanguageContext';
 
-const STEPS = [
-  {
-    step: '01',
-    title: 'Planejamento & Projetos',
-    desc: 'Análise do terreno, compatibilização de projetos estruturais e arquitetônicos e orçamento fechado sem custos surpresa.',
-    icon: Ruler
-  },
-  {
-    step: '02',
-    title: 'Fundação & Estrutura',
-    desc: 'Terraplenagem, fundações profundas e concretagem executadas exclusivamente por equipe própria e engenheiros no canteiro.',
-    icon: Hammer
-  },
-  {
-    step: '03',
-    title: 'Instalações Técnicas',
-    desc: 'Sistemas elétricos, redes hidrossanitárias certificadas e impermeabilização multicamadas com rigor técnico.',
-    icon: HardHat
-  },
-  {
-    step: '04',
-    title: 'Acabamentos & Chaves',
-    desc: 'Assentamento de porcelanatos, esquadrias nobres, pintura fina e entrega da casa 100% pronta para morar.',
-    icon: Key
-  }
-];
-
-// Variantes para animações em fila suaves (stagger)
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -57,18 +30,45 @@ const stepCardVariants = {
     scale: 1,
     transition: {
       duration: 0.65,
-      ease: [0.22, 1, 0.36, 1]
+      ease: [0.22, 1, 0.36, 1] as const
     }
   }
 };
 
 export default function ConstrutoraPage() {
+  const { t } = useLanguage();
+
+  const steps = [
+    {
+      step: '01',
+      title: t.construtora.step1Title,
+      desc: t.construtora.step1Desc,
+      icon: Ruler
+    },
+    {
+      step: '02',
+      title: t.construtora.step2Title,
+      desc: t.construtora.step2Desc,
+      icon: Hammer
+    },
+    {
+      step: '03',
+      title: t.construtora.step3Title,
+      desc: t.construtora.step3Desc,
+      icon: HardHat
+    },
+    {
+      step: '04',
+      title: t.construtora.step4Title,
+      desc: t.construtora.step4Desc,
+      icon: Key
+    }
+  ];
+
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
 
-      {/* =========================================================================
-          HERO SECTION COM VÍDEO REAL DO PROJETO CALIANDRAS 2 (MACHADO)
-          ========================================================================= */}
+      {/* HERO SECTION COM VÍDEO REAL DO PROJETO CALIANDRAS 2 (MACHADO) */}
       <section className="relative flex flex-col lg:flex-row overflow-hidden bg-[#1B2639] lg:h-[480px]">
         {/* Lado Esquerdo: Imagem + Texto (60%) */}
         <div className="relative w-full lg:w-[60%] flex items-center justify-center lg:justify-start lg:pl-16 xl:pl-20 px-6 sm:px-10 py-14 lg:py-0 group overflow-hidden">
@@ -80,19 +80,19 @@ export default function ConstrutoraPage() {
           
           <div className="relative z-10 max-w-xl text-left">
             <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-3">
-              Construtora &amp; Incorporação
+              {t.construtora.heroTag}
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-white leading-tight">
-              Seu Novo Lar, <br /> Nossa Construção
+              {t.construtora.heroTitle}
             </h1>
             <p className="text-sm sm:text-base text-slate-300 max-w-lg leading-relaxed font-light mb-7">
-              Conectamos famílias aos melhores imóveis e projetos residenciais de alto valor agregado na região de Cajamar e polo metropolitano de São Paulo.
+              {t.construtora.heroSubtitle}
             </p>
             <Link
               href="/contato"
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-colors shadow-xl"
             >
-              <span>Falar com a Construtora</span>
+              <span>{t.construtora.heroCta}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -112,15 +112,12 @@ export default function ConstrutoraPage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          SEÇÃO 1: CONSTRUÇÃO DE CASAS DO BÁSICO AO ACABAMENTO
-          (Imagem na Esquerda | Texto na Direita)
-          ========================================================================= */}
+      {/* SEÇÃO 1: CONSTRUÇÃO DE CASAS DO BÁSICO AO ACABAMENTO */}
       <section className="py-20 sm:py-28 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
-            {/* Imagem (Lado Esquerdo) com fade-in e scale suave */}
+            {/* Imagem (Lado Esquerdo) */}
             <motion.div
               initial={{ opacity: 0, x: -28 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -137,7 +134,7 @@ export default function ConstrutoraPage() {
               </div>
             </motion.div>
 
-            {/* Informações (Lado Direito) com fade suave */}
+            {/* Informações (Lado Direito) */}
             <motion.div
               initial={{ opacity: 0, x: 28 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -147,26 +144,26 @@ export default function ConstrutoraPage() {
             >
               <div className="space-y-4">
                 <p className="text-base text-[#1B2639] font-bold leading-relaxed">
-                  Construção de imóveis para venda, desde a aquisição do terreno até a entrega de chaves, mobiliados e decorados.
+                  {t.construtora.section1Title}
                 </p>
 
                 <p className="text-base text-slate-600 leading-relaxed">
-                  Atuamos na execução integral de residências, desde a escolha do terreno até a entrega definitiva das chaves. Equipe própria, supervisão permanente de engenheiros e padrão de acabamento superior.
+                  {t.construtora.section1Desc}
                 </p>
               </div>
 
               <div className="space-y-3 pt-1">
                 <div className="flex items-start gap-3 text-sm text-slate-700">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Construção Turnkey (Chave na Mão):</strong> cuidamos da fundação, estrutura, acabamentos nobres e entrega pronta para morar.</span>
+                  <span><strong>{t.construtora.bullet1Title}</strong> {t.construtora.bullet1Desc}</span>
                 </div>
                 <div className="flex items-start gap-3 text-sm text-slate-700">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Casas para Venda e Incorporação:</strong> desenvolvemos projetos próprios de alto padrão com garantia de qualidade.</span>
+                  <span><strong>{t.construtora.bullet2Title}</strong> {t.construtora.bullet2Desc}</span>
                 </div>
                 <div className="flex items-start gap-3 text-sm text-slate-700">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Time 100% Próprio &amp; CREA-SP:</strong> sem terceirizações desreguladas e com emissão de ART em todas as etapas.</span>
+                  <span><strong>{t.construtora.bullet3Title}</strong> {t.construtora.bullet3Desc}</span>
                 </div>
               </div>
 
@@ -175,7 +172,7 @@ export default function ConstrutoraPage() {
                   href="/contato"
                   className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-sm font-bold uppercase tracking-wider text-white bg-[#1B2639] hover:bg-[#25344d] transition-all shadow-md hover:shadow-lg"
                 >
-                  <span>Solicitar Orçamento de Construção</span>
+                  <span>{t.construtora.section1Cta}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -186,9 +183,7 @@ export default function ConstrutoraPage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          SEÇÃO 2: RESUMO DAS ETAPAS DO PROCESSO CONSTRUTIVO
-          ========================================================================= */}
+      {/* SEÇÃO 2: RESUMO DAS ETAPAS DO PROCESSO CONSTRUTIVO */}
       <section className="py-20 sm:py-28 bg-[#F8F9FA] border-t border-slate-200/70 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           
@@ -200,13 +195,13 @@ export default function ConstrutoraPage() {
             className="max-w-2xl mx-auto text-center mb-14 space-y-2"
           >
             <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-bold block">
-              Processo Construtivo
+              {t.construtora.processTag}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1B2639] tracking-tight">
-              Os caminhos que seguimos em sua obra
+              {t.construtora.processTitle}
             </h2>
             <p className="text-sm text-slate-600">
-              Metodologia clara para garantir prazo, economia e a qualidade de cada detalhe da sua casa.
+              {t.construtora.processSubtitle}
             </p>
           </motion.div>
 
@@ -218,7 +213,7 @@ export default function ConstrutoraPage() {
             viewport={{ once: true, amount: 0.15 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {STEPS.map((s, idx) => {
+            {steps.map((s, idx) => {
               const Icon = s.icon;
               return (
                 <motion.div
@@ -232,7 +227,7 @@ export default function ConstrutoraPage() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <span className="text-xs font-mono font-bold text-cyan-400">
-                      ETAPA {s.step}
+                      {t.construtora.stepWord} {s.step}
                     </span>
                   </div>
 
@@ -251,22 +246,20 @@ export default function ConstrutoraPage() {
         </div>
       </section>
 
-
-
-      {/* =========================================================================
-          CTA FINAL
-          ========================================================================= */}
+      {/* CTA FINAL */}
       <section className="py-24 bg-[#1B2639] border-t border-white/10">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-extrabold text-white mb-6">Pronto para dar o próximo passo?</h2>
+          <h2 className="text-3xl font-extrabold text-white mb-6">
+            {t.construtora.ctaTitle}
+          </h2>
           <p className="text-slate-300 mb-10 text-lg">
-            Nossos consultores e engenheiros estão à disposição para avaliar seu terreno ou apresentar as melhores opções de residências para sua família.
+            {t.construtora.ctaSubtitle}
           </p>
           <Link
             href="/contato"
             className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-md text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-colors shadow-xl"
           >
-            <span>Falar com a Construtora</span>
+            <span>{t.construtora.ctaButton}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

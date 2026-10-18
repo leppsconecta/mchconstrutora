@@ -1,7 +1,8 @@
 import React from 'react';
-import { Shield, Award, Users, CheckCircle2, ArrowRight, Radio, Building2, Home } from 'lucide-react';
+import { Shield, Award, Users, ArrowRight, Radio, Building2, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,12 +22,14 @@ const cardItemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.22, 1, 0.36, 1]
+      ease: [0.22, 1, 0.36, 1] as const
     }
   }
 };
 
 export default function QuemSomosPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
 
@@ -48,26 +51,26 @@ export default function QuemSomosPage() {
             {/* Informações (Lado Direito) */}
             <div className="space-y-6 py-4">
               <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1B2639] tracking-tight leading-tight">
-                Engenharia séria não se faz apenas em escritório; se faz no terreno.
+                {t.quemSomos.mainTitle}
               </h2>
               <p className="text-base text-slate-600 leading-relaxed">
-                A MCH nasceu da constatação de que o mercado da construção civil e de infraestrutura crítica sofria com a terceirização desregulada e a falta de acompanhamento técnico real nas frentes de serviço.
+                {t.quemSomos.introP1}
               </p>
               <p className="text-base text-slate-600 leading-relaxed">
-                Estruturamos nossa operação com equipes próprias e capacitadas (pedreiros, carpinteiros, eletricistas e operadores) supervisionadas integralmente por engenheiros com registro ativo no CREA-SP. Dessa forma, eliminamos gargalos de comunicação e garantimos que o cálculo estrutural seja seguido à risca no canteiro.
+                {t.quemSomos.introP2}
               </p>
 
               {/* Tópicos: O que fazemos */}
               <div className="pt-8 border-t border-slate-100 space-y-5">
-                <h3 className="font-extrabold text-lg text-[#1B2639]">Nossas Áreas de Atuação</h3>
+                <h3 className="font-extrabold text-lg text-[#1B2639]">{t.quemSomos.areasTitle}</h3>
                 <div className="grid gap-5">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-[#1B2639]/5 flex items-center justify-center shrink-0">
                       <Radio className="w-5 h-5 text-[#1B2639]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-[#1B2639]">Infraestrutura Telecom (Torres)</h4>
-                      <p className="text-xs text-slate-600 leading-relaxed">Fundação civil, adequações e grandes obras para a implantação de antenas e bases 3G/4G/5G.</p>
+                      <h4 className="text-sm font-bold text-[#1B2639]">{t.quemSomos.areasTelecomTitle}</h4>
+                      <p className="text-xs text-slate-600 leading-relaxed">{t.quemSomos.areasTelecomDesc}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -75,8 +78,8 @@ export default function QuemSomosPage() {
                       <Building2 className="w-5 h-5 text-[#1B2639]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-[#1B2639]">Construtora</h4>
-                      <p className="text-xs text-slate-600 leading-relaxed">Obras civis pesadas, reformas corporativas B2B e execução estrutural completa do início ao fim.</p>
+                      <h4 className="text-sm font-bold text-[#1B2639]">{t.quemSomos.areasConstrutoraTitle}</h4>
+                      <p className="text-xs text-slate-600 leading-relaxed">{t.quemSomos.areasConstrutoraDesc}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -84,8 +87,8 @@ export default function QuemSomosPage() {
                       <Home className="w-5 h-5 text-[#1B2639]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-[#1B2639]">Imobiliária</h4>
-                      <p className="text-xs text-slate-600 leading-relaxed">Assessoria inteligente de mercado para compra, venda e gestão assertiva de ativos imobiliários estratégicos.</p>
+                      <h4 className="text-sm font-bold text-[#1B2639]">{t.quemSomos.areasImobiliariaTitle}</h4>
+                      <p className="text-xs text-slate-600 leading-relaxed">{t.quemSomos.areasImobiliariaDesc}</p>
                     </div>
                   </div>
                 </div>
@@ -107,9 +110,9 @@ export default function QuemSomosPage() {
               className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
               <Shield className="w-8 h-8 text-cyan-400" />
-              <h3 className="text-xl font-bold text-white">Segurança &amp; Normas</h3>
+              <h3 className="text-xl font-bold text-white">{t.quemSomos.val1Title}</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Rigor absoluto com normas regulamentadoras NR-18 e NR-35. Zero concessões quando o assunto é integridade física e operacional no canteiro.
+                {t.quemSomos.val1Desc}
               </p>
             </motion.div>
 
@@ -119,9 +122,9 @@ export default function QuemSomosPage() {
               className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
               <Award className="w-8 h-8 text-cyan-400" />
-              <h3 className="text-xl font-bold text-white">Pontualidade Absoluta</h3>
+              <h3 className="text-xl font-bold text-white">{t.quemSomos.val2Title}</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Planejamento executivo e cumprimento rigoroso de cronogramas. Entregamos exatamente o que nos comprometemos, sem atrasos ou surpresas.
+                {t.quemSomos.val2Desc}
               </p>
             </motion.div>
 
@@ -131,9 +134,9 @@ export default function QuemSomosPage() {
               className="p-8 rounded-2xl bg-[#1B2639] border border-white/5 space-y-4 shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
               <Users className="w-8 h-8 text-cyan-400" />
-              <h3 className="text-xl font-bold text-white">Time Próprio</h3>
+              <h3 className="text-xl font-bold text-white">{t.quemSomos.val3Title}</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Capacidade produtiva e técnica 100% controlada com mão de obra qualificada da própria MCH, reduzindo retrabalhos e elevando o acabamento.
+                {t.quemSomos.val3Desc}
               </p>
             </motion.div>
           </motion.div>
@@ -142,10 +145,10 @@ export default function QuemSomosPage() {
           <div className="mt-16 p-8 sm:p-10 rounded-2xl bg-[#F8F9FA] border border-slate-200/60 flex flex-col md:flex-row gap-8 items-center justify-between">
              <div className="space-y-4 max-w-2xl">
                 <h3 className="text-xl font-extrabold text-[#1B2639]">
-                  Presença Estratégica em Cajamar / SP
+                  {t.quemSomos.presenceTitle}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Nossa sede localiza-se na <strong>Av dos Ypes 155, Cajamar - SP</strong>, no coração de um dos maiores eixos logísticos e industriais do Brasil. Essa posição estratégica nos permite mobilizar rapidamente equipamentos pesados, materiais e equipes técnicas para qualquer ponto da Grande São Paulo e interior.
+                  {t.quemSomos.presenceDesc}
                 </p>
              </div>
              <div className="shrink-0 w-full md:w-auto">
@@ -153,7 +156,7 @@ export default function QuemSomosPage() {
                   href="/contato"
                   className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-md text-sm font-bold uppercase tracking-wider text-white bg-[#1B2639] hover:bg-cyan-700 transition-colors shadow-lg"
                 >
-                  <span>Falar com a Diretoria</span>
+                  <span>{t.quemSomos.presenceCta}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
              </div>
