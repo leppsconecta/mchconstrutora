@@ -34,8 +34,8 @@ export const Marquee: React.FC = () => {
   const row2 = [...LOGOS_ROW_2, ...LOGOS_ROW_2, ...LOGOS_ROW_2, ...LOGOS_ROW_2];
 
   return (
-    <section className="py-20 bg-white border-y border-slate-100 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center mb-12">
+    <section className="py-12 sm:py-16 bg-white border-y border-slate-100 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center mb-8">
         <p className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold">
           Parcerias de Confiança Institucional
         </p>

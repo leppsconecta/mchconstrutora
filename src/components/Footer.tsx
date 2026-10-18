@@ -19,12 +19,12 @@ export const Footer: React.FC = () => {
             <Link
               href="/"
               className="inline-block group transition-transform duration-300 hover:opacity-95"
-              aria-label="Engenharia &amp; Construtora"
+              aria-label="Machado Construtora &amp; Incorporadora"
             >
               <img
-                src="/logos/logotipo_footer_white.png"
-                alt="Engenharia &amp; Construtora"
-                className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                src="/logos/logotipo_machado_header.png"
+                alt="Machado Construtora &amp; Incorporadora"
+                className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
             <p className="text-sm text-slate-300 leading-relaxed max-w-sm">
@@ -48,13 +48,18 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/telecomunicacoes" className="hover:text-white transition-colors">
+                  Telecomunicações
+                </Link>
+              </li>
+              <li>
                 <Link href="/reformas" className="hover:text-white transition-colors">
                   Reformas
                 </Link>
               </li>
               <li>
-                <Link href="/imobiliaria" className="hover:text-white transition-colors">
-                  Construtora &amp; Incorporação
+                <Link href="/construtora" className="hover:text-white transition-colors">
+                  Construtora
                 </Link>
               </li>
               <li>
@@ -107,7 +112,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9F9F9F]">
           <div>
-            &copy; {new Date().getFullYear()} Engenharia &amp; Construtora. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} Machado Construtora &amp; Incorporadora. Todos os direitos reservados.
           </div>
           <div>
             Cajamar · São Paulo · Brasil

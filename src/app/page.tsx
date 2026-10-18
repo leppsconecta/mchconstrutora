@@ -57,48 +57,26 @@ export default function HomePage() {
 
         {/* EM SEGUIDA O TEXTO SUBINDO (Sequência Escalada com Slide Up) */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-start mt-20 sm:mt-0">
-          <div className="max-w-2xl text-left">
-            {/* H1 Principal com Peso e Legibilidade - Discreto e Reduzido */}
+          <div className="max-w-3xl text-left">
+            {/* Frase de impacto */}
             <motion.h1
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]"
             >
-              Nós executamos infraestrutura para torres e antenas 6G.
+              Construindo valor, transformando espaços e entregando resultados.
             </motion.h1>
 
-            {/* Subtítulo Solicitado - Discreto e Reduzido */}
+            {/* Texto de apoio */}
             <motion.p
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-6 text-base sm:text-lg text-slate-200 font-normal leading-relaxed max-w-lg"
+              className="mt-6 text-base sm:text-lg text-slate-200 font-normal leading-relaxed max-w-2xl"
             >
-              Especialistas na construção e fundação pesada de bases para telecomunicações. Entregamos excelência civil, segurança irrestrita e máximo rigor técnico direto no canteiro de obras.
+              Desenvolvimento e construção de imóveis próprios para venda, reformas prediais, infraestrutura para telecomunicações em geral, impermeabilização especializada e soluções que unem engenharia, eficiência e compromisso, com resultados duradouros.
             </motion.p>
-
-            {/* Ações / Links Reais */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-10 flex flex-col sm:flex-row items-start justify-start gap-4"
-            >
-              <Link
-                href="/construtora"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-sm font-semibold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-all shadow-xl active:scale-95 group"
-              >
-                <span>Nossas Frentes</span>
-                <ArrowRight className="w-4 h-4 text-[#1B2639] group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/contato"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-md text-sm font-semibold uppercase tracking-wider text-white border border-white/40 hover:bg-white/10 transition-all active:scale-95"
-              >
-                <span>Falar com a Engenharia</span>
-              </Link>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -106,10 +84,10 @@ export default function HomePage() {
       {/* =========================================================================
           3. NOSSAS FRENTES DE ATUAÇÃO (Os 3 Pilares com Efeitos Interativos)
           ========================================================================= */}
-      <section className="py-24 sm:py-32 bg-[#F8F9FA]">
+      <section className="py-14 sm:py-20 bg-[#F8F9FA]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          {/* Cabeçalho da Seção com Respiro */}
-          <div className="max-w-2xl mx-auto text-center mb-16 sm:mb-20">
+          {/* Cabeçalho da Seção com Respiro Reduzido */}
+          <div className="max-w-2xl mx-auto text-center mb-10 sm:mb-14">
             <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-2">
               Frentes de Atuação
             </span>
@@ -194,10 +172,10 @@ export default function HomePage() {
 
               <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
                 <Link
-                  href="/cases"
+                  href="/telecomunicacoes"
                   className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#1B2639] group-hover:text-black transition-colors"
                 >
-                  <span>Ver Infraestrutura Telecom</span>
+                  <span>Ver Telecomunicações</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-2 transition-transform duration-200" />
                 </Link>
                 <span className="w-2 h-2 rounded-full bg-cyan-600 animate-pulse" />
@@ -232,10 +210,10 @@ export default function HomePage() {
 
               <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
                 <Link
-                  href="/contato"
+                  href="/reformas"
                   className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#1B2639] group-hover:text-[#25344d] transition-colors"
                 >
-                  <span>Solicitar Adequação B2B</span>
+                  <span>Conhecer Reformas</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-200" />
                 </Link>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[#1B2639] transition-colors" />
@@ -248,23 +226,23 @@ export default function HomePage() {
       {/* =========================================================================
           4. SOBRE NOSSA EXPERIÊNCIA (+10 ANOS)
           ========================================================================= */}
-      <section className="py-24 sm:py-32 bg-[#1B2639] text-white">
+      <section className="py-14 sm:py-20 bg-[#1B2639] text-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Lado Esquerdo: Imagem Planejamento de Obra */}
-            <div className="lg:col-span-6 order-2 lg:order-1">
-              <div className="relative rounded-xl overflow-hidden shadow-2xl aspect-[4/3] group border border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
+            {/* Lado Esquerdo: Imagem Planejamento de Obra Alinhada */}
+            <div className="lg:col-span-6 order-2 lg:order-1 flex">
+              <div className="relative w-full h-full min-h-[360px] sm:min-h-[420px] lg:min-h-0 rounded-2xl overflow-hidden shadow-2xl group border border-white/10 flex">
                 <img
                   src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80"
                   alt="Planejamento de Obra"
-                  className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-[1.5s] ease-out opacity-90"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-90"
                 />
                 <div className="absolute inset-0 bg-[#1B2639]/10 mix-blend-multiply group-hover:bg-transparent transition-colors duration-[1.5s]" />
               </div>
             </div>
 
             {/* Lado Direito: Texto com Experiência */}
-            <div className="lg:col-span-6 space-y-8 order-1 lg:order-2">
+            <div className="lg:col-span-6 space-y-7 order-1 lg:order-2 flex flex-col justify-between">
               <div>
                 <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-2">
                   História e Solidez
@@ -281,18 +259,6 @@ export default function HomePage() {
               <div className="space-y-6 pt-4 border-t border-white/10">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
-                    <Building2 className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1">Reformas</h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">
-                      Reformas prediais e adequações completas corporativas B2B, abrangendo toda a parte civil, hidráulica, elétrica e acabamentos especializados.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
                     <HardHat className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -302,16 +268,30 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-              </div>
-              
-              <div className="pt-2">
-                <Link
-                  href="/quem-somos"
-                  className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white hover:text-slate-300 transition-colors"
-                >
-                  <span>Conhecer nossa história completa</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
+                    <Radio className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">Telecomunicações</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      Implantações de sites para telecomunicações, reforço, desmobilizações, impermeabilizações e manutenções em geral.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0 mt-1">
+                    <Building2 className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">Reformas</h3>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      Reformas prediais e adequações completas corporativas B2B, abrangendo toda a parte civil, hidráulica, elétrica e acabamentos especializados.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

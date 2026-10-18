@@ -5,11 +5,7 @@ import {
   ArrowRight,
   Hammer,
   Ruler,
-  Key,
-  Wrench,
-  Zap,
-  Paintbrush,
-  Sparkles
+  Key
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
@@ -41,29 +37,6 @@ const STEPS = [
   }
 ];
 
-const MAINTENANCE_SERVICES = [
-  {
-    title: 'Encanador & Hidráulica',
-    desc: 'Caça-vazamentos, bombas pressurizadoras, caixas d’água e tubulações de esgoto/água quente.',
-    icon: Wrench
-  },
-  {
-    title: 'Eletricista & Elétrica',
-    desc: 'Quadros de distribuição, cabeamento estruturado, iluminação técnica e balanceamento de carga.',
-    icon: Zap
-  },
-  {
-    title: 'Pintor & Restauração',
-    desc: 'Pintura interna e externa, tratamento de trincas, umidade, aplicação de texturas e vernizes.',
-    icon: Paintbrush
-  },
-  {
-    title: 'Limpeza Pós-Obra',
-    desc: 'Higienização profunda especializada pós-reforma, limpeza de vidros e conservação predial.',
-    icon: Sparkles
-  }
-];
-
 // Variantes para animações em fila suaves (stagger)
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -72,18 +45,6 @@ const containerVariants = {
     transition: {
       staggerChildren: 0.12,
       delayChildren: 0.08
-    }
-  }
-};
-
-const cardItemVariants = {
-  hidden: { opacity: 0, y: 22 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.55,
-      ease: [0.22, 1, 0.36, 1]
     }
   }
 };
@@ -106,10 +67,56 @@ export default function ConstrutoraPage() {
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
 
       {/* =========================================================================
+          HERO SECTION COM VÍDEO REAL DO PROJETO CALIANDRAS 2 (MACHADO)
+          ========================================================================= */}
+      <section className="relative flex flex-col lg:flex-row overflow-hidden bg-[#1B2639] lg:h-[480px]">
+        {/* Lado Esquerdo: Imagem + Texto (60%) */}
+        <div className="relative w-full lg:w-[60%] flex items-center justify-center lg:justify-start lg:pl-16 xl:pl-20 px-6 sm:px-10 py-14 lg:py-0 group overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-[4s] ease-out" 
+            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=2000&q=80")' }} 
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1B2639]/95 via-[#1B2639]/80 to-[#1B2639]/95 lg:bg-gradient-to-r lg:from-[#1B2639] lg:via-[#1B2639]/85 lg:to-transparent" />
+          
+          <div className="relative z-10 max-w-xl text-left">
+            <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-3">
+              Construtora &amp; Incorporação
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-white leading-tight">
+              Seu Novo Lar, <br /> Nossa Construção
+            </h1>
+            <p className="text-sm sm:text-base text-slate-300 max-w-lg leading-relaxed font-light mb-7">
+              Conectamos famílias aos melhores imóveis e projetos residenciais de alto valor agregado na região de Cajamar e polo metropolitano de São Paulo.
+            </p>
+            <Link
+              href="/contato"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-md text-xs font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-colors shadow-xl"
+            >
+              <span>Falar com a Construtora</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Lado Direito: Vídeo Recortado (40%) */}
+        <div className="relative w-full lg:w-[40%] h-[260px] sm:h-[300px] lg:h-full border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
+          <video 
+            src="https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4"
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[#1B2639]/10 pointer-events-none" />
+        </div>
+      </section>
+
+      {/* =========================================================================
           SEÇÃO 1: CONSTRUÇÃO DE CASAS DO BÁSICO AO ACABAMENTO
           (Imagem na Esquerda | Texto na Direita)
           ========================================================================= */}
-      <section className="pt-8 pb-16 sm:pt-12 sm:pb-24 bg-white overflow-hidden">
+      <section className="py-20 sm:py-28 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
@@ -124,7 +131,7 @@ export default function ConstrutoraPage() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group">
                 <img
                   src="/casa-alto-padrao.jpg"
-                  alt="Casa de alto padrão construída"
+                  alt="Casa de alto padrão construída pela Machado"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
@@ -138,18 +145,15 @@ export default function ConstrutoraPage() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="lg:col-span-6 space-y-6"
             >
-              <div className="space-y-2">
-                <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-bold block">
-                  Construtora &amp; Reformas
-                </span>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1B2639] tracking-tight leading-tight">
-                  Construção de Casas do Básico ao Acabamento
-                </h1>
-              </div>
+              <div className="space-y-4">
+                <p className="text-base text-[#1B2639] font-bold leading-relaxed">
+                  Construção de imóveis para venda, desde a aquisição do terreno até a entrega de chaves, mobiliados e decorados.
+                </p>
 
-              <p className="text-base text-slate-600 leading-relaxed">
-                Atuamos na execução integral de residências, desde a escolha do terreno até a entrega definitiva das chaves. Equipe própria, supervisão permanente de engenheiros e padrão de acabamento superior.
-              </p>
+                <p className="text-base text-slate-600 leading-relaxed">
+                  Atuamos na execução integral de residências, desde a escolha do terreno até a entrega definitiva das chaves. Equipe própria, supervisão permanente de engenheiros e padrão de acabamento superior.
+                </p>
+              </div>
 
               <div className="space-y-3 pt-1">
                 <div className="flex items-start gap-3 text-sm text-slate-700">
@@ -183,96 +187,9 @@ export default function ConstrutoraPage() {
       </section>
 
       {/* =========================================================================
-          SEÇÃO 2: SERVIÇOS PREDIAIS & MANUTENÇÃO (SEÇÃO AZUL MARINHO + CARDS BRANCOS EM FILA)
-          (Texto na Esquerda | Imagem na Direita)
+          SEÇÃO 2: RESUMO DAS ETAPAS DO PROCESSO CONSTRUTIVO
           ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#1B2639] text-white border-t border-white/10 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            
-            {/* Texto (Lado Esquerdo) */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="space-y-2">
-                <span className="inline-block text-xs uppercase tracking-widest text-cyan-300 font-bold px-3 py-1 rounded-full bg-white/10 backdrop-blur-md">
-                  Manutenção &amp; Facilities
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                  Serviços Prediais &amp; Reparos Especializados
-                </h2>
-              </div>
-
-              <p className="text-base text-slate-300 leading-relaxed">
-                Dispomos de corpo técnico próprio e qualificado para manutenção preventiva e corretiva, pequenos reparos e conservação contínua de residências, edifícios e ambientes comerciais.
-              </p>
-
-              {/* Grid 2x2 com os 4 Serviços em Cards Brancos Animados em Fila (Stagger) */}
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.15 }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1"
-              >
-                {MAINTENANCE_SERVICES.map((serv, idx) => {
-                  const Icon = serv.icon;
-                  return (
-                    <motion.div
-                      key={idx}
-                      variants={cardItemVariants}
-                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                      className="p-4 rounded-xl bg-white text-[#1B2639] border border-slate-100 shadow-md space-y-1.5 hover:shadow-xl transition-shadow cursor-default"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-[#1B2639]/10 flex items-center justify-center text-[#1B2639]">
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <h3 className="text-sm font-bold text-[#1B2639]">{serv.title}</h3>
-                      </div>
-                      <p className="text-xs text-slate-600 leading-relaxed">
-                        {serv.desc}
-                      </p>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-
-              <div className="pt-2">
-                <Link
-                  href="/contato"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-lg text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-cyan-300 transition-all shadow-xl hover:shadow-2xl"
-                >
-                  <span>Solicitar Atendimento Predial</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-            </div>
-
-            {/* Imagem (Lado Direito) com transição suave */}
-            <motion.div
-              initial={{ opacity: 0, x: 28 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:col-span-6"
-            >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group border border-white/10">
-                <img
-                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80"
-                  alt="Serviços prediais e manutenção técnica especializada"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-              </div>
-            </motion.div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SEÇÃO 3: RESUMO DAS ETAPAS DO PROCESSO (CARDS AZUL MARINHO ANIMADOS EM FILA)
-          ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-white border-t border-slate-200/70 overflow-hidden">
+      <section className="py-20 sm:py-28 bg-[#F8F9FA] border-t border-slate-200/70 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           
           <motion.div
@@ -293,7 +210,7 @@ export default function ConstrutoraPage() {
             </p>
           </motion.div>
 
-          {/* Cards das 4 etapas animados em sequência com efeito stagger */}
+          {/* Cards das 4 etapas */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -331,6 +248,27 @@ export default function ConstrutoraPage() {
             })}
           </motion.div>
 
+        </div>
+      </section>
+
+
+
+      {/* =========================================================================
+          CTA FINAL
+          ========================================================================= */}
+      <section className="py-24 bg-[#1B2639] border-t border-white/10">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-extrabold text-white mb-6">Pronto para dar o próximo passo?</h2>
+          <p className="text-slate-300 mb-10 text-lg">
+            Nossos consultores e engenheiros estão à disposição para avaliar seu terreno ou apresentar as melhores opções de residências para sua família.
+          </p>
+          <Link
+            href="/contato"
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-md text-sm font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-colors shadow-xl"
+          >
+            <span>Falar com a Construtora</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
