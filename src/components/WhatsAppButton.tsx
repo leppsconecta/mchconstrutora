@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Copy, Check, MessageCircle, Mail, MapPin } from 'lucide-react';
+import { Copy, Check, Mail, MapPin } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const WhatsAppButton: React.FC = () => {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -31,7 +33,7 @@ export const WhatsAppButton: React.FC = () => {
       className="fixed bottom-6 right-6 z-50 group" 
     >
       
-      {/* Pop-up Menu Wrapper - pb-4 cria uma "ponte" invisível para o mouse não perder o hover no gap */}
+      {/* Pop-up Menu Wrapper */}
       <div 
         className={`absolute bottom-full right-0 pb-4 w-72 transition-all duration-300 origin-bottom-right ${
           isOpen 
@@ -41,8 +43,8 @@ export const WhatsAppButton: React.FC = () => {
       >
         <div className="bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden flex flex-col">
           <div className="bg-[#1B2639] px-5 py-4 text-white">
-            <h4 className="text-sm font-extrabold tracking-wide uppercase">Canais de Contato</h4>
-            <p className="text-xs text-slate-300 mt-0.5">Selecione para falar ou copie o dado</p>
+            <h4 className="text-sm font-extrabold tracking-wide uppercase">{t.whatsapp.channelsTitle}</h4>
+            <p className="text-xs text-slate-300 mt-0.5">{t.whatsapp.channelsSubtitle}</p>
           </div>
           
           <div className="p-2 space-y-1 bg-white">
@@ -63,13 +65,13 @@ export const WhatsAppButton: React.FC = () => {
               <button
                 onClick={(e) => handleCopy('(11) 96645-4023', 'whatsapp', e)}
                 className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
-                title="Copiar WhatsApp"
+                title={`${t.whatsapp.copyLabel} WhatsApp`}
               >
                 {copied === 'whatsapp' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
 
-            {/* E-mail (Somente Copia, não abre href) */}
+            {/* E-mail (Somente Copia) */}
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <div 
                 onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
@@ -80,19 +82,19 @@ export const WhatsAppButton: React.FC = () => {
                 </div>
                 <div className="text-left">
                   <div className="text-xs font-bold text-[#1B2639]">E-mail Corporativo</div>
-                  <div className="text-[11px] text-slate-500 truncate w-[130px]" title="Clique para copiar">contato@mchengenharia.com.br</div>
+                  <div className="text-[11px] text-slate-500 truncate w-[130px]">contato@mchengenharia.com.br</div>
                 </div>
               </div>
               <button
                 onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
                 className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
-                title="Copiar E-mail"
+                title={`${t.whatsapp.copyLabel} E-mail`}
               >
                 {copied === 'email' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
 
-            {/* Endereço (Clica e Abre Mapa / Copia) */}
+            {/* Endereço */}
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <a 
                 href="https://maps.google.com/?q=Av.+dos+Ipês,+155+-+Portal+dos+Ipês,+Cajamar+-+SP,+07790-840" 
@@ -104,14 +106,14 @@ export const WhatsAppButton: React.FC = () => {
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <div className="text-xs font-bold text-[#1B2639]">Sede Operacional</div>
-                  <div className="text-[11px] text-slate-500 line-clamp-1 w-[130px]" title="Av. dos Ipês, 155 - Cajamar, SP">Cajamar - SP</div>
+                  <div className="text-xs font-bold text-[#1B2639]">{t.contato.headquarters}</div>
+                  <div className="text-[11px] text-slate-500 line-clamp-1 w-[130px]">Cajamar - SP</div>
                 </div>
               </a>
               <button
                 onClick={(e) => handleCopy('Av. dos Ipês, 155 - 2º Andar - Portal dos Ipês, Cajamar - SP, 07790-840', 'endereco', e)}
                 className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
-                title="Copiar Endereço Completo"
+                title={`${t.whatsapp.copyLabel} ${t.contato.headquarters}`}
               >
                 {copied === 'endereco' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
               </button>
@@ -121,11 +123,11 @@ export const WhatsAppButton: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Button (Toggles Menu on Click for Mobile, also works with Hover on Desktop) */}
+      {/* Main Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center w-14 h-14 bg-white text-[#1B2639] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:scale-110 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 border border-slate-100 relative"
-        aria-label="Atendimento"
+        aria-label={t.whatsapp.channelsTitle}
       >
         <svg
           viewBox="0 0 24 24"

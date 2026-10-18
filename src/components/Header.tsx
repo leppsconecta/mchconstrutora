@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Link } from './Link';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
+import { LanguageSelector } from './LanguageSelector';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = React.useRef(0);
+  const location = useLocation();
+  const { t } = useLanguage();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -22,16 +26,15 @@ export const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  const location = useLocation();
 
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Telecomunicações', href: '/telecomunicacoes' },
-    { label: 'Reformas', href: '/reformas' },
-    { label: 'Construtora', href: '/construtora' },
-    { label: 'Cases', href: '/cases' },
-    { label: 'Quem Somos', href: '/quem-somos' },
-    { label: 'Contato', href: '/contato' }
+    { label: t.nav.home, href: '/' },
+    { label: t.nav.telecom, href: '/telecomunicacoes', isHighlight: true },
+    { label: t.nav.reformas, href: '/reformas' },
+    { label: t.nav.construtora, href: '/construtora' },
+    { label: t.nav.cases, href: '/cases' },
+    { label: t.nav.quemSomos, href: '/quem-somos' },
+    { label: t.nav.contato, href: '/contato' }
   ];
 
   return (
@@ -60,17 +63,16 @@ export const Header: React.FC = () => {
             </Link>
           </motion.div>
 
-          {/* Navegação Desktop com Links Reais */}
-          <nav className="hidden lg:flex items-center gap-8 ml-auto">
+          {/* Navegação Desktop com Links Reais + Seletor de Idiomas */}
+          <nav className="hidden lg:flex items-center gap-7 ml-auto">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
-              const isHighlight = link.label === 'Telecomunicações';
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={`text-sm tracking-wide transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:origin-left after:transition-transform after:duration-300 ${
-                    isHighlight 
+                    link.isHighlight 
                       ? 'text-cyan-400 font-bold hover:text-cyan-300 after:bg-cyan-400' 
                       : (isActive ? 'text-white font-semibold after:bg-white' : 'text-slate-300 font-medium hover:text-white after:bg-white')
                   } ${isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'}`}
@@ -79,14 +81,21 @@ export const Header: React.FC = () => {
                 </Link>
               );
             })}
+
+            {/* Divisor vertical sutil */}
+            <div className="h-5 w-[1px] bg-white/15" />
+
+            {/* Seletor de Idioma Desktop */}
+            <LanguageSelector />
           </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center">
+          {/* Mobile Menu Button + Seletor Compacto */}
+          <div className="flex lg:hidden items-center gap-2">
+            <LanguageSelector />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-slate-300 hover:text-white transition-colors"
-              aria-label="Abrir menu"
+              aria-label={mobileMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -96,18 +105,17 @@ export const Header: React.FC = () => {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#1B2639] border-b border-white/10 px-6 py-6 space-y-4">
+        <div className="lg:hidden bg-[#1B2639] border-b border-white/10 px-6 py-6 space-y-5">
           <nav className="flex flex-col space-y-3">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
-              const isHighlight = link.label === 'Telecomunicações';
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-base py-2 transition-colors ${
-                    isHighlight
+                    link.isHighlight
                       ? 'text-cyan-400 font-bold'
                       : (isActive ? 'text-white font-bold' : 'text-slate-300 font-medium hover:text-white')
                   }`}
@@ -118,6 +126,8 @@ export const Header: React.FC = () => {
             })}
           </nav>
 
+          {/* Seletor de Idioma Mobile */}
+          <LanguageSelector isMobile />
         </div>
       )}
     </header>

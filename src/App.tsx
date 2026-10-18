@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Preloader from './components/Preloader';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -68,49 +69,51 @@ function SmoothScrollSetup() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <SmoothScrollSetup />
-      <ScrollToTop />
-      {/* Preloader de Abertura Inicial (1.5s com efeito janela) */}
-      <Preloader />
+    <LanguageProvider>
+      <BrowserRouter>
+        <SmoothScrollSetup />
+        <ScrollToTop />
+        {/* Preloader de Abertura Inicial (1.5s com efeito janela) */}
+        <Preloader />
 
-      <div className="min-h-screen bg-white text-[#1B2639] flex flex-col font-sans selection:bg-[#1B2639] selection:text-white">
-        {/* Header Fixo com Backdrop-Blur e Links Reais */}
-        <Header />
+        <div className="min-h-screen bg-white text-[#1B2639] flex flex-col font-sans selection:bg-[#1B2639] selection:text-white">
+          {/* Header Fixo com Backdrop-Blur e Links Reais */}
+          <Header />
 
-        {/* Rotas Reais da Aplicação (Sem Modais) */}
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/telecomunicacoes" element={<TelecomunicacoesPage />} />
-            <Route path="/reformas" element={<ReformasPage />} />
-            <Route path="/construtora" element={<ConstrutoraPage />} />
-            <Route path="/cases" element={<CasesPage />} />
-            <Route path="/quem-somos" element={<QuemSomosPage />} />
-            <Route path="/contato" element={<ContatoPage />} />
+          {/* Rotas Reais da Aplicação (Sem Modais) */}
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/telecomunicacoes" element={<TelecomunicacoesPage />} />
+              <Route path="/reformas" element={<ReformasPage />} />
+              <Route path="/construtora" element={<ConstrutoraPage />} />
+              <Route path="/cases" element={<CasesPage />} />
+              <Route path="/quem-somos" element={<QuemSomosPage />} />
+              <Route path="/contato" element={<ContatoPage />} />
 
-            {/* Rotas legadas, atalhos e compatibilidade */}
-            <Route path="/torres" element={<Navigate to="/telecomunicacoes" replace />} />
-            <Route path="/telecom" element={<Navigate to="/telecomunicacoes" replace />} />
-            <Route path="/torres-telecom" element={<Navigate to="/telecomunicacoes" replace />} />
-            <Route path="/imobiliaria" element={<ImobiliariaPage />} />
-            <Route path="/imoveis" element={<Navigate to="/imobiliaria" replace />} />
-            <Route path="/sobre" element={<Navigate to="/quem-somos" replace />} />
-            <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
-            <Route path="/obras" element={<Navigate to="/construtora" replace />} />
-            <Route path="/projetos" element={<Navigate to="/cases" replace />} />
+              {/* Rotas legadas, atalhos e compatibilidade */}
+              <Route path="/torres" element={<Navigate to="/telecomunicacoes" replace />} />
+              <Route path="/telecom" element={<Navigate to="/telecomunicacoes" replace />} />
+              <Route path="/torres-telecom" element={<Navigate to="/telecomunicacoes" replace />} />
+              <Route path="/imobiliaria" element={<ImobiliariaPage />} />
+              <Route path="/imoveis" element={<Navigate to="/imobiliaria" replace />} />
+              <Route path="/sobre" element={<Navigate to="/quem-somos" replace />} />
+              <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
+              <Route path="/obras" element={<Navigate to="/construtora" replace />} />
+              <Route path="/projetos" element={<Navigate to="/cases" replace />} />
 
-            {/* Fallback */}
-            <Route path="*" element={<HomePage />} />
-          </Routes>
-        </main>
+              {/* Fallback */}
+              <Route path="*" element={<HomePage />} />
+            </Routes>
+          </main>
 
-        {/* Rodapé Minimalista com Morada e Ressalva Visual */}
-        <Footer />
-        
-        {/* Botão Flutuante do WhatsApp */}
-        <WhatsAppButton />
-      </div>
-    </BrowserRouter>
+          {/* Rodapé Minimalista com Morada e Ressalva Visual */}
+          <Footer />
+          
+          {/* Botão Flutuante do WhatsApp */}
+          <WhatsAppButton />
+        </div>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }
