@@ -243,7 +243,7 @@ export const es: Translations = {
   },
   quemSomos: {
     mainTitle: 'La ingeniería seria no se hace solo en oficinas; se construye en el terreno.',
-    introP1: 'MCH nació al constatar que el sector de la construcción civil y la infraestructura crítica padecía de subcontratación desregulada y falta de supervisión técnica real en el canteiro.',
+    introP1: 'Machado nació al constatar que el sector de la construcción civil y la infraestructura crítica padecía de subcontratación desregulada y falta de supervisión técnica real en el canteiro.',
     introP2: 'Estructuramos nuestras operaciones con cuadrillas propias y capacitadas (albañiles, carpinteros, electricistas y operarios) supervisadas íntegramente por ingenieros con registro activo en CREA-SP. Así eliminamos fallos de comunicación y aseguramos que el cálculo estructural se cumpla rigurosamente.',
     areasTitle: 'Nuestras Áreas de Actuación',
     areasTelecomTitle: 'Infraestructura Telecom (Torres)',

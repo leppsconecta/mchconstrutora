@@ -243,7 +243,7 @@ export const pt: Translations = {
   },
   quemSomos: {
     mainTitle: 'Engenharia séria não se faz apenas em escritório; se faz no terreno.',
-    introP1: 'A MCH nasceu da constatação de que o mercado da construção civil e de infraestrutura crítica sofria com a terceirização desregulada e a falta de acompanhamento técnico real nas frentes de serviço.',
+    introP1: 'A Machado nasceu da constatação de que o mercado da construção civil e de infraestrutura crítica sofria com a terceirização desregulada e a falta de acompanhamento técnico real nas frentes de serviço.',
     introP2: 'Estruturamos nossa operação com equipes próprias e capacitadas (pedreiros, carpinteiros, eletricistas e operadores) supervisionadas integralmente por engenheiros com registro ativo no CREA-SP. Dessa forma, eliminamos gargalos de comunicação e garantimos que o cálculo estrutural seja seguido à risca no canteiro.',
     areasTitle: 'Nossas Áreas de Atuação',
     areasTelecomTitle: 'Infraestrutura Telecom (Torres)',
@@ -257,7 +257,7 @@ export const pt: Translations = {
     val2Title: 'Pontualidade Absoluta',
     val2Desc: 'Planejamento executivo e cumprimento rigoroso de cronogramas. Entregamos exatamente o que nos comprometemos, sem atrasos ou surpresas.',
     val3Title: 'Time Próprio',
-    val3Desc: 'Capacidade produtiva e técnica 100% controlada com mão de obra qualificada da própria MCH, reduzindo retrabalhos e elevando o acabamento.',
+    val3Desc: 'Capacidade produtiva e técnica 100% controlada com mão de obra qualificada da própria Machado, reduzindo retrabalhos e elevando o acabamento.',
     presenceTitle: 'Presença Estratégica em Cajamar / SP',
     presenceDesc: 'Nossa sede localiza-se na Av dos Ypes 155, Cajamar - SP, no coração de um dos maiores eixos logísticos e industriais do Brasil. Essa posição estratégica nos permite mobilizar rapidamente equipamentos pesados, materiais e equipes técnicas para qualquer ponto da Grande São Paulo e interior.',
     presenceCta: 'Falar com a Diretoria'

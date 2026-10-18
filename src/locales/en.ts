@@ -243,7 +243,7 @@ export const en: Translations = {
   },
   quemSomos: {
     mainTitle: 'Serious engineering is not just done in offices; it is built on site.',
-    introP1: 'MCH was founded on the conviction that the civil construction and critical infrastructure market was hindered by unregulated outsourcing and a lack of authentic on-site technical supervision.',
+    introP1: 'Machado was founded on the conviction that the civil construction and critical infrastructure market was hindered by unregulated outsourcing and a lack of authentic on-site technical supervision.',
     introP2: 'We structured our operations with certified, in-house crews (masons, carpenters, electricians, and operators) directly supervised by engineers with active CREA-SP accreditation. This eliminates communication gaps and ensures structural calculations are executed flawlessly on the ground.',
     areasTitle: 'Our Main Areas of Operation',
     areasTelecomTitle: 'Telecom Infrastructure (Towers)',
