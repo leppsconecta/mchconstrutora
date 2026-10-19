@@ -48,7 +48,30 @@ export const INITIAL_FUNCIONARIOS: Funcionario[] = [
     neighborhood: 'Centro',
     city: 'Divinópolis',
     state: 'MG',
-    observations: 'Responsável técnico pelas obras residenciais do condomínio Solar.'
+    observations: 'Responsável técnico pelas obras residenciais do condomínio Solar.',
+    formacoesCursos: [
+      {
+        id: 'fc-1',
+        tipo: 'Graduação / Bacharelado',
+        nomeCurso: 'Engenharia Civil',
+        instituicao: 'Universidade Federal de Minas Gerais (UFMG)',
+        anoConclusao: '2012',
+        status: 'Concluído'
+      },
+      {
+        id: 'fc-2',
+        tipo: 'Pós-graduação / MBA',
+        nomeCurso: 'Gestão de Projetos e Obras',
+        instituicao: 'Fundação Getulio Vargas (FGV)',
+        anoConclusao: '2016',
+        status: 'Concluído'
+      }
+    ],
+    conhecimentosVida: [
+      'Cálculo e dimensionamento estrutural',
+      'Leitura e compatibilização de projetos BIM',
+      'Negociação com fornecedores de agregados e concreto'
+    ]
   },
   {
     id: 'func-2',
@@ -76,7 +99,22 @@ export const INITIAL_FUNCIONARIOS: Funcionario[] = [
     neighborhood: 'Santa Clara',
     city: 'Divinópolis',
     state: 'MG',
-    observations: 'Coordena o setor de projetos conceituais e maquetes 3D.'
+    observations: 'Coordena o setor de projetos conceituais e maquetes 3D.',
+    formacoesCursos: [
+      {
+        id: 'fc-3',
+        tipo: 'Graduação / Bacharelado',
+        nomeCurso: 'Arquitetura e Urbanismo',
+        instituicao: 'PUC Minas',
+        anoConclusao: '2017',
+        status: 'Concluído'
+      }
+    ],
+    conhecimentosVida: [
+      'Modelagem e renderização fotorrealista (Revit + Lumion)',
+      'Design biofílico e iluminação natural em residências',
+      'Experiência em interiores e escolha de materiais de acabamento'
+    ]
   },
   {
     id: 'func-3',
@@ -102,7 +140,29 @@ export const INITIAL_FUNCIONARIOS: Funcionario[] = [
     neighborhood: 'Sidil',
     city: 'Divinópolis',
     state: 'MG',
-    observations: 'Mais de 15 anos de liderança em canteiro de obras e fundações.'
+    observations: 'Mais de 15 anos de liderança em canteiro de obras e fundações.',
+    formacoesCursos: [
+      {
+        id: 'fc-4',
+        tipo: 'Curso Técnico',
+        nomeCurso: 'Técnico em Edificações',
+        instituicao: 'SENAI',
+        anoConclusao: '2005',
+        status: 'Concluído'
+      },
+      {
+        id: 'fc-5',
+        tipo: 'Certificação / NR',
+        nomeCurso: 'NR-35 (Trabalho em Altura) e NR-18 (Construção Civil)',
+        anoConclusao: '2023',
+        status: 'Concluído'
+      }
+    ],
+    conhecimentosVida: [
+      'Mais de 25 anos de vivência prática em canteiro de obras',
+      'Noção apurada de nivelamento de terreno e armação de ferragens',
+      'Leitura de plantas no canteiro e liderança de equipes de pedreiros'
+    ]
   },
   {
     id: 'func-4',
@@ -128,6 +188,20 @@ export const INITIAL_FUNCIONARIOS: Funcionario[] = [
     neighborhood: 'Centro',
     city: 'Divinópolis',
     state: 'MG',
-    observations: 'CRECI ativo. Especialista em imóveis corporativos e loteamentos.'
+    observations: 'CRECI ativo. Especialista em imóveis corporativos e loteamentos.',
+    formacoesCursos: [
+      {
+        id: 'fc-6',
+        tipo: 'Tecnólogo',
+        nomeCurso: 'Gestão de Negócios Imobiliários',
+        instituicao: 'Estácio',
+        anoConclusao: '2020',
+        status: 'Concluído'
+      }
+    ],
+    conhecimentosVida: [
+      'Atendimento de alto padrão e negociação com investidores',
+      'Noções práticas de avaliação mercadológica e zoneamento urbano'
+    ]
   }
 ];

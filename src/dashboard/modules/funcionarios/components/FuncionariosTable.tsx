@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Phone, Eye, Edit, Trash2 } from 'lucide-react';
-import { Funcionario, EmpresaItem } from '../types';
+import { ChevronLeft, ChevronRight, Phone, Trash2 } from 'lucide-react';
+import { Funcionario } from '../types';
 
 interface FuncionariosTableProps {
   currentItems: Funcionario[];
@@ -9,11 +9,9 @@ interface FuncionariosTableProps {
   filteredCount: number;
   currentPage: number;
   totalPages: number;
-  companies: EmpresaItem[];
   onPageChange: (page: number) => void;
   onUpdateStatus: (id: string, newStatus: Funcionario['status']) => void;
-  onView: (emp: Funcionario) => void;
-  onEdit: (emp: Funcionario) => void;
+  onRowClick: (emp: Funcionario) => void;
   onDelete: (id: string, name: string) => void;
 }
 
@@ -24,33 +22,26 @@ export const FuncionariosTable: React.FC<FuncionariosTableProps> = ({
   filteredCount,
   currentPage,
   totalPages,
-  companies,
   onPageChange,
   onUpdateStatus,
-  onView,
-  onEdit,
+  onRowClick,
   onDelete
 }) => {
-  const getCompanyName = (empresaId: string) => {
-    return companies.find(c => c.id === empresaId)?.nome || 'MCH Matriz';
-  };
-
   return (
     <div className="bg-[#101726]/90 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[1100px] table-fixed text-left border-collapse">
+        <table className="w-full min-w-[1000px] table-fixed text-left border-collapse">
           <thead>
             <tr className="bg-[#0A0E17]/60 border-b border-white/10 text-slate-400 text-xs font-semibold">
-              <th className="pl-5 pr-2 py-3.5 w-[3.5%] text-center font-semibold">#</th>
-              <th className="px-3 py-3.5 w-[8.5%] font-semibold">Entrada</th>
-              <th className="px-3 py-3.5 w-[18%] font-semibold">Funcionário</th>
-              <th className="px-3 py-3.5 w-[14%] font-semibold">Empresa</th>
-              <th className="px-3 py-3.5 w-[12%] font-semibold">Contato</th>
-              <th className="px-3 py-3.5 w-[13%] font-semibold">Função</th>
-              <th className="px-3 py-3.5 w-[8%] font-semibold">Vínculo</th>
-              <th className="px-3 py-3.5 w-[11%] font-semibold">PIX</th>
-              <th className="px-3 py-3.5 w-[9%] font-semibold">Status</th>
-              <th className="pl-2 pr-5 py-3.5 w-[8%] text-right font-semibold">Ações</th>
+              <th className="pl-5 pr-2 py-3.5 w-[4%] text-center font-semibold">#</th>
+              <th className="px-3 py-3.5 w-[9%] font-semibold">Entrada</th>
+              <th className="px-3 py-3.5 w-[21%] font-semibold">Funcionário</th>
+              <th className="px-3 py-3.5 w-[14%] font-semibold">Contato</th>
+              <th className="px-3 py-3.5 w-[16%] font-semibold">Função</th>
+              <th className="px-3 py-3.5 w-[10%] font-semibold">Vínculo</th>
+              <th className="px-3 py-3.5 w-[13%] font-semibold">PIX</th>
+              <th className="px-3 py-3.5 w-[8%] font-semibold">Status</th>
+              <th className="pl-2 pr-5 py-3.5 w-[5%] text-right font-semibold">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -63,7 +54,9 @@ export const FuncionariosTable: React.FC<FuncionariosTableProps> = ({
               return (
                 <tr
                   key={emp.id}
-                  className="hover:bg-white/5 transition-colors group h-[52px]"
+                  onClick={() => onRowClick(emp)}
+                  className="hover:bg-white/5 transition-colors group cursor-pointer h-[52px]"
+                  title="Clique para abrir e editar a ficha do funcionário"
                 >
                   <td className="pl-5 pr-2 py-2.5 text-xs text-slate-500 font-mono text-center">
                     {startIndex + index + 1}
@@ -81,12 +74,7 @@ export const FuncionariosTable: React.FC<FuncionariosTableProps> = ({
                       </div>
                     )}
                   </td>
-                  <td className="px-3 py-2.5">
-                    <div className="text-xs text-slate-300 truncate" title={getCompanyName(emp.empresa_id)}>
-                      {getCompanyName(emp.empresa_id)}
-                    </div>
-                  </td>
-                  <td className="px-3 py-2.5">
+                  <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
                     {cleanPhone ? (
                       <a
                         href={`https://wa.me/55${cleanPhone}`}
@@ -117,7 +105,7 @@ export const FuncionariosTable: React.FC<FuncionariosTableProps> = ({
                       {emp.bank_key ? `${emp.bank_key_type ? emp.bank_key_type + ': ' : ''}${emp.bank_key}` : '-'}
                     </div>
                   </td>
-                  <td className="px-3 py-2.5">
+                  <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
                     <select
                       value={emp.status}
                       onChange={(e) => onUpdateStatus(emp.id, e.target.value as Funcionario['status'])}
@@ -137,24 +125,8 @@ export const FuncionariosTable: React.FC<FuncionariosTableProps> = ({
                       <option value="Desligado" className="bg-[#101726] text-rose-400">Desligado</option>
                     </select>
                   </td>
-                  <td className="pl-2 pr-5 py-2.5 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        type="button"
-                        onClick={() => onView(emp)}
-                        className="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
-                        title="Visualizar ficha completa"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onEdit(emp)}
-                        className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
-                        title="Editar funcionário"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
+                  <td className="pl-2 pr-5 py-2.5 text-right" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-end">
                       <button
                         type="button"
                         onClick={() => onDelete(emp.id, emp.name)}
@@ -169,10 +141,10 @@ export const FuncionariosTable: React.FC<FuncionariosTableProps> = ({
               );
             })}
 
-            {/* 20 linhas obrigatórias por página */}
+            {/* 20 linhas obrigatórias por página independente de ter valor ou não */}
             {Array.from({ length: Math.max(0, itemsPerPage - currentItems.length) }).map((_, i) => (
               <tr key={`empty-${i}`} className="h-[52px]">
-                <td colSpan={10} className="pl-5 pr-5">&nbsp;</td>
+                <td colSpan={9} className="pl-5 pr-5">&nbsp;</td>
               </tr>
             ))}
           </tbody>

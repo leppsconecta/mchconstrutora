@@ -4,6 +4,25 @@ export type Genero = 'Masculino' | 'Feminino' | 'Outro';
 export type TipoDocumento = 'RG' | 'CNH' | 'Passaporte';
 export type TipoChavePix = 'CPF' | 'CNPJ' | 'E-mail' | 'Telefone' | 'Chave Aleatória';
 
+export type TipoFormacao = 
+  | 'Graduação / Bacharelado' 
+  | 'Tecnólogo' 
+  | 'Pós-graduação / MBA' 
+  | 'Curso Técnico' 
+  | 'Certificação / NR' 
+  | 'Conhecimento Prático / Vivência de Vida' 
+  | 'Outro';
+
+export interface FormacaoCurso {
+  id: string;
+  tipo: TipoFormacao;
+  nomeCurso: string;
+  instituicao?: string;
+  anoConclusao?: string;
+  status: 'Concluído' | 'Em Andamento' | 'Vivência / Prática';
+  detalhes?: string;
+}
+
 export interface Endereco {
   cep: string;
   street: string;
@@ -28,6 +47,10 @@ export interface Funcionario {
   gender: Genero;
   birth_date?: string;
   
+  // Cursos, Formações e Conhecimentos de Vida
+  formacoesCursos?: FormacaoCurso[];
+  conhecimentosVida?: string[];
+
   // Dados Bancários
   bank_account_name?: string;
   bank_name?: string;
