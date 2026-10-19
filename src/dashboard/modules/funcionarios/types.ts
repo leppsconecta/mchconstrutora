@@ -10,16 +10,26 @@ export type TipoFormacao =
   | 'Pós-graduação / MBA' 
   | 'Curso Técnico' 
   | 'Certificação / NR' 
-  | 'Conhecimento Prático / Vivência de Vida' 
-  | 'Outro';
+  | 'Conhecimento Prático / Vivência de Vida';
+
+export interface CertificadoAnexo {
+  id: string;
+  nome: string;
+  url: string;
+  tamanho?: string;
+}
 
 export interface FormacaoCurso {
   id: string;
   tipo: TipoFormacao;
   nomeCurso: string;
   instituicao?: string;
+  dataInicio?: string;
+  dataFim?: string;
+  observacoes?: string;
+  certificados?: CertificadoAnexo[];
   anoConclusao?: string;
-  status: 'Concluído' | 'Em Andamento' | 'Vivência / Prática';
+  status?: 'Concluído' | 'Em Andamento' | 'Vivência / Prática';
   detalhes?: string;
 }
 

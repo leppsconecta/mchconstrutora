@@ -72,7 +72,7 @@ export const RolesConfigModal: React.FC<RolesConfigModalProps> = ({
               value={newRoleName}
               onChange={(e) => setNewRoleName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-              className="flex-1 px-3 py-2 text-xs sm:text-sm bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 transition-colors"
+              className="flex-1 px-3 py-2 text-xs sm:text-sm bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-600 placeholder:text-xs placeholder:font-normal focus:outline-none focus:border-sky-400 transition-colors"
             />
             <button
               type="button"
@@ -90,10 +90,10 @@ export const RolesConfigModal: React.FC<RolesConfigModalProps> = ({
               <table className="w-full text-left border-collapse">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="px-4 py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Nome do Cargo
+                    <th className="px-4 py-2.5 text-[11px] font-semibold text-slate-400">
+                      Nome do cargo
                     </th>
-                    <th className="px-4 py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">
+                    <th className="px-4 py-2.5 text-[11px] font-semibold text-slate-400 text-right">
                       Ações
                     </th>
                   </tr>

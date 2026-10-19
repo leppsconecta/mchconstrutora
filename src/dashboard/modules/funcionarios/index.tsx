@@ -13,7 +13,6 @@ import {
 } from './mockData';
 import { FuncionariosTable } from './components/FuncionariosTable';
 import { FuncionarioFormModal } from './components/FuncionarioFormModal';
-import { FuncionarioViewModal } from './components/FuncionarioViewModal';
 import { RolesConfigModal } from './components/RolesConfigModal';
 import { ShareCaptureModal } from './components/ShareCaptureModal';
 
@@ -65,7 +64,6 @@ export const FuncionariosModule: React.FC = () => {
 
   // Modais
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isRolesModalOpen, setIsRolesModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [selectedFuncionario, setSelectedFuncionario] = useState<Funcionario | null>(null);
@@ -134,12 +132,6 @@ export const FuncionariosModule: React.FC = () => {
   const handleUpdateStatus = (id: string, newStatus: Funcionario['status']) => {
     setEmployees(prev => prev.map(emp => (emp.id === id ? { ...emp, status: newStatus } : emp)));
     showToast(`Status alterado para "${newStatus}".`);
-  };
-
-  // View Detailed Profile
-  const handleView = (emp: Funcionario) => {
-    setSelectedFuncionario(emp);
-    setIsViewModalOpen(true);
   };
 
   // Open Form to Edit
@@ -219,40 +211,26 @@ export const FuncionariosModule: React.FC = () => {
         </div>
       )}
 
-      {/* Top Header Actions Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#101726]/60 border border-white/5 rounded-2xl p-4">
-        <div>
-          <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            <span>Quadro de Colaboradores</span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
-              {employees.length}
-            </span>
-          </h2>
-          <p className="text-xs text-slate-400">
-            Gestão da equipe, dados bancários e fichas cadastrais da MCH Engenharia & Imobiliária.
-          </p>
-        </div>
+      {/* Barra de Ações */}
+      <div className="flex items-center justify-end gap-2 w-full">
+        <button
+          type="button"
+          onClick={() => setIsShareModalOpen(true)}
+          className="px-3.5 py-2 rounded-xl border border-white/10 hover:border-sky-400/40 bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 hover:text-white transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+          title="Compartilhar link de captação externa"
+        >
+          <Share2 className="w-4 h-4 text-sky-400" />
+          <span>Compartilhar</span>
+        </button>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsShareModalOpen(true)}
-            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl border border-white/10 hover:border-sky-400/40 bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 hover:text-white transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-            title="Compartilhar link de captação externa"
-          >
-            <Share2 className="w-4 h-4 text-sky-400" />
-            <span>Compartilhar</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleNew}
-            className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-xs font-bold text-white transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Novo Funcionário</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleNew}
+          className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-xs font-bold text-white transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Novo funcionário</span>
+        </button>
       </div>
 
       {/* Tabela de Colaboradores */}
@@ -263,28 +241,16 @@ export const FuncionariosModule: React.FC = () => {
         filteredCount={filteredEmployees.length}
         currentPage={currentPage}
         totalPages={totalPages}
-        companies={companies}
         onPageChange={setCurrentPage}
         onUpdateStatus={handleUpdateStatus}
-        onView={handleView}
-        onEdit={handleEdit}
+        onRowClick={handleEdit}
         onDelete={handleDelete}
       />
 
-      {/* Modal 1: Ficha de Visualização do Funcionário */}
-      <FuncionarioViewModal
-        isOpen={isViewModalOpen}
-        funcionario={selectedFuncionario}
-        companies={companies}
-        onClose={() => setIsViewModalOpen(false)}
-        onEdit={handleEdit}
-      />
-
-      {/* Modal 2: Formulário Interno de Cadastro / Edição */}
+      {/* Modal: Formulário Interno de Cadastro / Edição por Etapas */}
       <FuncionarioFormModal
         isOpen={isFormModalOpen}
         selectedFuncionario={selectedFuncionario}
-        companies={companies}
         roles={roles}
         onClose={() => setIsFormModalOpen(false)}
         onSave={handleSave}
