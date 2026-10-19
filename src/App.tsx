@@ -31,6 +31,7 @@ import ArquivosModule from './dashboard/modules/ArquivosModule';
 import FinanceiroModule from './dashboard/modules/FinanceiroModule';
 import CurriculosModule from './dashboard/modules/CurriculosModule';
 import FuncionariosModule from './dashboard/modules/FuncionariosModule';
+import { CaptacaoTrabalheConosco } from './dashboard/modules/funcionarios/public/CaptacaoTrabalheConosco';
 
 /**
  * Scroll to top on every route transition
@@ -149,6 +150,9 @@ export default function App() {
               <Route path="/obras" element={<Navigate to="/construtora" replace />} />
               <Route path="/projetos" element={<Navigate to="/cases" replace />} />
             </Route>
+
+            {/* Página Pública de Captação / Trabalhe Conosco */}
+            <Route path="/trabalhe-conosco" element={<CaptacaoTrabalheConosco />} />
 
             {/* =========================================
                 AUTENTICAÇÃO / LOGIN
