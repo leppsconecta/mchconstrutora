@@ -25,6 +25,7 @@ import { LoginPage } from './dashboard/pages/LoginPage';
 
 // Independent Module Files
 import ProjetosModule from './dashboard/modules/ProjetosModule';
+import ClientesModule from './dashboard/modules/ClientesModule';
 import CrmLeadsModule from './dashboard/modules/CrmLeadsModule';
 import ArquivosModule from './dashboard/modules/ArquivosModule';
 import FinanceiroModule from './dashboard/modules/FinanceiroModule';
@@ -162,6 +163,7 @@ export default function App() {
               <Route path="/admin" element={<DashboardLayout />}>
                 <Route index element={<Navigate to="/admin/projetos" replace />} />
                 <Route path="projetos" element={<ProjetosModule />} />
+                <Route path="clientes" element={<ClientesModule />} />
                 <Route path="crm-leads" element={<CrmLeadsModule />} />
                 <Route path="arquivos" element={<ArquivosModule />} />
                 <Route path="financeiro" element={<FinanceiroModule />} />

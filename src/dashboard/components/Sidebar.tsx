@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   FolderKanban, 
+  UserCheck,
   Users2, 
   Files, 
   Wallet, 
@@ -19,6 +20,11 @@ export const navigationItems = [
     name: 'Projetos',
     path: '/admin/projetos',
     icon: FolderKanban,
+  },
+  {
+    name: 'Clientes',
+    path: '/admin/clientes',
+    icon: UserCheck,
   },
   {
     name: 'CRM | Leads',
