@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import Lenis from 'lenis';
 import { LanguageProvider } from './contexts/LanguageContext';
 import Preloader from './components/Preloader';
@@ -7,7 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 
-// Real Pages (Next.js App Router Structure)
+// Real Pages (Public Institutional Website)
 import HomePage from './app/page';
 import ConstrutoraPage from './app/construtora/page';
 import ReformasPage from './app/reformas/page';
@@ -16,6 +16,20 @@ import ImobiliariaPage from './app/imobiliaria/page';
 import CasesPage from './app/cases/page';
 import QuemSomosPage from './app/quem-somos/page';
 import ContatoPage from './app/contato/page';
+
+// Dashboard / Admin Imports
+import { AuthProvider } from './dashboard/context/AuthContext';
+import { ProtectedRoute } from './dashboard/components/ProtectedRoute';
+import { DashboardLayout } from './dashboard/components/DashboardLayout';
+import { LoginPage } from './dashboard/pages/LoginPage';
+
+// Independent Module Files
+import ProjetosModule from './dashboard/modules/ProjetosModule';
+import CrmLeadsModule from './dashboard/modules/CrmLeadsModule';
+import ArquivosModule from './dashboard/modules/ArquivosModule';
+import FinanceiroModule from './dashboard/modules/FinanceiroModule';
+import CurriculosModule from './dashboard/modules/CurriculosModule';
+import FuncionariosModule from './dashboard/modules/FuncionariosModule';
 
 /**
  * Scroll to top on every route transition
@@ -31,12 +45,21 @@ function ScrollToTop() {
 }
 
 /**
- * Smooth Scroll com Lenis (Inércia ultra suave e fluida)
+ * Smooth Scroll com Lenis (Inércia ultra suave para o site público)
  */
 function SmoothScrollSetup() {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // Desativa Lenis nas rotas do painel administrativo
+    if (
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/dashboard') ||
+      pathname.startsWith('/login')
+    ) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.6, // Inércia mais longa e sedosa
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -67,22 +90,45 @@ function SmoothScrollSetup() {
   return null;
 }
 
+/**
+ * Layout do Site Público Institucional (com Header, Footer e WhatsApp)
+ */
+function PublicLayout() {
+  return (
+    <div className="min-h-screen bg-white text-[#1B2639] flex flex-col font-sans selection:bg-[#1B2639] selection:text-white">
+      {/* Preloader exclusivo do site público institucional */}
+      <Preloader />
+
+      {/* Header Fixo com Backdrop-Blur e Links Reais */}
+      <Header />
+
+      {/* Rotas Públicas */}
+      <main className="flex-1">
+        <Outlet />
+      </main>
+
+      {/* Rodapé Minimalista */}
+      <Footer />
+
+      {/* Botão Flutuante do WhatsApp */}
+      <WhatsAppButton />
+    </div>
+  );
+}
+
 export default function App() {
   return (
-    <LanguageProvider>
-      <BrowserRouter>
-        <SmoothScrollSetup />
-        <ScrollToTop />
-        {/* Preloader de Abertura Inicial (1.5s com efeito janela) */}
-        <Preloader />
+    <AuthProvider>
+      <LanguageProvider>
+        <BrowserRouter>
+          <SmoothScrollSetup />
+          <ScrollToTop />
 
-        <div className="min-h-screen bg-white text-[#1B2639] flex flex-col font-sans selection:bg-[#1B2639] selection:text-white">
-          {/* Header Fixo com Backdrop-Blur e Links Reais */}
-          <Header />
-
-          {/* Rotas Reais da Aplicação (Sem Modais) */}
-          <main className="flex-1">
-            <Routes>
+          <Routes>
+            {/* =========================================
+                ROTAS PÚBLICAS / INSTITUCIONAL
+               ========================================= */}
+            <Route element={<PublicLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/telecomunicacoes" element={<TelecomunicacoesPage />} />
               <Route path="/reformas" element={<ReformasPage />} />
@@ -91,7 +137,7 @@ export default function App() {
               <Route path="/quem-somos" element={<QuemSomosPage />} />
               <Route path="/contato" element={<ContatoPage />} />
 
-              {/* Rotas legadas, atalhos e compatibilidade */}
+              {/* Rotas legadas, atalhos e compatibilidade do site */}
               <Route path="/torres" element={<Navigate to="/telecomunicacoes" replace />} />
               <Route path="/telecom" element={<Navigate to="/telecomunicacoes" replace />} />
               <Route path="/torres-telecom" element={<Navigate to="/telecomunicacoes" replace />} />
@@ -101,19 +147,40 @@ export default function App() {
               <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
               <Route path="/obras" element={<Navigate to="/construtora" replace />} />
               <Route path="/projetos" element={<Navigate to="/cases" replace />} />
+            </Route>
 
-              {/* Fallback */}
-              <Route path="*" element={<HomePage />} />
-            </Routes>
-          </main>
+            {/* =========================================
+                AUTENTICAÇÃO / LOGIN
+               ========================================= */}
+            <Route path="/admin/login" element={<LoginPage />} />
+            <Route path="/login" element={<Navigate to="/admin/login" replace />} />
 
-          {/* Rodapé Minimalista com Morada e Ressalva Visual */}
-          <Footer />
-          
-          {/* Botão Flutuante do WhatsApp */}
-          <WhatsAppButton />
-        </div>
-      </BrowserRouter>
-    </LanguageProvider>
+            {/* =========================================
+                PAINEL DE CONTROLE / DASHBOARD (PROTEGIDO)
+               ========================================= */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/admin" element={<DashboardLayout />}>
+                <Route index element={<Navigate to="/admin/projetos" replace />} />
+                <Route path="projetos" element={<ProjetosModule />} />
+                <Route path="crm-leads" element={<CrmLeadsModule />} />
+                <Route path="arquivos" element={<ArquivosModule />} />
+                <Route path="financeiro" element={<FinanceiroModule />} />
+                <Route path="curriculos" element={<CurriculosModule />} />
+                <Route path="funcionarios" element={<FuncionariosModule />} />
+              </Route>
+
+              {/* Atalhos para o dashboard */}
+              <Route path="/dashboard" element={<Navigate to="/admin/projetos" replace />} />
+              <Route path="/dashboard/*" element={<Navigate to="/admin/projetos" replace />} />
+            </Route>
+
+            {/* =========================================
+                FALLBACK
+               ========================================= */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </LanguageProvider>
+    </AuthProvider>
   );
 }
