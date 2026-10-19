@@ -84,6 +84,7 @@ export const FuncionarioViewModal: React.FC<FuncionarioViewModalProps> = ({
               <p><strong>Vínculo:</strong> {funcionario.type}</p>
               <p><strong>Entrada:</strong> {funcionario.admission_date ? new Date(funcionario.admission_date).toLocaleDateString('pt-BR') : '-'}</p>
               <p><strong>Gênero:</strong> {funcionario.gender}</p>
+              <p><strong>Estado Civil:</strong> {funcionario.marital_status || '-'}</p>
             </div>
             <div className="space-y-2">
               <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
@@ -100,8 +101,23 @@ export const FuncionarioViewModal: React.FC<FuncionarioViewModalProps> = ({
               </p>
               <p><strong>E-mail:</strong> {funcionario.email || '-'}</p>
               {funcionario.emergency_phone && (
-                <p><strong>Emergência:</strong> {funcionario.emergency_phone}</p>
+                <p><strong>Recado:</strong> {funcionario.emergency_phone}</p>
               )}
+            </div>
+          </div>
+
+          {/* Dados Pessoais, Naturalidade & Filiação */}
+          <div className="p-4 rounded-xl bg-[#0A0E17]/60 border border-white/5 space-y-2">
+            <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5 text-sky-400" />
+              <span>Dados Pessoais & Filiação</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <p><strong>Nascimento:</strong> {funcionario.birth_date ? new Date(funcionario.birth_date + 'T00:00:00').toLocaleDateString('pt-BR') : '-'}</p>
+              <p><strong>Nacionalidade:</strong> {funcionario.nacionalidade || 'Brasileira'}</p>
+              <p><strong>Naturalidade:</strong> {funcionario.naturalidade || '-'}</p>
+              <p><strong>Nome da Mãe:</strong> {funcionario.mother_name || '-'}</p>
+              {funcionario.father_name && <p><strong>Nome do Pai:</strong> {funcionario.father_name}</p>}
             </div>
           </div>
 
@@ -119,15 +135,28 @@ export const FuncionarioViewModal: React.FC<FuncionarioViewModalProps> = ({
             </div>
           </div>
 
-          {/* Documentos & Endereço */}
+          {/* Documentos & Informações Trabalhistas */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 rounded-xl bg-[#0A0E17]/60 border border-white/5 space-y-2">
               <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5 text-purple-400" />
-                <span>Documentos</span>
+                <span>Documentos & Trabalhista</span>
               </div>
               <p><strong>{funcionario.document_type || 'Documento'}:</strong> {funcionario.document || '-'}</p>
-              <div className="pt-2 flex flex-col gap-1.5">
+              {funcionario.ctps_number && <p><strong>CTPS:</strong> {funcionario.ctps_number}</p>}
+              {funcionario.pis_pasep && <p><strong>PIS/PASEP:</strong> {funcionario.pis_pasep}</p>}
+              {funcionario.voter_title && (
+                <p>
+                  <strong>Título de Eleitor:</strong> {funcionario.voter_title}
+                  {(funcionario.voter_zone || funcionario.voter_section) && (
+                    <span className="text-slate-400"> (Z: {funcionario.voter_zone || '-'} / S: {funcionario.voter_section || '-'})</span>
+                  )}
+                </p>
+              )}
+              {funcionario.military_certificate && (
+                <p><strong>Reservista:</strong> {funcionario.military_certificate}</p>
+              )}
+              <div className="pt-2 flex flex-col gap-1.5 border-t border-white/5">
                 {funcionario.document_front ? (
                   <a
                     href={funcionario.document_front}

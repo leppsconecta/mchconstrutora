@@ -23,7 +23,15 @@ import {
   AlertCircle,
   Download
 } from 'lucide-react';
-import { Funcionario, CargoItem, FormacaoCurso, TipoFormacao, CertificadoAnexo } from '../types';
+import { Funcionario, CargoItem, FormacaoCurso, TipoFormacao, CertificadoAnexo, EstadoCivil } from '../types';
+
+const ESTADO_CIVIL_OPCOES: EstadoCivil[] = [
+  'Solteiro(a)',
+  'Casado(a)',
+  'União Estável',
+  'Divorciado(a)',
+  'Viúvo(a)'
+];
 import { 
   STORAGE_KEY_FUNCIONARIOS, 
   STORAGE_KEY_CARGOS, 
@@ -84,7 +92,9 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
     gender: 'Masculino',
     bank_key_type: 'CPF',
     document_type: 'RG',
-    empresa_id: 'emp-1'
+    empresa_id: 'emp-1',
+    marital_status: 'Solteiro(a)',
+    nacionalidade: 'Brasileira'
   });
 
   const [address, setAddress] = useState({
@@ -445,6 +455,17 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
       email: formData.email || '',
       gender: formData.gender || 'Masculino',
       birth_date: formData.birth_date || '',
+      marital_status: formData.marital_status || 'Solteiro(a)',
+      naturalidade: formData.naturalidade || '',
+      nacionalidade: formData.nacionalidade || 'Brasileira',
+      father_name: formData.father_name || '',
+      mother_name: formData.mother_name || '',
+      voter_title: formData.voter_title || '',
+      voter_zone: formData.voter_zone || '',
+      voter_section: formData.voter_section || '',
+      military_certificate: formData.military_certificate || '',
+      ctps_number: formData.ctps_number || '',
+      pis_pasep: formData.pis_pasep || '',
       bank_account_name: formData.bank_account_name || '',
       bank_name: formData.bank_name || '',
       bank_key_type: formData.bank_key_type || 'CPF',
@@ -517,26 +538,28 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B111E] text-white py-10 px-3 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#0B111E] text-white py-4 sm:py-10 px-2 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
         
-        {/* Header de Navegação Superior */}
-        <div className="flex items-center justify-between">
-          <a href="/" className="inline-flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            <span>Voltar ao site</span>
-          </a>
-          <span className="text-xs text-slate-400 font-medium">MCH Engenharia & Imobiliária</span>
+        {/* Logotipo Oficial Machado Centralizado (Sem link de voltar) */}
+        <div className="flex items-center justify-center py-1 sm:py-2">
+          <img
+            src="/logos/logotipo_machado_header.png"
+            alt="Machado Engenharia & Imobiliária"
+            className="h-8 sm:h-11 w-auto object-contain"
+          />
         </div>
 
-        {/* Card Principal da Aplicação com Altura e Estrutura Fixas */}
-        <div className="bg-[#101726] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        {/* Card Principal da Aplicação */}
+        <div className="bg-[#101726] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden">
           
           {/* Header de Progresso com Pills */}
-          <div className="px-6 pt-5 pb-4 border-b border-white/10 bg-[#0F1626] space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="px-3.5 sm:px-6 pt-4 pb-3.5 sm:pt-5 sm:pb-4 border-b border-white/10 bg-[#0F1626] space-y-3 sm:space-y-4">
+            
+            {/* Desktop: Título e % */}
+            <div className="hidden sm:flex items-center justify-between">
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-white">
+                <h3 className="text-base font-bold text-white">
                   Ficha cadastral do candidato
                 </h3>
                 <p className="text-xs text-slate-400">
@@ -548,17 +571,32 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
               </span>
             </div>
 
+            {/* Mobile: Exibe CENTRALIZADO apenas a etapa que o usuário está */}
+            <div className="sm:hidden text-center space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[11px] font-bold">
+                <span>Etapa {currentStep} de {ETAPAS.length}</span>
+                <span className="text-slate-600">•</span>
+                <span>{progressPercent}%</span>
+              </div>
+              <h3 className="text-base font-bold text-white tracking-tight">
+                {ETAPAS[currentStep - 1].titulo}
+              </h3>
+              <p className="text-[11px] text-slate-400">
+                {ETAPAS[currentStep - 1].desc}
+              </p>
+            </div>
+
             {/* Barra de Progresso */}
             <div className="space-y-2">
-              <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden border border-white/5">
+              <div className="w-full bg-white/5 rounded-full h-1.5 sm:h-2 overflow-hidden border border-white/5">
                 <div 
                   className="bg-gradient-to-r from-sky-500 to-emerald-400 h-full rounded-full transition-all duration-300 shadow-sm shadow-sky-500/50"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
 
-              {/* Pills de Navegação com Bloqueio */}
-              <div className="grid grid-cols-5 gap-1.5 pt-1">
+              {/* Pills de Navegação - Apenas Desktop (no mobile fica oculto) */}
+              <div className="hidden sm:grid sm:grid-cols-5 gap-1.5 pt-1">
                 {ETAPAS.map((etapa) => {
                   const isActive = etapa.id === currentStep;
                   const isCompleted = etapa.id < currentStep;
@@ -597,7 +635,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
 
           {/* Alerta de Validação */}
           {stepWarning && (
-            <div className="mx-6 mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-between gap-3 text-rose-300 text-xs shrink-0 animate-in fade-in">
+            <div className="mx-3.5 sm:mx-6 mt-3 sm:mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-between gap-3 text-rose-300 text-xs shrink-0 animate-in fade-in">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                 <span>{stepWarning}</span>
@@ -612,22 +650,14 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
             </div>
           )}
 
-          {/* Conteúdo da Etapa */}
-          <div className="p-6 sm:p-8 space-y-6 min-h-[460px]">
+          {/* Conteúdo da Etapa - Padding otimizado para não achatar inputs no mobile */}
+          <div className="p-3.5 sm:p-8 space-y-5 sm:space-y-6 min-h-[420px] sm:min-h-[460px]">
             
             {/* ETAPA 1: DADOS PESSOAIS */}
             {currentStep === 1 && (
               <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="border-b border-white/10 pb-3">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <User className="w-4 h-4 text-sky-400" />
-                    <span>Identificação e contatos</span>
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">Insira seus dados pessoais para contato.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-3.5">
-                  <div className="space-y-1 md:col-span-4">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 sm:gap-3.5">
+                  <div className="col-span-2 md:col-span-4 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Nome completo</span>
                       <span className="text-rose-400">*</span>
@@ -646,7 +676,8 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1 md:col-span-2">
+                  {/* Sexo e Data de nascimento na mesma linha no mobile */}
+                  <div className="col-span-1 md:col-span-2 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Sexo</span>
                       <span className="text-rose-400">*</span>
@@ -661,7 +692,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     </select>
                   </div>
 
-                  <div className="space-y-1 md:col-span-2">
+                  <div className="col-span-1 md:col-span-2 space-y-1">
                     <label className={LABEL_CLASS}>Data de nascimento</label>
                     <input
                       type="date"
@@ -678,7 +709,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1 md:col-span-2">
+                  <div className="col-span-2 sm:col-span-1 md:col-span-2 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Telefone pessoal / WhatsApp</span>
                       <span className="text-rose-400">*</span>
@@ -698,7 +729,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                   </div>
 
                   {/* Telefone para Recado */}
-                  <div className="space-y-1 md:col-span-2">
+                  <div className="col-span-2 sm:col-span-1 md:col-span-2 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Telefone para recado</span>
                       <span className="text-rose-400">*</span>
@@ -712,18 +743,70 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       }}
                       className={stepErrors.emergency_phone ? INPUT_ERROR_CLASS : INPUT_CLASS}
                     />
-                    {stepErrors.emergency_phone ? (
+                    {stepErrors.emergency_phone && (
                       <span className="text-[11px] text-rose-400 font-medium block leading-tight">
                         {stepErrors.emergency_phone}
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-slate-500 block">
-                        Obrigatório. Não pode ser o mesmo número pessoal.
                       </span>
                     )}
                   </div>
 
-                  <div className="space-y-1 md:col-span-6">
+                  {/* Estado Civil e Nacionalidade */}
+                  <div className="col-span-1 md:col-span-2 space-y-1">
+                    <label className={LABEL_CLASS}>Estado civil</label>
+                    <select
+                      value={formData.marital_status || 'Solteiro(a)'}
+                      onChange={(e) => setFormData({ ...formData, marital_status: e.target.value as any })}
+                      className={SELECT_CLASS}
+                    >
+                      {ESTADO_CIVIL_OPCOES.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="col-span-1 md:col-span-2 space-y-1">
+                    <label className={LABEL_CLASS}>Nacionalidade</label>
+                    <input
+                      placeholder="Ex: Brasileira"
+                      value={formData.nacionalidade || ''}
+                      onChange={(e) => setFormData({ ...formData, nacionalidade: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  {/* Naturalidade */}
+                  <div className="col-span-2 md:col-span-2 space-y-1">
+                    <label className={LABEL_CLASS}>Naturalidade (cidade / UF natal)</label>
+                    <input
+                      placeholder="Ex: Belo Horizonte - MG"
+                      value={formData.naturalidade || ''}
+                      onChange={(e) => setFormData({ ...formData, naturalidade: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  {/* Filiação */}
+                  <div className="col-span-2 md:col-span-3 space-y-1">
+                    <label className={LABEL_CLASS}>Nome da mãe</label>
+                    <input
+                      placeholder="Nome completo da mãe"
+                      value={formData.mother_name || ''}
+                      onChange={(e) => setFormData({ ...formData, mother_name: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  <div className="col-span-2 md:col-span-3 space-y-1">
+                    <label className={LABEL_CLASS}>Nome do pai</label>
+                    <input
+                      placeholder="Nome completo do pai (opcional)"
+                      value={formData.father_name || ''}
+                      onChange={(e) => setFormData({ ...formData, father_name: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  <div className="col-span-2 md:col-span-6 space-y-1">
                     <label className={LABEL_CLASS}>E-mail</label>
                     <input
                       type="email"
@@ -740,15 +823,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
             {/* ETAPA 2: VAGA PRETENDIDA (SEM EMPRESA DE INTERESSE) */}
             {currentStep === 2 && (
               <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="border-b border-white/10 pb-3">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-sky-400" />
-                    <span>Dados da vaga pretendida</span>
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">Selecione a função e o regime de contratação desejados.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
                   <div className="space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Função / cargo pretendido</span>
@@ -792,26 +867,16 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
 
             {/* ETAPA 3: CURSOS, FORMAÇÕES & CONHECIMENTOS DE VIDA */}
             {currentStep === 3 && (
-              <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="border-b border-white/10 pb-3">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-sky-400" />
-                    <span>Cursos, formações e conhecimentos de vida</span>
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Informe suas graduações, cursos técnicos, certificações, anexos de certificados e vivências práticas.
-                  </p>
-                </div>
-
+              <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
                 {/* Formulário de Adição de Cursos */}
-                <div className="p-4 rounded-xl bg-[#0A0E17]/90 border border-white/10 space-y-3.5 shadow-md">
+                <div className="p-3 sm:p-4 rounded-xl bg-[#0A0E17]/90 border border-white/10 space-y-3 sm:space-y-3.5 shadow-md">
                   <span className="text-xs font-semibold text-sky-400 flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5" />
                     <span>Adicionar formação ou curso ({cursos.length})</span>
                   </span>
 
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-3.5">
-                    <div className="md:col-span-2 space-y-1">
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 sm:gap-3.5">
+                    <div className="col-span-2 md:col-span-2 space-y-1">
                       <label className={LABEL_CLASS}>Tipo de formação</label>
                       <select
                         value={novoCurso.tipo}
@@ -824,7 +889,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       </select>
                     </div>
 
-                    <div className="md:col-span-4 space-y-1">
+                    <div className="col-span-2 md:col-span-4 space-y-1">
                       <label className={LABEL_CLASS}>Nome do curso ou especialização</label>
                       <input
                         placeholder="Ex: Engenharia Civil, Técnico em Edificações, NR-35..."
@@ -834,7 +899,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       />
                     </div>
 
-                    <div className="md:col-span-2 space-y-1">
+                    <div className="col-span-2 md:col-span-2 space-y-1">
                       <label className={LABEL_CLASS}>Instituição</label>
                       <input
                         placeholder="Ex: UFMG, SENAI, Estácio..."
@@ -844,27 +909,28 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       />
                     </div>
 
-                    <div className="md:col-span-2 space-y-1">
-                      <label className={LABEL_CLASS}>Início (mês/ano ou ano)</label>
+                    {/* Início e Fim na mesma linha no mobile */}
+                    <div className="col-span-1 md:col-span-2 space-y-1">
+                      <label className={LABEL_CLASS}>Início</label>
                       <input
-                        placeholder="Ex: 02/2019 ou 2019"
+                        placeholder="Ex: 02/2019"
                         value={novoCurso.dataInicio}
                         onChange={(e) => setNovoCurso({ ...novoCurso, dataInicio: e.target.value })}
                         className={INPUT_CLASS}
                       />
                     </div>
 
-                    <div className="md:col-span-2 space-y-1">
+                    <div className="col-span-1 md:col-span-2 space-y-1">
                       <label className={LABEL_CLASS}>Fim ou conclusão</label>
                       <input
-                        placeholder="Ex: 12/2023 ou Concluído"
+                        placeholder="Ex: 12/2023"
                         value={novoCurso.dataFim}
                         onChange={(e) => setNovoCurso({ ...novoCurso, dataFim: e.target.value })}
                         className={INPUT_CLASS}
                       />
                     </div>
 
-                    <div className="md:col-span-4 space-y-1">
+                    <div className="col-span-2 md:col-span-4 space-y-1">
                       <label className={LABEL_CLASS}>Observação</label>
                       <input
                         placeholder="Detalhes ou informações adicionais..."
@@ -874,7 +940,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       />
                     </div>
 
-                    <div className="md:col-span-2 space-y-1">
+                    <div className="col-span-2 md:col-span-2 space-y-1">
                       <label className={LABEL_CLASS}>Status</label>
                       <select
                         value={novoCurso.status}
@@ -888,8 +954,8 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     </div>
 
                     {/* Anexar Certificado */}
-                    <div className="md:col-span-6 space-y-2 pt-1 border-t border-white/5">
-                      <div className="flex items-center justify-between">
+                    <div className="col-span-2 md:col-span-6 space-y-2 pt-1 border-t border-white/5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <label className={LABEL_CLASS}>
                           <span className="flex items-center gap-1.5">
                             <Paperclip className="w-3.5 h-3.5 text-sky-400" />
@@ -898,7 +964,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                           <span className="text-[10px] text-slate-500 font-normal">(opcional • múltiplos arquivos)</span>
                         </label>
                         
-                        <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors">
+                        <label className="cursor-pointer inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors">
                           <Upload className="w-3.5 h-3.5" />
                           <span>Selecionar arquivos</span>
                           <input
@@ -912,18 +978,18 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       </div>
 
                       {novoCurso.certificados.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-1">
+                        <div className="flex flex-wrap gap-1.5 pt-1">
                           {novoCurso.certificados.map((cert) => (
                             <div 
                               key={cert.id}
-                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-xs text-sky-300"
+                              className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-xs text-sky-300 max-w-full"
                             >
                               <FileText className="w-3.5 h-3.5 shrink-0 text-sky-400" />
-                              <span className="truncate max-w-[180px] font-medium" title={cert.nome}>{cert.nome}</span>
+                              <span className="truncate max-w-[140px] sm:max-w-[200px] font-medium" title={cert.nome}>{cert.nome}</span>
                               <button
                                 type="button"
                                 onClick={() => handleRemoveCertificate(cert.id)}
-                                className="text-slate-400 hover:text-rose-400 p-0.5 cursor-pointer"
+                                className="text-slate-400 hover:text-rose-400 p-0.5 cursor-pointer ml-auto"
                               >
                                 <X className="w-3 h-3" />
                               </button>
@@ -938,7 +1004,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleAddCurso}
-                      className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer shadow-md transition-all"
+                      className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer shadow-md transition-all"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Adicionar curso à ficha</span>
@@ -952,14 +1018,14 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     {cursos.map((c) => (
                       <div 
                         key={c.id} 
-                        className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-start justify-between gap-3 group"
+                        className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start justify-between gap-3 group"
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0 mt-0.5">
+                        <div className="flex items-start gap-2.5">
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0 mt-0.5">
                             <Award className="w-4 h-4" />
                           </div>
                           <div className="space-y-1">
-                            <div className="flex items-center gap-2 flex-wrap">
+                            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                               <span className="text-xs sm:text-sm font-bold text-white">{c.nomeCurso}</span>
                               <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-500/10 text-sky-300 border border-sky-500/20">
                                 {c.tipo}
@@ -1004,7 +1070,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
 
                   <div className="flex gap-2">
                     <input
-                      placeholder="Ex: Vivência em carpintaria, assentamento de pisos, noções de solda..."
+                      placeholder="Ex: Vivência em carpintaria, assentamento de pisos..."
                       value={novoConhecimento}
                       onChange={(e) => setNovoConhecimento(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddConhecimento())}
@@ -1013,10 +1079,10 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleAddConhecimento()}
-                      className="px-4 h-10 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
+                      className="px-3 sm:px-4 h-10 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Adicionar</span>
+                      <span className="hidden sm:inline">Adicionar</span>
                     </button>
                   </div>
 
@@ -1042,11 +1108,11 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                   </div>
 
                   {conhecimentosVida.length > 0 && (
-                    <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 flex flex-wrap gap-1.5">
+                    <div className="p-2.5 sm:p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 flex flex-wrap gap-1.5">
                       {conhecimentosVida.map((item) => (
                         <span 
                           key={item}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-[#101726] border border-amber-500/30 text-white shadow-sm"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#101726] border border-amber-500/30 text-white shadow-sm"
                         >
                           <span>{item}</span>
                           <button
@@ -1066,20 +1132,12 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
 
             {/* ETAPA 4: DADOS BANCÁRIOS & DOCUMENTOS */}
             {currentStep === 4 && (
-              <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="border-b border-white/10 pb-3">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-sky-400" />
-                    <span>Dados para pagamento e documentação</span>
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">Informações para pagamento e fotos/arquivos de documentos.</p>
-                </div>
-
+              <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-200">
                 {/* PIX e Banco */}
-                <div className="p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
+                <div className="p-3 sm:p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
                   <span className="text-xs font-semibold text-sky-400 block">Chave PIX e conta bancária</span>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-2.5 sm:gap-3.5">
+                    <div className="col-span-2 sm:col-span-1 space-y-1">
                       <label className={LABEL_CLASS}>Titular da conta</label>
                       <input
                         placeholder="Nome do titular como no banco"
@@ -1089,7 +1147,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       />
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="col-span-2 sm:col-span-1 space-y-1">
                       <label className={LABEL_CLASS}>Instituição bancária</label>
                       <input
                         placeholder="Ex: Nubank, Itaú, Banco do Brasil..."
@@ -1099,8 +1157,8 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className={LABEL_CLASS}>Tipo da chave PIX</label>
+                    <div className="col-span-1 space-y-1">
+                      <label className={LABEL_CLASS}>Tipo da chave</label>
                       <select
                         value={formData.bank_key_type || 'CPF'}
                         onChange={(e) => setFormData({ ...formData, bank_key_type: e.target.value as any })}
@@ -1114,7 +1172,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       </select>
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="col-span-1 space-y-1">
                       <label className={LABEL_CLASS}>
                         <span>Chave PIX</span>
                         <span className="text-rose-400">*</span>
@@ -1136,10 +1194,10 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                 </div>
 
                 {/* Documentação */}
-                <div className="p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
+                <div className="p-3 sm:p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
                   <span className="text-xs font-semibold text-sky-400 block">Documentação pessoal</span>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-2.5 sm:gap-3.5">
+                    <div className="col-span-1 space-y-1">
                       <label className={LABEL_CLASS}>Tipo de documento</label>
                       <select
                         value={formData.document_type || 'RG'}
@@ -1152,9 +1210,9 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       </select>
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="col-span-1 space-y-1">
                       <label className={LABEL_CLASS}>
-                        <span>Número do documento</span>
+                        <span>Número</span>
                         <span className="text-rose-400">*</span>
                       </label>
                       <input
@@ -1171,8 +1229,8 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Upload Frente */}
-                    <div className="relative group border border-dashed border-white/15 rounded-xl p-4 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors min-h-[120px]">
+                    {/* Upload Frente e Verso lado a lado */}
+                    <div className="col-span-1 relative group border border-dashed border-white/15 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors min-h-[115px]">
                       <input
                         type="file"
                         id="pub-front"
@@ -1184,22 +1242,21 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       {isUploadingFront ? (
                         <Loader2 className="w-5 h-5 text-sky-400 animate-spin" />
                       ) : formData.document_front ? (
-                        <div className="space-y-2">
-                          <img src={formData.document_front} alt="Frente" className="h-16 w-auto object-cover rounded-lg mx-auto" />
-                          <span className="text-[11px] text-emerald-400 block font-semibold">Frente anexada</span>
-                          <label htmlFor="pub-front" className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer block">Trocar arquivo</label>
+                        <div className="space-y-1.5">
+                          <img src={formData.document_front} alt="Frente" className="h-12 w-auto object-cover rounded-lg mx-auto" />
+                          <span className="text-[10px] text-emerald-400 block font-semibold">Frente anexada</span>
+                          <label htmlFor="pub-front" className="text-[9px] text-slate-400 hover:text-white underline cursor-pointer block">Trocar</label>
                         </div>
                       ) : (
                         <label htmlFor="pub-front" className="cursor-pointer space-y-1">
-                          <Upload className="w-5 h-5 text-slate-400 mx-auto group-hover:text-sky-400 transition-colors" />
-                          <span className="text-xs text-slate-300 font-semibold block">Anexar frente do documento</span>
-                          <span className="text-[10px] text-slate-500 block">PNG, JPG ou PDF até 25MB</span>
+                          <Upload className="w-4 h-4 text-slate-400 mx-auto group-hover:text-sky-400 transition-colors" />
+                          <span className="text-[11px] text-slate-300 font-semibold block leading-tight">Frente do doc.</span>
+                          <span className="text-[9px] text-slate-500 block">Até 25MB</span>
                         </label>
                       )}
                     </div>
 
-                    {/* Upload Verso */}
-                    <div className="relative group border border-dashed border-white/15 rounded-xl p-4 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors min-h-[120px]">
+                    <div className="col-span-1 relative group border border-dashed border-white/15 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors min-h-[115px]">
                       <input
                         type="file"
                         id="pub-back"
@@ -1211,19 +1268,107 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                       {isUploadingBack ? (
                         <Loader2 className="w-5 h-5 text-sky-400 animate-spin" />
                       ) : formData.document_back ? (
-                        <div className="space-y-2">
-                          <img src={formData.document_back} alt="Verso" className="h-16 w-auto object-cover rounded-lg mx-auto" />
-                          <span className="text-[11px] text-emerald-400 block font-semibold">Verso anexado</span>
-                          <label htmlFor="pub-back" className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer block">Trocar arquivo</label>
+                        <div className="space-y-1.5">
+                          <img src={formData.document_back} alt="Verso" className="h-12 w-auto object-cover rounded-lg mx-auto" />
+                          <span className="text-[10px] text-emerald-400 block font-semibold">Verso anexado</span>
+                          <label htmlFor="pub-back" className="text-[9px] text-slate-400 hover:text-white underline cursor-pointer block">Trocar</label>
                         </div>
                       ) : (
                         <label htmlFor="pub-back" className="cursor-pointer space-y-1">
-                          <Upload className="w-5 h-5 text-slate-400 mx-auto group-hover:text-sky-400 transition-colors" />
-                          <span className="text-xs text-slate-300 font-semibold block">Anexar verso do documento</span>
-                          <span className="text-[10px] text-slate-500 block">PNG, JPG ou PDF até 25MB</span>
+                          <Upload className="w-4 h-4 text-slate-400 mx-auto group-hover:text-sky-400 transition-colors" />
+                          <span className="text-[11px] text-slate-300 font-semibold block leading-tight">Verso do doc.</span>
+                          <span className="text-[9px] text-slate-500 block">Até 25MB</span>
                         </label>
                       )}
                     </div>
+                  </div>
+                </div>
+
+                {/* Documentos Profissionais e Eleitorais */}
+                <div className="p-3 sm:p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
+                  <span className="text-xs font-semibold text-sky-400 block">Documentos profissionais e eleitorais</span>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
+                    {/* CTPS Digital */}
+                    <div className="col-span-1 md:col-span-2 space-y-1">
+                      <label className={LABEL_CLASS}>
+                        <span>CTPS (Carteira de trabalho)</span>
+                      </label>
+                      <input
+                        placeholder="Geralmente CPF ou nº da física"
+                        value={formData.ctps_number || ''}
+                        onChange={(e) => setFormData({ ...formData, ctps_number: e.target.value })}
+                        className={INPUT_CLASS}
+                      />
+                      <span className="text-[10px] text-slate-500 block">
+                        Na CTPS Digital, basta o CPF.
+                      </span>
+                    </div>
+
+                    {/* PIS/PASEP */}
+                    <div className="col-span-1 md:col-span-2 space-y-1">
+                      <label className={LABEL_CLASS}>
+                        <span>PIS / PASEP</span>
+                      </label>
+                      <input
+                        placeholder="000.00000.00-0"
+                        value={formData.pis_pasep || ''}
+                        onChange={(e) => setFormData({ ...formData, pis_pasep: e.target.value })}
+                        className={INPUT_CLASS}
+                      />
+                      <span className="text-[10px] text-slate-500 block">
+                        Número do PIS/NIS/PASEP se houver.
+                      </span>
+                    </div>
+
+                    {/* Título de Eleitor */}
+                    <div className="col-span-2 md:col-span-2 space-y-1">
+                      <label className={LABEL_CLASS}>
+                        <span>Título de eleitor</span>
+                      </label>
+                      <input
+                        placeholder="Número do título de eleitor"
+                        value={formData.voter_title || ''}
+                        onChange={(e) => setFormData({ ...formData, voter_title: e.target.value })}
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+
+                    <div className="col-span-1 md:col-span-1 space-y-1">
+                      <label className={LABEL_CLASS}>Zona</label>
+                      <input
+                        placeholder="Ex: 102"
+                        value={formData.voter_zone || ''}
+                        onChange={(e) => setFormData({ ...formData, voter_zone: e.target.value })}
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+
+                    <div className="col-span-1 md:col-span-1 space-y-1">
+                      <label className={LABEL_CLASS}>Seção</label>
+                      <input
+                        placeholder="Ex: 045"
+                        value={formData.voter_section || ''}
+                        onChange={(e) => setFormData({ ...formData, voter_section: e.target.value })}
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+
+                    {/* Certificado de Reservista (apenas homens) */}
+                    {formData.gender === 'Masculino' && (
+                      <div className="col-span-2 md:col-span-4 space-y-1 pt-1 border-t border-white/5 animate-in fade-in">
+                        <label className={LABEL_CLASS}>
+                          <span>Certificado de reservista / alistamento militar</span>
+                          <span className="text-[10px] text-sky-400 font-normal">(homens)</span>
+                        </label>
+                        <input
+                          placeholder="Número do certificado de reservista ou dispensa de incorporação"
+                          value={formData.military_certificate || ''}
+                          onChange={(e) => setFormData({ ...formData, military_certificate: e.target.value })}
+                          className={INPUT_CLASS}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1231,17 +1376,9 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
 
             {/* ETAPA 5: ENDEREÇO & MENSAGEM */}
             {currentStep === 5 && (
-              <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="border-b border-white/10 pb-3">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-sky-400" />
-                    <span>Endereço residencial e mensagem final</span>
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">Onde você reside e mensagem de apresentação para a equipe MCH.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3.5">
-                  <div className="space-y-1">
+              <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-200">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
+                  <div className="col-span-1 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>CEP</span>
                       <span className="text-rose-400">*</span>
@@ -1257,26 +1394,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1 md:col-span-3">
-                    <label className={LABEL_CLASS}>
-                      <span>Rua / logradouro</span>
-                      <span className="text-rose-400">*</span>
-                    </label>
-                    <input
-                      placeholder="Rua ou avenida"
-                      value={address.street}
-                      onChange={(e) => {
-                        setAddress({ ...address, street: e.target.value });
-                        if (stepErrors.street) setStepErrors(prev => ({ ...prev, street: '' }));
-                      }}
-                      className={stepErrors.street ? INPUT_ERROR_CLASS : INPUT_CLASS}
-                    />
-                    {stepErrors.street && (
-                      <span className="text-[11px] text-rose-400 font-medium block">{stepErrors.street}</span>
-                    )}
-                  </div>
-
-                  <div className="space-y-1">
+                  <div className="col-span-1 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Número</span>
                       <span className="text-rose-400">*</span>
@@ -1295,7 +1413,26 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="col-span-2 md:col-span-2 space-y-1">
+                    <label className={LABEL_CLASS}>
+                      <span>Rua / logradouro</span>
+                      <span className="text-rose-400">*</span>
+                    </label>
+                    <input
+                      placeholder="Rua ou avenida"
+                      value={address.street}
+                      onChange={(e) => {
+                        setAddress({ ...address, street: e.target.value });
+                        if (stepErrors.street) setStepErrors(prev => ({ ...prev, street: '' }));
+                      }}
+                      className={stepErrors.street ? INPUT_ERROR_CLASS : INPUT_CLASS}
+                    />
+                    {stepErrors.street && (
+                      <span className="text-[11px] text-rose-400 font-medium block">{stepErrors.street}</span>
+                    )}
+                  </div>
+
+                  <div className="col-span-1 space-y-1">
                     <label className={LABEL_CLASS}>Complemento</label>
                     <input
                       placeholder="Apto, bloco..."
@@ -1305,7 +1442,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     />
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="col-span-1 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Bairro</span>
                       <span className="text-rose-400">*</span>
@@ -1324,7 +1461,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="col-span-2 md:col-span-2 space-y-1">
                     <label className={LABEL_CLASS}>
                       <span>Cidade / UF</span>
                       <span className="text-rose-400">*</span>
@@ -1359,13 +1496,13 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
           </div>
 
           {/* Footer com Navegação Entre Etapas */}
-          <div className="px-6 py-4 border-t border-white/10 bg-[#0F1626] flex items-center justify-between shrink-0">
+          <div className="px-3.5 sm:px-6 py-3.5 sm:py-4 border-t border-white/10 bg-[#0F1626] flex items-center justify-between shrink-0">
             <div>
               {currentStep > 1 && (
                 <button
                   type="button"
                   onClick={handlePrevStep}
-                  className="px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 sm:px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Voltar</span>
@@ -1378,7 +1515,7 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
+                  className="px-4 sm:px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
                 >
                   <span>Próxima etapa</span>
                   <ChevronRight className="w-4 h-4" />
@@ -1387,10 +1524,10 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSubmit()}
-                  className="px-7 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
+                  className="px-4 sm:px-7 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/20"
                 >
                   <Check className="w-4 h-4" />
-                  <span>Finalizar e enviar candidatura</span>
+                  <span>Finalizar candidatura</span>
                 </button>
               )}
             </div>

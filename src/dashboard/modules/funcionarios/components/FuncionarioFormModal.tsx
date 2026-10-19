@@ -22,7 +22,15 @@ import {
   AlertCircle,
   Download
 } from 'lucide-react';
-import { Funcionario, CargoItem, FormacaoCurso, TipoFormacao, CertificadoAnexo } from '../types';
+import { Funcionario, CargoItem, FormacaoCurso, TipoFormacao, CertificadoAnexo, EstadoCivil } from '../types';
+
+const ESTADO_CIVIL_OPCOES: EstadoCivil[] = [
+  'Solteiro(a)',
+  'Casado(a)',
+  'União Estável',
+  'Divorciado(a)',
+  'Viúvo(a)'
+];
 
 interface FuncionarioFormModalProps {
   isOpen: boolean;
@@ -508,6 +516,17 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
       emergency_phone: formData.emergency_phone || '',
       email: formData.email || '',
       birth_date: formData.birth_date || '',
+      marital_status: formData.marital_status || 'Solteiro(a)',
+      naturalidade: formData.naturalidade || '',
+      nacionalidade: formData.nacionalidade || 'Brasileira',
+      father_name: formData.father_name || '',
+      mother_name: formData.mother_name || '',
+      voter_title: formData.voter_title || '',
+      voter_zone: formData.voter_zone || '',
+      voter_section: formData.voter_section || '',
+      military_certificate: formData.military_certificate || '',
+      ctps_number: formData.ctps_number || '',
+      pis_pasep: formData.pis_pasep || '',
       bank_account_name: formData.bank_account_name || '',
       bank_name: formData.bank_name || '',
       bank_key: formData.bank_key || '',
@@ -636,14 +655,6 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
              ========================================================= */}
           {currentStep === 1 && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              <div className="border-b border-white/10 pb-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <User className="w-4 h-4 text-sky-400" />
-                  <span>Identificação e contatos</span>
-                </h4>
-                <p className="text-xs text-slate-400 mt-0.5">Preencha os dados básicos e contatos do colaborador.</p>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-6 gap-3.5">
                 {/* Nome Completo */}
                 <div className="space-y-1 md:col-span-4">
@@ -739,15 +750,78 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
                     }}
                     className={stepErrors.emergency_phone ? INPUT_ERROR_CLASS : INPUT_CLASS}
                   />
-                  {stepErrors.emergency_phone ? (
+                  {stepErrors.emergency_phone && (
                     <span className="text-[11px] text-rose-400 font-medium block leading-tight">
                       {stepErrors.emergency_phone}
                     </span>
-                  ) : (
-                    <span className="text-[10px] text-slate-500 block">
-                      Obrigatório. Não pode ser o mesmo número pessoal.
-                    </span>
                   )}
+                </div>
+
+                {/* Estado Civil */}
+                <div className="space-y-1 md:col-span-2">
+                  <label className={LABEL_CLASS}>
+                    <span>Estado civil</span>
+                  </label>
+                  <select
+                    value={formData.marital_status || 'Solteiro(a)'}
+                    onChange={(e) => setFormData({ ...formData, marital_status: e.target.value as any })}
+                    className={SELECT_CLASS}
+                  >
+                    {ESTADO_CIVIL_OPCOES.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Nacionalidade */}
+                <div className="space-y-1 md:col-span-2">
+                  <label className={LABEL_CLASS}>
+                    <span>Nacionalidade</span>
+                  </label>
+                  <input
+                    placeholder="Ex: Brasileira"
+                    value={formData.nacionalidade || ''}
+                    onChange={(e) => setFormData({ ...formData, nacionalidade: e.target.value })}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+
+                {/* Naturalidade */}
+                <div className="space-y-1 md:col-span-2">
+                  <label className={LABEL_CLASS}>
+                    <span>Naturalidade (cidade / UF natal)</span>
+                  </label>
+                  <input
+                    placeholder="Ex: Belo Horizonte - MG"
+                    value={formData.naturalidade || ''}
+                    onChange={(e) => setFormData({ ...formData, naturalidade: e.target.value })}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+
+                {/* Filiação: Mãe e Pai */}
+                <div className="space-y-1 md:col-span-3">
+                  <label className={LABEL_CLASS}>
+                    <span>Nome da mãe</span>
+                  </label>
+                  <input
+                    placeholder="Nome completo da mãe"
+                    value={formData.mother_name || ''}
+                    onChange={(e) => setFormData({ ...formData, mother_name: e.target.value })}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+
+                <div className="space-y-1 md:col-span-3">
+                  <label className={LABEL_CLASS}>
+                    <span>Nome do pai</span>
+                  </label>
+                  <input
+                    placeholder="Nome completo do pai (opcional)"
+                    value={formData.father_name || ''}
+                    onChange={(e) => setFormData({ ...formData, father_name: e.target.value })}
+                    className={INPUT_CLASS}
+                  />
                 </div>
 
                 {/* E-mail */}
@@ -772,14 +846,6 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
              ========================================================= */}
           {currentStep === 2 && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              <div className="border-b border-white/10 pb-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-sky-400" />
-                  <span>Cargo, vínculo e admissão</span>
-                </h4>
-                <p className="text-xs text-slate-400 mt-0.5">Defina a função exercida, tipo de contrato e data de entrada.</p>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-6 gap-3.5">
                 {/* Tipo de Vínculo */}
                 <div className="space-y-1 md:col-span-3">
@@ -905,16 +971,6 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
              ========================================================= */}
           {currentStep === 3 && (
             <div className="space-y-6 animate-in fade-in duration-200">
-              <div className="border-b border-white/10 pb-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-sky-400" />
-                  <span>Cursos, formações e conhecimentos de vida</span>
-                </h4>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Adicione cursos, graduações, certificados anexados e noções práticas da vivência do colaborador.
-                </p>
-              </div>
-
               {/* Seção A: Cursos e Formações */}
               <div className="space-y-3.5">
                 <div className="flex items-center justify-between">
@@ -1238,14 +1294,6 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
              ========================================================= */}
           {currentStep === 4 && (
             <div className="space-y-5 animate-in fade-in duration-200">
-              <div className="border-b border-white/10 pb-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-sky-400" />
-                  <span>Dados para pagamento e documentação</span>
-                </h4>
-                <p className="text-xs text-slate-400 mt-0.5">Informações de chave PIX e fotos/arquivos de documentos.</p>
-              </div>
-
               {/* PIX e Banco */}
               <div className="p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
                 <span className="text-xs font-semibold text-sky-400 block">Chave PIX e conta bancária</span>
@@ -1415,6 +1463,97 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
                   </div>
                 </div>
               </div>
+
+                {/* Documentos Profissionais e Eleitorais */}
+                <div className="p-4 rounded-xl bg-[#0A0E17]/60 border border-white/10 space-y-3">
+                <span className="text-xs font-semibold text-sky-400 block">Documentos profissionais e eleitorais</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
+                  {/* CTPS */}
+                  <div className="space-y-1 sm:col-span-1 md:col-span-2">
+                    <label className={LABEL_CLASS}>
+                      <span>CTPS (Carteira de trabalho)</span>
+                    </label>
+                    <input
+                      placeholder="Geralmente CPF ou nº da física"
+                      value={formData.ctps_number || ''}
+                      onChange={(e) => setFormData({ ...formData, ctps_number: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                    <span className="text-[10px] text-slate-500 block">
+                      Na CTPS Digital, basta o CPF.
+                    </span>
+                  </div>
+
+                  {/* PIS/PASEP */}
+                  <div className="space-y-1 sm:col-span-1 md:col-span-2">
+                    <label className={LABEL_CLASS}>
+                      <span>Número do PIS / PASEP</span>
+                    </label>
+                    <input
+                      placeholder="000.00000.00-0"
+                      value={formData.pis_pasep || ''}
+                      onChange={(e) => setFormData({ ...formData, pis_pasep: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                    <span className="text-[10px] text-slate-500 block">
+                      Número do PIS/PASEP/NIS se houver.
+                    </span>
+                  </div>
+
+                  {/* Título de Eleitor */}
+                  <div className="space-y-1 sm:col-span-2 md:col-span-2">
+                    <label className={LABEL_CLASS}>
+                      <span>Título de eleitor</span>
+                    </label>
+                    <input
+                      placeholder="Número do título de eleitor"
+                      value={formData.voter_title || ''}
+                      onChange={(e) => setFormData({ ...formData, voter_title: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  <div className="space-y-1 sm:col-span-1 md:col-span-1">
+                    <label className={LABEL_CLASS}>
+                      <span>Zona eleitoral</span>
+                    </label>
+                    <input
+                      placeholder="Ex: 102"
+                      value={formData.voter_zone || ''}
+                      onChange={(e) => setFormData({ ...formData, voter_zone: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  <div className="space-y-1 sm:col-span-1 md:col-span-1">
+                    <label className={LABEL_CLASS}>
+                      <span>Seção</span>
+                    </label>
+                    <input
+                      placeholder="Ex: 045"
+                      value={formData.voter_section || ''}
+                      onChange={(e) => setFormData({ ...formData, voter_section: e.target.value })}
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+
+                  {/* Certificado de Reservista (apenas homens) */}
+                  {formData.gender === 'Masculino' && (
+                    <div className="space-y-1 sm:col-span-2 md:col-span-4 pt-1 border-t border-white/5 animate-in fade-in">
+                      <label className={LABEL_CLASS}>
+                        <span>Certificado de reservista / alistamento militar</span>
+                        <span className="text-[10px] text-sky-400 font-normal">(homens)</span>
+                      </label>
+                      <input
+                        placeholder="Número do certificado de reservista ou dispensa de incorporação"
+                        value={formData.military_certificate || ''}
+                        onChange={(e) => setFormData({ ...formData, military_certificate: e.target.value })}
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
@@ -1423,14 +1562,6 @@ export const FuncionarioFormModal: React.FC<FuncionarioFormModalProps> = ({
              ========================================================= */}
           {currentStep === 5 && (
             <div className="space-y-5 animate-in fade-in duration-200">
-              <div className="border-b border-white/10 pb-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-sky-400" />
-                  <span>Endereço residencial e observações</span>
-                </h4>
-                <p className="text-xs text-slate-400 mt-0.5">Localização de moradia e anotações internas da liderança/RH.</p>
-              </div>
-
               {/* Endereço */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3.5">
                 <div className="space-y-1">

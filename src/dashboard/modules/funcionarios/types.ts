@@ -43,6 +43,8 @@ export interface Endereco {
   state: string;
 }
 
+export type EstadoCivil = 'Solteiro(a)' | 'Casado(a)' | 'Divorciado(a)' | 'Viúvo(a)' | 'União Estável';
+
 export interface Funcionario {
   id: string;
   name: string;
@@ -56,6 +58,13 @@ export interface Funcionario {
   email?: string;
   gender: Genero;
   birth_date?: string;
+
+  // Dados Pessoais Complementares
+  marital_status?: EstadoCivil;
+  naturalidade?: string;
+  nacionalidade?: string;
+  father_name?: string;
+  mother_name?: string;
   
   // Cursos, Formações e Conhecimentos de Vida
   formacoesCursos?: FormacaoCurso[];
@@ -72,6 +81,14 @@ export interface Funcionario {
   document?: string;
   document_front?: string;
   document_back?: string;
+
+  // Documentos Complementares e Trabalhistas
+  voter_title?: string;
+  voter_zone?: string;
+  voter_section?: string;
+  military_certificate?: string;
+  ctps_number?: string;
+  pis_pasep?: string;
 
   // Endereço
   cep?: string;
