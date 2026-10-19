@@ -77,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
             <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1B2639] to-[#0A0E17] border border-sky-500/30 flex items-center justify-center shrink-0 shadow-inner">
               <img
                 src="/logo-emblem.png"
-                alt="MCH"
+                alt="Machado"
                 className="w-7 h-7 object-contain"
               />
             </div>
@@ -90,8 +90,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
                   : 'opacity-0 max-w-0 -translate-x-4 pointer-events-none'
               }`}
             >
-              <h2 className="font-bold text-sm tracking-tight text-white leading-tight">
-                MCH ENGENHARIA
+              <h2 className="font-bold text-base tracking-tight text-white leading-tight">
+                Machado
               </h2>
               <p className="text-[10px] text-sky-400 font-mono tracking-wider uppercase">
                 Painel Corporativo

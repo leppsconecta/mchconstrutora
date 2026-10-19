@@ -17,9 +17,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onToggleMobile
   };
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-[#0B111E]/85 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 flex items-center justify-between">
-      {/* Left: Mobile trigger */}
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 h-16 sm:h-20 bg-[#0B111E]/85 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 flex items-center justify-between">
+      {/* Left: Mobile trigger & Greeting */}
+      <div className="flex items-center gap-3 sm:gap-4">
         <button
           type="button"
           onClick={onToggleMobileMenu}
@@ -28,6 +28,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onToggleMobile
         >
           <Menu className="w-5 h-5" />
         </button>
+
+        <p className="text-sm sm:text-base text-white font-normal select-none">
+          Olá <span className="font-bold text-sky-400">Bruno</span>, seja bem vindo!
+        </p>
       </div>
 
       {/* Right: Actions */}
