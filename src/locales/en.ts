@@ -166,7 +166,7 @@ export const en: Translations = {
     teamTitle: 'In-House Specialized Workforce',
     teamSubtitle: 'Your entire network foundation built by seasoned professionals. We deploy dedicated civil teams directly on the frontline to ensure flawless foundations and lasting structural integrity for your towers.',
     team1Title: 'Civil Engineers',
-    team1Desc: 'Designers, structural calculators, and project coordinators with active CREA-SP accreditation.',
+    team1Desc: 'Designers, structural calculators, and project coordinators.',
     team2Title: 'Electricians',
     team2Desc: 'Certified NR-10 technicians for medium/low voltage networks and grounding SPDA systems.',
     team3Title: 'Masons & Rebar Specialists',

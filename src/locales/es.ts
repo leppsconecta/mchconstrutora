@@ -166,7 +166,7 @@ export const es: Translations = {
     teamTitle: 'Mano de Obra Propia y Especializada',
     teamSubtitle: 'Toda la base de su red construida por profesionales expertos. Disponemos de un equipo completo de especialistas civiles actuando en primera línea para asegurar que la fundación e infraestructura de su torre sean impecables.',
     team1Title: 'Ingenieros Civiles',
-    team1Desc: 'Proyectistas, calculistas y directores de obra con matrícula activa en CREA-SP.',
+    team1Desc: 'Proyectistas, calculistas y directores de obra.',
     team2Title: 'Electricistas',
     team2Desc: 'Instaladores certificados en normativas de seguridad para baja y media tensión.',
     team3Title: 'Albañiles y Armadores',

@@ -200,18 +200,10 @@ export default function CasesPage() {
       <section className="relative pt-12 pb-20 sm:pt-16 sm:pb-28 bg-[#1B2639] text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Cabeçalho Minimalista da Página */}
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
-            <span className="text-xs uppercase tracking-widest text-cyan-400 font-bold block mb-3">
-              {t.cases.heroTag}
-            </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-              {t.cases.heroTitle}
-            </h1>
-            <p className="mt-4 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              {t.cases.heroSubtitle}
-            </p>
-          </div>
+          {/* Título acessível para SEO e leitores de tela */}
+          <h1 className="sr-only">
+            {t.cases.heroTitle}
+          </h1>
 
           {/* PALCO DO CARROSSEL EM CASCATA COM PERSPECTIVA 3D */}
           <div
