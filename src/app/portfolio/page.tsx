@@ -233,7 +233,7 @@ export default function PortfolioPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <h1 className="sr-only">
-            Portfólio de Obras, Construção Civil e Reformas em Cajamar e SP | Machado Construtora e Incorporadora
+            Portfólio de Obras &amp; Projetos - Machado Construtora
           </h1>
 
           {/* PALCO DO CARROSSEL EM CASCATA COM PERSPECTIVA 3D */}

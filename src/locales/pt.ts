@@ -42,7 +42,7 @@ export const pt: Translations = {
     copyLabel: 'Copiar'
   },
   home: {
-    heroTitle: 'Machado Construtora e Incorporadora: Engenharia, Obras e Reformas em Cajamar e SP',
+    heroTitle: 'Construindo valor, transformando espaços e entregando resultados.',
     heroSubtitle: 'Desenvolvimento e construção de imóveis próprios para venda, reformas prediais, infraestrutura para telecomunicações em geral, impermeabilização especializada e soluções que unem engenharia, eficiência e compromisso, com resultados duradouros.',
     pillarsTag: 'Frentes de Atuação',
     pillarsTitle: 'Os Três Pilares da Machado',
@@ -159,7 +159,7 @@ export const pt: Translations = {
   },
   telecom: {
     heroTag: 'Infraestrutura & Telecomunicações',
-    heroTitle: 'Infraestrutura para Telecomunicações e Torres em SP | Machado Engenharia',
+    heroTitle: 'Infraestrutura para Telecom',
     heroSubtitle: 'A força construtora que executa as fundações profundas, lajes maciças e adequações estruturais que sustentam as torres com máxima segurança no Brasil.',
     heroCta: 'Falar com a Engenharia',
     teamTag: 'Quem faz acontecer no Canteiro',
@@ -188,7 +188,7 @@ export const pt: Translations = {
   },
   construtora: {
     heroTag: 'Construtora & Incorporação',
-    heroTitle: 'Construção Civil Residencial Turnkey em Cajamar e SP | Machado Construtora',
+    heroTitle: 'Seu Novo Lar, Nossa Construção',
     heroSubtitle: 'Conectamos famílias aos melhores imóveis e projetos residenciais de alto valor agregado na região de Cajamar e polo metropolitano de São Paulo.',
     heroCta: 'Falar com a Construtora',
     section1Title: 'Construção de imóveis para venda, desde a aquisição do terreno até a entrega de chaves, mobiliados e decorados.',
@@ -218,7 +218,7 @@ export const pt: Translations = {
   },
   reformas: {
     heroTag: 'Serviços Prediais & Manutenção',
-    heroTitle: 'Reformas Prediais e Corporativas B2B em Cajamar e SP | Machado',
+    heroTitle: 'Transformando Ambientes com Precisão',
     heroSubtitle: 'Atendimento predial e manutenção técnica especializada para empresas, condomínios e residências.',
     service1Title: 'Encanador & Hidráulica',
     service1Desc: 'Caça-vazamentos, bombas pressurizadoras, caixas d’água e tubulações de esgoto/água quente.',
@@ -242,7 +242,7 @@ export const pt: Translations = {
     step4Desc: 'Pinturas de alto padrão, revestimentos nobres e entrega do imóvel totalmente limpo e pronto.',
   },
   quemSomos: {
-    mainTitle: 'Sobre a Machado Construtora e Incorporadora: Engenharia e Obras em Cajamar - SP',
+    mainTitle: 'Engenharia séria não se faz apenas em escritório; se faz no terreno.',
     introP1: 'A Machado nasceu da constatação de que o mercado da construção civil e de infraestrutura crítica sofria com a terceirização desregulada e a falta de acompanhamento técnico real nas frentes de serviço.',
     introP2: 'Estruturamos nossa operação com equipes próprias e capacitadas (pedreiros, carpinteiros, eletricistas e operadores) supervisionadas integralmente por engenheiros com registro ativo no CREA-SP. Dessa forma, eliminamos gargalos de comunicação e garantimos que o cálculo estrutural seja seguido à risca no canteiro.',
     areasTitle: 'Nossas Áreas de Atuação',
@@ -264,7 +264,7 @@ export const pt: Translations = {
   },
   contato: {
     tag: 'Canais Oficiais',
-    title: 'Contato | Fale com a Machado Construtora e Incorporadora em Cajamar - SP',
+    title: 'Estamos prontos para atender sua demanda técnica.',
     subtitle: 'Nossos engenheiros estão habituados aos prazos críticos e exigências de conformidade de grandes concessionárias, empresas e investidores.',
     headquarters: 'Sede Operacional',
     addressLine1: 'Av. dos Ipês, 155 - 2º Andar',
