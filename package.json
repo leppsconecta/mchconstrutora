@@ -10,7 +10,8 @@
     "preview": "vite preview --port=3000",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "admin:create": "node --env-file=.env scripts/create-admin.mjs"
+    "admin:create": "node --env-file=.env scripts/create-admin.mjs",
+    "admin:reset-password": "node --env-file=.env scripts/reset-admin-password.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

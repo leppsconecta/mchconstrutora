@@ -28,12 +28,133 @@ import {
   RefreshCw,
   Layers,
   Play,
+  Pause,
+  Volume2,
+  VolumeX,
   Building2,
   Hammer
 } from 'lucide-react';
 import { useSiteConfig, PortfolioItem, SiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
 import { useConfirmDelete } from '../context/ConfirmDeleteContext';
 import { uploadImageToBucket, deleteImageFromBucket, SUPABASE_BUCKET } from '../../lib/supabase';
+
+// Player de pré-visualização de vídeo com controles visíveis e interativos no Dashboard
+const VideoPreviewPlayer: React.FC<{
+  src: string;
+  className?: string;
+}> = ({ src, className = "w-full h-full object-cover object-center" }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+    setIsPlaying(true);
+  }, [src]);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
+  if (hasError) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-[#070b14] text-slate-400 gap-2">
+        <Video className="w-8 h-8 text-amber-400/80" />
+        <p className="text-xs font-semibold text-slate-300">Vídeo não suportado ou link indisponível</p>
+        <p className="text-[11px] text-slate-500 max-w-xs">
+          Faça upload de um arquivo .mp4 ou .webm válido no botão abaixo.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="relative w-full h-full group/video bg-black cursor-pointer overflow-hidden flex items-center justify-center select-none"
+      onClick={togglePlay}
+    >
+      <video
+        ref={videoRef}
+        key={src}
+        src={src}
+        autoPlay
+        loop
+        muted={isMuted}
+        playsInline
+        onError={() => setHasError(true)}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        className={className}
+      />
+
+      {/* Botão Central de Play / Pause */}
+      <div 
+        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 pointer-events-none ${
+          !isPlaying ? 'opacity-100 bg-black/40' : 'opacity-0 group-hover/video:opacity-100 bg-black/20'
+        }`}
+      >
+        <div className="w-13 h-13 rounded-full bg-sky-500/90 hover:bg-sky-400 text-white flex items-center justify-center shadow-2xl backdrop-blur-md transform transition-transform group-hover/video:scale-110">
+          {isPlaying ? (
+            <Pause className="w-5 h-5 fill-current" />
+          ) : (
+            <Play className="w-5 h-5 fill-current ml-0.5" />
+          )}
+        </div>
+      </div>
+
+      {/* Barra de Controles Inferior Visível no Dashboard */}
+      <div 
+        className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex items-center justify-between gap-3 text-white z-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={togglePlay}
+            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            title={isPlaying ? 'Pausar vídeo' : 'Reproduzir vídeo'}
+          >
+            {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleMute}
+            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            title={isMuted ? 'Ativar som' : 'Desativar som'}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+
+          <span className="text-[11px] font-medium text-slate-300">
+            {isPlaying ? 'Em reprodução' : 'Pausado'}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <span className="px-2 py-0.5 rounded bg-sky-500/30 border border-sky-400/40 text-sky-200 text-[10px] font-mono font-semibold">
+            VÍDEO
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Ícone personalizado e responsivo do TikTok (não existente por padrão no lucide-react)
 const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
@@ -1383,9 +1504,9 @@ export const SiteModule: React.FC = () => {
             className="hidden"
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             {/* CARD SEÇÃO 1: HERO DA CONSTRUTORA */}
-            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between">
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between h-full">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
@@ -1398,8 +1519,8 @@ export const SiteModule: React.FC = () => {
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
-                    Hero (480px)
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                    Seção 1 (Hero)
                   </span>
                 </div>
 
@@ -1434,41 +1555,26 @@ export const SiteModule: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Preview em tamanho real correspondente ao site: h-[260px] sm:h-[300px] lg:h-[480px] */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] text-slate-400">Prévia no tamanho exato do site:</span>
-                    {stagedMedia['hero_construtora'] ? (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[10px] font-semibold flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        Preview não salvo
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-mono text-[10px]">
-                        Ativo no site
-                      </span>
-                    )}
-                  </div>
+                {/* Container da Prévia: Mesmo tamanho exato (aspect-[4/3]) */}
+                <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-xl flex items-center justify-center">
+                  {stagedMedia['hero_construtora'] && (
+                    <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-lg bg-amber-500/90 text-white font-mono text-[10px] font-bold shadow-lg backdrop-blur-sm flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span>Preview não salvo</span>
+                    </div>
+                  )}
 
-                  <div className="w-full h-[260px] sm:h-[300px] lg:h-[480px] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-2xl">
-                    {mediaForm.hero_construtora_media_type === 'video' ? (
-                      <video
-                        key={mediaForm.hero_construtora_media_url}
-                        src={mediaForm.hero_construtora_media_url}
-                        controls
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover object-center"
-                      />
-                    ) : (
-                      <img
-                        src={mediaForm.hero_construtora_media_url}
-                        alt="Hero Construtora Preview"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-                  </div>
+                  {mediaForm.hero_construtora_media_type === 'video' ? (
+                    <VideoPreviewPlayer
+                      src={mediaForm.hero_construtora_media_url}
+                    />
+                  ) : (
+                    <img
+                      src={mediaForm.hero_construtora_media_url}
+                      alt="Hero Construtora Preview"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  )}
                 </div>
 
                 {/* Botões de Mídia */}
@@ -1521,7 +1627,7 @@ export const SiteModule: React.FC = () => {
             </div>
 
             {/* CARD SEÇÃO 2: CONSTRUÇÃO DE CASAS / OBRAS */}
-            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between">
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between h-full">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
@@ -1535,7 +1641,7 @@ export const SiteModule: React.FC = () => {
                   </div>
 
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Proporção 4:3
+                    Seção 2 (Obras)
                   </span>
                 </div>
 
@@ -1570,41 +1676,26 @@ export const SiteModule: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Preview em tamanho real correspondente ao site: aspect-[4/3] */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] text-slate-400">Prévia no tamanho exato do site:</span>
-                    {stagedMedia['construtora_secao2'] ? (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[10px] font-semibold flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        Preview não salvo
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-mono text-[10px]">
-                        Ativo no site
-                      </span>
-                    )}
-                  </div>
+                {/* Container da Prévia: Mesmo tamanho exato (aspect-[4/3]) */}
+                <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-xl flex items-center justify-center">
+                  {stagedMedia['construtora_secao2'] && (
+                    <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-lg bg-amber-500/90 text-white font-mono text-[10px] font-bold shadow-lg backdrop-blur-sm flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span>Preview não salvo</span>
+                    </div>
+                  )}
 
-                  <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-2xl">
-                    {mediaForm.construtora_secao2_media_type === 'video' ? (
-                      <video
-                        key={mediaForm.construtora_secao2_media_url}
-                        src={mediaForm.construtora_secao2_media_url}
-                        controls
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover object-center"
-                      />
-                    ) : (
-                      <img
-                        src={mediaForm.construtora_secao2_media_url}
-                        alt="Seção 2 Construtora Preview"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-                  </div>
+                  {mediaForm.construtora_secao2_media_type === 'video' ? (
+                    <VideoPreviewPlayer
+                      src={mediaForm.construtora_secao2_media_url}
+                    />
+                  ) : (
+                    <img
+                      src={mediaForm.construtora_secao2_media_url}
+                      alt="Seção 2 Construtora Preview"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  )}
                 </div>
 
                 {/* Botões de Mídia */}
