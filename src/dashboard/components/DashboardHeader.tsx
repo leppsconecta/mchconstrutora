@@ -13,8 +13,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onToggleMobile
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/admin/login', { replace: true });
   };
 

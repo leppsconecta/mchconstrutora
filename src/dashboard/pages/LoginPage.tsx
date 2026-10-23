@@ -5,39 +5,58 @@ import { Lock, Mail, Eye, EyeOff, AlertCircle, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
-  const { login, isAuthenticated } = useAuth();
+  const { login, changePassword, isAuthenticated, mustChangePassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Redireciona caso já esteja autenticado
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/projetos';
-      navigate(from, { replace: true });
-    }
-  }, [isAuthenticated, navigate, location]);
+  const redirectTarget =
+    (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/projetos';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redireciona caso já esteja autenticado (e sem troca de senha pendente)
+  React.useEffect(() => {
+    if (isAuthenticated && !mustChangePassword) {
+      navigate(redirectTarget, { replace: true });
+    }
+  }, [isAuthenticated, mustChangePassword, navigate, redirectTarget]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const res = login(email, password);
-      if (res.success) {
-        const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/admin/projetos';
-        navigate(from, { replace: true });
-      } else {
-        setError(res.error || 'Credenciais inválidas.');
-        setIsSubmitting(false);
-      }
-    }, 350);
+    const res = await login(email, password);
+    setPassword('');
+    if (!res.success) {
+      setError(res.error || 'Credenciais inválidas.');
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (newPassword !== confirmPassword) {
+      setError('As senhas não conferem.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const res = await changePassword(newPassword);
+    setNewPassword('');
+    setConfirmPassword('');
+    if (!res.success) {
+      setError(res.error || 'Não foi possível alterar a senha.');
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -88,6 +107,40 @@ export const LoginPage: React.FC = () => {
             )}
           </AnimatePresence>
 
+          {mustChangePassword ? (
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <p className="text-xs text-slate-300">
+                Primeiro acesso: defina uma nova senha (mínimo 12 caracteres) para continuar.
+              </p>
+              <input
+                type="password"
+                required
+                minLength={12}
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Nova senha"
+                className="w-full px-4 py-2.5 text-sm bg-[#080D18] border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+              />
+              <input
+                type="password"
+                required
+                minLength={12}
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirme a nova senha"
+                className="w-full px-4 py-2.5 text-sm bg-[#080D18] border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+              />
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full mt-3 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-sky-600 via-sky-500 to-sky-600 border border-sky-400/30 shadow-lg shadow-sky-600/20 transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? 'Salvando...' : 'Definir nova senha'}
+              </button>
+            </form>
+          ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Campo E-mail */}
             <div>
@@ -103,7 +156,8 @@ export const LoginPage: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="bruno@machado.com.br"
+                  autoComplete="username"
+                  placeholder="seu@email.com.br"
                   className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#080D18] border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
                 />
               </div>
@@ -126,6 +180,7 @@ export const LoginPage: React.FC = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
@@ -165,6 +220,7 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
+          )}
         </div>
 
         {/* Copyright */}

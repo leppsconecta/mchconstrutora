@@ -1,7 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-export const SUPABASE_URL = 'https://txlvjukmjjfjufwkkrzm.supabase.co';
-export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bHZqdWttampmanVmd2trcnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5MzA0MDUsImV4cCI6MjA1NjUwNjQwNX0.UQFz5ZoGivjGzy2-XADgRKqqH3Cm2bM5jSqPFHzjzaQ';
+// Valores vêm do .env (VITE_*). A chave anon é pública por design; quem protege os dados é o RLS.
+export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  throw new Error(
+    'Configuração ausente: defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no .env (ou nas variáveis de ambiente da hospedagem).'
+  );
+}
 export const SUPABASE_SCHEMA = 'machado_construtora';
 export const SUPABASE_BUCKET = 'machado_construtora';
 
@@ -15,9 +22,10 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 });
 
 /**
- * Cliente padrão para operações de Storage (os buckets ficam no schema `storage`)
+ * Cliente para operações de Storage (os buckets ficam no schema `storage`).
+ * Reaproveita o mesmo cliente para compartilhar a sessão do admin (JWT) nas operações protegidas.
  */
-export const supabaseStorage = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabaseStorage = supabase;
 
 /**
  * Comprime e redimensiona uma imagem no navegador antes do upload
@@ -120,7 +128,7 @@ export async function uploadImageToBucket(
     .from(SUPABASE_BUCKET)
     .upload(uniqueName, processedFile, {
       cacheControl: '31536000', // 1 ano de cache CDN
-      upsert: true,
+      upsert: false,
       contentType: processedFile.type || 'image/webp',
     });
 

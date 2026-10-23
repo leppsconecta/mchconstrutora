@@ -157,29 +157,14 @@ export default function TrabalheConoscoPage() {
         updated_at: new Date().toISOString()
       };
 
-      // 1. Sincronizar com o banco de dados Supabase (tabela machado_construtora.curriculos)
-      try {
-        const { error: insertErr } = await supabase
-          .from('curriculos')
-          .insert(newCandidateRecord);
-        if (insertErr) {
-          console.warn('Aviso no salvamento remoto Supabase:', insertErr);
-        }
-      } catch (dbErr) {
-        console.warn('Registro sincronizado localmente:', dbErr);
-      }
-
-      // 2. Sincronizar com localStorage para visualização instantânea no Dashboard
-      try {
-        const storedKey = 'mch_curriculos_list';
-        const currentStored = localStorage.getItem(storedKey);
-        const list = currentStored ? JSON.parse(currentStored) : [];
-        list.unshift(newCandidateRecord);
-        localStorage.setItem(storedKey, JSON.stringify(list));
-        // Disparar evento para que abas do dashboard abertas atualizem em tempo real
-        window.dispatchEvent(new Event('storage'));
-      } catch (storageErr) {
-        console.error('Erro no armazenamento local:', storageErr);
+      // Grava no banco (machado_construtora.curriculos). Se falhar, avisa o candidato em vez de fingir sucesso.
+      const { error: insertErr } = await supabase
+        .from('curriculos')
+        .insert(newCandidateRecord);
+      if (insertErr) {
+        console.error('Falha ao salvar currículo:', insertErr);
+        setErrorMessage('Não foi possível enviar seu currículo agora. Tente novamente em instantes.');
+        return;
       }
 
       setSubmitted(true);

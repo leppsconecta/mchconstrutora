@@ -40,7 +40,7 @@ export default function ConstrutoraPage() {
   const { t } = useLanguage();
   const { siteConfig } = useSiteConfig();
 
-  const heroMediaUrl = siteConfig.hero_construtora_media_url || 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4';
+  const heroMediaUrl = siteConfig.hero_construtora_media_url || 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/machado_construtora/site/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4';
   const isVideo = siteConfig.hero_construtora_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
 
   const steps = [
