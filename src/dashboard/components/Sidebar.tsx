@@ -8,7 +8,8 @@ import {
   Wallet, 
   GraduationCap, 
   Users,
-  Globe
+  Globe,
+  Mail
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -31,6 +32,11 @@ export const navigationItems = [
     name: 'CRM | Leads',
     path: '/admin/crm-leads',
     icon: Users2,
+  },
+  {
+    name: 'Contato',
+    path: '/admin/contato',
+    icon: Mail,
   },
   {
     name: 'Arquivos',

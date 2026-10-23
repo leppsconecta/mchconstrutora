@@ -31,6 +31,7 @@ import CrmLeadsModule from './dashboard/modules/CrmLeadsModule';
 import ArquivosModule from './dashboard/modules/ArquivosModule';
 import FinanceiroModule from './dashboard/modules/FinanceiroModule';
 import CurriculosModule from './dashboard/modules/CurriculosModule';
+import ContatoModule from './dashboard/modules/ContatoModule';
 import FuncionariosModule from './dashboard/modules/FuncionariosModule';
 import SiteModule from './dashboard/modules/SiteModule';
 import TrabalheConoscoPage from './app/trabalhe-conosco/page';
@@ -178,6 +179,7 @@ export default function App() {
                   <Route path="projetos" element={<ProjetosModule />} />
                   <Route path="clientes" element={<ClientesModule />} />
                   <Route path="crm-leads" element={<CrmLeadsModule />} />
+                  <Route path="contato" element={<ContatoModule />} />
                   <Route path="arquivos" element={<ArquivosModule />} />
                   <Route path="financeiro" element={<FinanceiroModule />} />
                   <Route path="curriculos" element={<CurriculosModule />} />

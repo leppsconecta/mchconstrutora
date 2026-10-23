@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin, Briefcase, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin, Briefcase, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
 import { getBreadcrumbSchema, getFaqSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
+import { supabase } from '../../lib/supabase';
 
 // Ícone do TikTok
 const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
@@ -44,6 +45,8 @@ export default function ContatoPage() {
   const { t } = useLanguage();
   const { siteConfig } = useSiteConfig();
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     nome: '',
     empresa: '',
@@ -53,9 +56,66 @@ export default function ContatoPage() {
     mensagem: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    const newContact = {
+      id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'contato-' + Date.now(),
+      nome: formData.nome.trim(),
+      empresa: formData.empresa.trim() || null,
+      email: formData.email.trim(),
+      telefone: formData.telefone.trim(),
+      assunto: formData.assunto || 'Construção Civil / Incorporação',
+      mensagem: formData.mensagem.trim(),
+      status: 'Novo',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    try {
+      const { error } = await supabase.from('contatos').insert([
+        {
+          nome: newContact.nome,
+          empresa: newContact.empresa,
+          email: newContact.email,
+          telefone: newContact.telefone,
+          assunto: newContact.assunto,
+          mensagem: newContact.mensagem,
+          status: 'Novo'
+        }
+      ]);
+
+      if (error) {
+        console.warn('Aviso ao registrar contato no Supabase:', error);
+      }
+
+      // Salva no storage local como garantia imediata
+      try {
+        const stored = localStorage.getItem('mch_contatos_list');
+        const list = stored ? JSON.parse(stored) : [];
+        localStorage.setItem('mch_contatos_list', JSON.stringify([newContact, ...list]));
+        window.dispatchEvent(new Event('storage'));
+      } catch (err) {
+        console.error(err);
+      }
+
+      setSubmitted(true);
+      setFormData({
+        nome: '',
+        empresa: '',
+        email: '',
+        telefone: '',
+        assunto: t.contato.subjectOptions[0] || 'Construção Civil / Incorporação',
+        mensagem: ''
+      });
+    } catch (err) {
+      console.error('Erro no envio do formulário:', err);
+      setErrorMessage('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente ou fale conosco via WhatsApp.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -354,12 +414,29 @@ export default function ContatoPage() {
                       />
                     </div>
 
+                    {errorMessage && (
+                      <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full py-3.5 rounded-md text-sm font-semibold uppercase tracking-wider text-white bg-[#1B2639] hover:bg-[#25344d] transition-all flex items-center justify-center gap-2 shadow"
+                      disabled={isSubmitting}
+                      className="w-full py-3.5 rounded-md text-sm font-semibold uppercase tracking-wider text-white bg-[#1B2639] hover:bg-[#25344d] transition-all flex items-center justify-center gap-2 shadow disabled:opacity-60 cursor-pointer"
                     >
-                      <span>{t.contato.submitButton}</span>
-                      <Send className="w-4 h-4" />
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Enviando mensagem...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>{t.contato.submitButton}</span>
+                          <Send className="w-4 h-4" />
+                        </>
+                      )}
                     </button>
                   </form>
                 )}
