@@ -73,11 +73,12 @@
 - [x] Configuração de `noindex, nofollow` em todas as rotas restritas/privadas (/admin/*, /admin/login, formulários internos)
 - [x] Validação de URLs limpas, sem acentos ou parâmetros desnecessários
 
-### [ ] BLOCO 3: ROBOTS, SITEMAP E INDEXAÇÃO
-- [ ] Criação de `public/robots.txt` permitindo rotas públicas e bloqueando estritamente `/admin`, `/login`, `/dashboard`, etc.
-- [ ] Permissão explícita para bots de IA (GPTBot, ClaudeBot, PerplexityBot, Google-Extended)
-- [ ] Geração automatizada/estática de `public/sitemap.xml` contemplando todas as páginas públicas institucionais
-- [ ] Adição de header / meta tag `noindex, nofollow` em todas as rotas restritas e de autenticação
+### [x] BLOCO 3: ROBOTS, SITEMAP E INDEXAÇÃO
+- [x] Criação de `public/robots.txt` permitindo rotas públicas e bloqueando estritamente `/admin`, `/login`, `/dashboard`, etc.
+- [x] Permissão explícita para bots de IA (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended)
+- [x] Geração de `public/sitemap.xml` contemplando todas as páginas públicas institucionais
+- [x] Adição de meta tag `noindex, nofollow` em todas as rotas restritas e de autenticação
+- [x] Criação de página 404 personalizada (`NotFoundPage`) com navegação amigável e noindex
 
 ### [ ] BLOCO 4: DADOS ESTRUTURADOS (JSON-LD SCHEMA.ORG)
 - [ ] Esquema `LocalBusiness` / `GeneralContractor` (Construção Civil) com NAP (Name, Address, Phone), horário, geo-coordenadas e sameAs

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- Página Inicial / Home -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Construção Civil e Incorporação (Casas de Alto Padrão Turnkey) -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/construtora</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Infraestrutura para Telecomunicações (Fundações e Bases de Torres) -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/telecomunicacoes</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Reformas Prediais e Corporativas (B2B) -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/reformas</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Portfólio de Obras e Empreendimentos Concluídos -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/portfolio</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Quem Somos / Institucional e Estrutura Técnica -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/quem-somos</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Contato / Solicitação de Proposta Comercial -->
+  <url>
+    <loc>https://www.construcoesmachado.com.br/contato</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+</urlset>

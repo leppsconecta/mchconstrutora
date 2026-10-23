@@ -1,0 +1,45 @@
+# ==============================================================================
+# ROBOTS.TXT - MACHADO CONSTRUTORA E INCORPORADORA
+# Dominio Oficial: https://www.construcoesmachado.com.br
+# ==============================================================================
+
+# Rastejadores Gerais (Google, Bing, Yahoo, etc.)
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /login
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /trabalhe-conosco
+Disallow: /cadastro-funcionario
+Disallow: /trabalhe-conosco-completo
+
+# Rastejadores de Inteligência Artificial (GEO - Generative Engine Optimization)
+# Permissão total para indexação por LLMs (ChatGPT, Gemini, Perplexity, Claude, Apple)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap Oficial
+Sitemap: https://www.construcoesmachado.com.br/sitemap.xml

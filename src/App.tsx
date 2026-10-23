@@ -16,6 +16,7 @@ import ImobiliariaPage from './app/imobiliaria/page';
 import PortfolioPage from './app/portfolio/page';
 import QuemSomosPage from './app/quem-somos/page';
 import ContatoPage from './app/contato/page';
+import NotFoundPage from './app/not-found/page';
 
 // Dashboard / Admin Imports
 import { AuthProvider } from './dashboard/context/AuthContext';
@@ -154,6 +155,7 @@ export default function App() {
                 <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
                 <Route path="/obras" element={<Navigate to="/construtora" replace />} />
                 <Route path="/projetos" element={<Navigate to="/portfolio" replace />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
 
               {/* Página Pública de Captação de Currículos / Trabalhe Conosco */}
@@ -187,11 +189,6 @@ export default function App() {
                 <Route path="/dashboard" element={<Navigate to="/admin/projetos" replace />} />
                 <Route path="/dashboard/*" element={<Navigate to="/admin/projetos" replace />} />
               </Route>
-
-              {/* =========================================
-                  FALLBACK
-                 ========================================= */}
-              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </SiteConfigProvider>
