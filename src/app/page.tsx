@@ -3,6 +3,7 @@ import { motion, useSpring } from 'framer-motion';
 import { HardHat, Radio, Building2, ArrowRight } from 'lucide-react';
 import { Link } from '../components/Link';
 import { Marquee } from '../components/Marquee';
+import { SeoHead } from '../components/SeoHead';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSiteConfig } from '../contexts/SiteConfigContext';
 
@@ -35,6 +36,12 @@ export default function HomePage() {
 
   return (
     <div className="bg-white text-[#1B2639]">
+      <SeoHead
+        title="Machado Construtora e Incorporadora | Obras e Reformas SP"
+        description="Construtora e incorporadora em Cajamar e SP. Obras civis turnkey, infraestrutura de telecom e reformas prediais B2B. Solicite sua proposta agora!"
+        canonicalPath="/"
+        image="/casa-alto-padrao.jpg"
+      />
       {/* =========================================================================
           2. HERO SECTION COM FOTOGRAFIA DA BASE DE TORRE
           ========================================================================= */}

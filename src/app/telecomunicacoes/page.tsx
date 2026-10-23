@@ -1,6 +1,7 @@
 import React from 'react';
 import { Signal, Zap, ShieldCheck, ArrowRight, HardHat, Hammer, Users } from 'lucide-react';
 import { Link } from '../../components/Link';
+import { SeoHead } from '../../components/SeoHead';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function TelecomunicacoesPage() {
@@ -8,6 +9,12 @@ export default function TelecomunicacoesPage() {
 
   return (
     <div className="min-h-screen bg-[#1B2639] text-white selection:bg-cyan-500 selection:text-[#1B2639]">
+      <SeoHead
+        title="Infraestrutura para Telecomunicações e Torres em SP"
+        description="Fundações profundas, lajes maciças e infraestrutura civil para torres e antenas de telecomunicações no Brasil. Fale com nossa equipe de engenharia!"
+        canonicalPath="/telecomunicacoes"
+        image="/imagem_torre.png"
+      />
       {/* Split Hero Section */}
       <section className="relative flex flex-col lg:flex-row overflow-hidden bg-[#1B2639] lg:h-[500px] border-b border-white/10">
 
