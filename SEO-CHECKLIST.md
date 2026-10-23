@@ -57,11 +57,11 @@
 - [x] Criação do arquivo `SEO-CHECKLIST.md` na raiz
 - [x] Apresentação do plano detalhado e aguardar confirmação do usuário
 
-### [ ] BLOCO 1: H1 E ESTRUTURA DE TÍTULOS
-- [ ] Auditar e garantir exatamente UM `<h1>` semântico por página pública
-- [ ] Incorporar palavra-chave principal e localização nos H1s (ex: Construtora e Incorporadora em Cajamar e Grande SP)
-- [ ] Organizar hierarquia rígida: H1 > H2 > H3 sem pular níveis e sem tags de heading aplicadas puramente para fins estéticos
-- [ ] Corrigir eventuais H1s genéricos ou ausentes nas páginas de serviços
+### [x] BLOCO 1: H1 E ESTRUTURA DE TÍTULOS
+- [x] Auditar e garantir exatamente UM `<h1>` semântico por página pública
+- [x] Incorporar palavra-chave principal e localização nos H1s (ex: Construtora e Incorporadora em Cajamar e Grande SP)
+- [x] Organizar hierarquia rígida: H1 > H2 > H3 sem pular níveis e sem tags de heading aplicadas puramente para fins estéticos
+- [x] Corrigir eventuais H1s genéricos ou ausentes nas páginas de serviços
 
 ### [ ] BLOCO 2: TAGS DE CADA PÁGINA (METADATA & HEAD)
 - [ ] Implementar componente dinâmico de Head/SEO para SPAs (Title, Meta Description, Canonical, OG, Twitter)
