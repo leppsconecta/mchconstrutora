@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin, Briefcase, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
-import { getBreadcrumbSchema, getFaqSchema } from '../../lib/schemas';
+import { getBreadcrumbSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
 import { supabase } from '../../lib/supabase';
@@ -13,33 +13,6 @@ const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" })
     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .59.05.86.15V9.4a6.33 6.33 0 0 0-.86-.06A6.34 6.34 0 0 0 3.1 15.68a6.34 6.34 0 0 0 10.82 4.48c1.37-1.37 2.08-3.23 2.08-5.16V8.67a8.21 8.21 0 0 0 4.59 1.4V6.69z"/>
   </svg>
 );
-
-const FAQS = [
-  {
-    question: 'Qual é a região atendida pela Machado Construtora?',
-    answer: 'Nossa sede fica em Cajamar - SP e atendemos com equipe própria as cidades de Cajamar (Polvilho e Jordanésia), Santana de Parnaíba (Alphaville), Barueri, Jundiaí e toda a Região Metropolitana de São Paulo.'
-  },
-  {
-    question: 'A Machado constrói casas no modelo chave na mão (turnkey)?',
-    answer: 'Sim. Gerenciamos e executamos a obra integralmente: desde o estudo do terreno, fundações e alvenaria até as instalações elétricas, hidráulicas e acabamentos finos, com ART e registro no CREA-SP.'
-  },
-  {
-    question: 'A empresa executa obras civis para telecomunicações e torres?',
-    answer: 'Sim, somos referência na implantação civil pesada para telecomunicações no Brasil, realizando fundações profundas Greenfield, adequações Rooftop e reforços estruturais com conformidade às normas NR-18 e NR-35.'
-  },
-  {
-    question: 'Como funciona o atendimento de reformas prediais e corporativas (B2B)?',
-    answer: 'Atendemos empresas, condomínios e galpões industriais com cronograma fechado. Realizamos vistoria técnica prévia e executamos serviços civis, hidráulicos e elétricos de alta demanda sem interromper as operações do cliente.'
-  },
-  {
-    question: 'A mão de obra é própria ou terceirizada?',
-    answer: 'Trabalhamos com equipe própria (pedreiros, carpinteiros, armadores e eletricistas) supervisionada diretamente por engenheiros civis residentes, garantindo padrão executivo e segurança jurídica.'
-  },
-  {
-    question: 'Qual é o prazo típico para retorno de propostas e orçamentos?',
-    answer: 'Nosso departamento de engenharia analisa as especificações técnicas e responde solicitações de proposta em até 24 a 48 horas úteis, podendo também realizar visita técnica presencial ao local.'
-  }
-];
 
 export default function ContatoPage() {
   const { t } = useLanguage();
@@ -129,8 +102,7 @@ export default function ContatoPage() {
           getBreadcrumbSchema([
             { name: 'Início', path: '/' },
             { name: 'Contato', path: '/contato' }
-          ]),
-          getFaqSchema(FAQS)
+          ])
         ]}
       />
       {/* Conteúdo de Contato Clean */}
@@ -442,41 +414,6 @@ export default function ContatoPage() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          FAQ TÉCNICA E RESPOSTAS DIRETAS (GEO / AEO)
-          ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-slate-50 border-t border-slate-200/60">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-            <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block">
-              Dúvidas Técnicas Frequentes
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1B2639] tracking-tight">
-              Perguntas e Respostas
-            </h2>
-            <p className="text-sm text-slate-600">
-              Esclarecimentos sobre nossa atuação em Cajamar, Grande São Paulo, modelos de contratação e prazos de execução.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {FAQS.map((faq, idx) => (
-              <div 
-                key={idx} 
-                className="p-6 rounded-xl bg-white border border-slate-200/80 shadow-sm space-y-2 hover:border-slate-300 transition-colors"
-              >
-                <h3 className="text-sm sm:text-base font-bold text-[#1B2639] leading-snug">
-                  {faq.question}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                  {faq.answer}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>

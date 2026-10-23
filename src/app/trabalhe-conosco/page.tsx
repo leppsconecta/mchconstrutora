@@ -203,7 +203,7 @@ export default function TrabalheConoscoPage() {
       
       {/* Top Header com Botão de Voltar */}
       <header className="border-b border-white/10 bg-[#0F131A]/90 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link 
             href="/contato" 
             className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
@@ -222,15 +222,15 @@ export default function TrabalheConoscoPage() {
         </div>
       </header>
 
-      {/* Container Principal do Formulário (Sem título da página, conforme solicitado) */}
-      <div className="max-w-xl mx-auto px-6 pt-10 sm:pt-14">
+      {/* Container Principal do Formulário - Largura Completa da Página */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
         <h1 className="sr-only">
           Envio de Currículo e Trabalhe Conosco | Machado Construtora e Incorporadora
         </h1>
 
         {/* FEEDBACK DE SUCESSO APÓS ENVIO */}
         {submitted ? (
-          <div className="bg-[#121316] border border-white/10 rounded-2xl p-8 sm:p-10 shadow-2xl text-center space-y-6 animate-in fade-in zoom-in-95 duration-400">
+          <div className="bg-[#121316] border border-white/10 rounded-2xl p-8 sm:p-12 shadow-2xl text-center space-y-6 animate-in fade-in zoom-in-95 duration-400 max-w-2xl mx-auto">
             <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -279,249 +279,258 @@ export default function TrabalheConoscoPage() {
             </div>
           </div>
         ) : (
-          /* FORMULÁRIO EXATO CONFORME MODELO DAS IMAGENS */
-          <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* Mensagem de Erro de Validação */}
-            {errorMessage && (
-              <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs sm:text-sm font-medium flex items-center gap-2 animate-in fade-in">
-                <HelpCircle className="w-4 h-4 shrink-0 text-red-400" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            {/* Nome Completo * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Nome Completo *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Seu nome completo"
-                className={INPUT_CLASS}
-              />
-            </div>
-
-            {/* Telefone * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Telefone *
-              </label>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={handlePhoneChange}
-                placeholder="11 9 1234-5678"
-                className={INPUT_CLASS}
-              />
-            </div>
-
-            {/* Sexo * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2.5">
-                Sexo *
-              </label>
-              <div className="flex items-center gap-6">
-                {(['Masculino', 'Feminino'] as const).map((opt) => {
-                  const isChecked = formData.gender === opt;
-                  return (
-                    <label 
-                      key={opt} 
-                      className="flex items-center gap-2.5 cursor-pointer select-none group text-sm text-slate-200"
-                    >
-                      <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
-                        isChecked ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-white/30 group-hover:border-white/50'
-                      }`}>
-                        {isChecked && <span className="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50" />}
-                      </span>
-                      <input
-                        type="radio"
-                        name="gender"
-                        value={opt}
-                        checked={isChecked}
-                        onChange={() => setFormData(prev => ({ ...prev, gender: opt }))}
-                        className="sr-only"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Faixa Etária * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2.5">
-                Faixa Etária *
-              </label>
-              <div className="space-y-3">
-                {FAIXAS_ETARIAS.map((range) => {
-                  const isChecked = formData.ageRange === range;
-                  return (
-                    <label 
-                      key={range} 
-                      className="flex items-center gap-2.5 cursor-pointer select-none group text-sm text-slate-200"
-                    >
-                      <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all shrink-0 ${
-                        isChecked ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-white/30 group-hover:border-white/50'
-                      }`}>
-                        {isChecked && <span className="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50" />}
-                      </span>
-                      <input
-                        type="radio"
-                        name="ageRange"
-                        value={range}
-                        checked={isChecked}
-                        onChange={() => setFormData(prev => ({ ...prev, ageRange: range }))}
-                        className="sr-only"
-                      />
-                      <span>{range}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Cidade * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Cidade *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.city}
-                onChange={e => setFormData({ ...formData, city: e.target.value })}
-                placeholder="Sua cidade"
-                className={INPUT_CLASS}
-              />
-            </div>
-
-            {/* Bairro * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Bairro *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.neighborhood}
-                onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
-                placeholder="Seu bairro"
-                className={INPUT_CLASS}
-              />
-            </div>
-
-            {/* Cargo de Interesse * */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Cargo de Interesse *
-              </label>
-              <div className="relative">
-                <select
-                  required
-                  value={formData.role}
-                  onChange={e => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full h-11 bg-[#121316] border border-white/15 rounded-lg px-4 pr-10 text-sm text-white focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all appearance-none cursor-pointer"
-                >
-                  <option value="" disabled className="bg-[#121316] text-slate-500">
-                    Selecione o cargo
-                  </option>
-                  {CARGOS_OPCOES.map((cargo) => (
-                    <option key={cargo} value={cargo} className="bg-[#121316] text-white">
-                      {cargo}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                  <ChevronDown className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-
-            {/* Mensagem Adicional / Observações (sem asterisco, opcional) */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Mensagem Adicional / Observações
-              </label>
-              <textarea
-                value={formData.observations}
-                onChange={e => setFormData({ ...formData, observations: e.target.value })}
-                rows={4}
-                placeholder="Conte-nos um pouco sobre você, sobre suas experiências na área ou observações adicionais..."
-                className="w-full bg-transparent border border-white/15 rounded-lg p-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all resize-y"
-              />
-            </div>
-
-            {/* Anexar Currículo (máx. 1 arquivo, 5MB) */}
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Anexar Currículo (máx. 1 arquivo, 5MB)
-              </label>
+          /* CARD DO FORMULÁRIO NA LARGURA DA PÁGINA */
+          <div className="bg-[#121316] border border-white/10 rounded-2xl p-6 sm:p-10 lg:p-12 shadow-2xl">
+            <form onSubmit={handleSubmit} className="space-y-6">
               
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                accept=".pdf,.doc,.docx"
-                className="hidden"
-                id="resume-file-input"
-              />
+              {/* Mensagem de Erro de Validação */}
+              {errorMessage && (
+                <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs sm:text-sm font-medium flex items-center gap-2 animate-in fade-in">
+                  <HelpCircle className="w-4 h-4 shrink-0 text-red-400" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
 
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-11 bg-transparent border border-white/15 rounded-lg px-3 flex items-center justify-between cursor-pointer hover:border-white/30 transition-colors"
-              >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <span className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-xs text-white font-medium shrink-0">
-                    Escolher arquivo
-                  </span>
-                  <span className="text-xs text-slate-400 truncate">
-                    {resumeFile 
-                      ? `${resumeFile.name} (${(resumeFile.size / (1024 * 1024)).toFixed(1)} MB)` 
-                      : 'Nenhum arquivo escolhido'}
-                  </span>
+              {/* Grid Responsivo de Campos do Formulário */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Nome Completo * */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Nome Completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Seu nome completo"
+                    className={INPUT_CLASS}
+                  />
                 </div>
 
-                {resumeFile && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveFile();
-                    }}
-                    className="p-1 text-slate-400 hover:text-red-400 transition-colors"
-                    title="Remover arquivo"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
+                {/* Telefone * */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Telefone *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={handlePhoneChange}
+                    placeholder="11 9 1234-5678"
+                    className={INPUT_CLASS}
+                  />
+                </div>
 
-            {/* Botão Enviar Currículo em Azul Oficial do Projeto */}
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full h-12 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 active:scale-[0.99] disabled:opacity-50"
-              >
-                {submitting ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Enviando Currículo...</span>
+                {/* Cidade * */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Cidade *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.city}
+                    onChange={e => setFormData({ ...formData, city: e.target.value })}
+                    placeholder="Sua cidade"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+
+                {/* Bairro * */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Bairro *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.neighborhood}
+                    onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
+                    placeholder="Seu bairro"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+
+                {/* Cargo de Interesse * */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Cargo de Interesse *
+                  </label>
+                  <div className="relative">
+                    <select
+                      required
+                      value={formData.role}
+                      onChange={e => setFormData({ ...formData, role: e.target.value })}
+                      className="w-full h-11 bg-[#121316] border border-white/15 rounded-lg px-4 pr-10 text-sm text-white focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="" disabled className="bg-[#121316] text-slate-500">
+                        Selecione o cargo
+                      </option>
+                      {CARGOS_OPCOES.map((cargo) => (
+                        <option key={cargo} value={cargo} className="bg-[#121316] text-white">
+                          {cargo}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
                   </div>
-                ) : (
-                  <span>Enviar Currículo</span>
-                )}
-              </button>
-            </div>
+                </div>
 
-          </form>
+                {/* Sexo * */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-200 mb-2.5">
+                    Sexo *
+                  </label>
+                  <div className="flex items-center gap-6 h-11">
+                    {(['Masculino', 'Feminino'] as const).map((opt) => {
+                      const isChecked = formData.gender === opt;
+                      return (
+                        <label 
+                          key={opt} 
+                          className="flex items-center gap-2.5 cursor-pointer select-none group text-sm text-slate-200"
+                        >
+                          <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                            isChecked ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-white/30 group-hover:border-white/50'
+                          }`}>
+                            {isChecked && <span className="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50" />}
+                          </span>
+                          <input
+                            type="radio"
+                            name="gender"
+                            value={opt}
+                            checked={isChecked}
+                            onChange={() => setFormData(prev => ({ ...prev, gender: opt }))}
+                            className="sr-only"
+                          />
+                          <span>{opt}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Faixa Etária * */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-200 mb-2.5">
+                    Faixa Etária *
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    {FAIXAS_ETARIAS.map((range) => {
+                      const isChecked = formData.ageRange === range;
+                      return (
+                        <label 
+                          key={range} 
+                          className={`flex items-center gap-2.5 cursor-pointer select-none group text-xs sm:text-sm text-slate-200 p-3 rounded-lg border transition-all ${
+                            isChecked ? 'bg-sky-500/10 border-sky-400/50 text-white' : 'bg-white/[0.02] border-white/10 hover:border-white/25'
+                          }`}
+                        >
+                          <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all shrink-0 ${
+                            isChecked ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-white/30 group-hover:border-white/50'
+                          }`}>
+                            {isChecked && <span className="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50" />}
+                          </span>
+                          <input
+                            type="radio"
+                            name="ageRange"
+                            value={range}
+                            checked={isChecked}
+                            onChange={() => setFormData(prev => ({ ...prev, ageRange: range }))}
+                            className="sr-only"
+                          />
+                          <span className="truncate">{range}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Anexar Currículo (máx. 1 arquivo, 5MB) */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Anexar Currículo (máx. 1 arquivo, 5MB)
+                  </label>
+                  
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    accept=".pdf,.doc,.docx"
+                    className="hidden"
+                    id="resume-file-input"
+                  />
+
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full h-12 bg-transparent border border-white/15 rounded-lg px-4 flex items-center justify-between cursor-pointer hover:border-white/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <span className="px-3 py-1.5 rounded bg-white/10 hover:bg-white/15 text-xs text-white font-medium shrink-0">
+                        Escolher arquivo
+                      </span>
+                      <span className="text-xs text-slate-400 truncate">
+                        {resumeFile 
+                          ? `${resumeFile.name} (${(resumeFile.size / (1024 * 1024)).toFixed(1)} MB)` 
+                          : 'Nenhum arquivo escolhido'}
+                      </span>
+                    </div>
+
+                    {resumeFile && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFile();
+                        }}
+                        className="p-1 text-slate-400 hover:text-red-400 transition-colors"
+                        title="Remover arquivo"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mensagem Adicional / Observações */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
+                    Mensagem Adicional / Observações
+                  </label>
+                  <textarea
+                    value={formData.observations}
+                    onChange={e => setFormData({ ...formData, observations: e.target.value })}
+                    rows={4}
+                    placeholder="Conte-nos um pouco sobre você, sobre suas experiências na área ou observações adicionais..."
+                    className="w-full bg-transparent border border-white/15 rounded-lg p-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all resize-y"
+                  />
+                </div>
+
+                {/* Botão Enviar Currículo */}
+                <div className="md:col-span-2 pt-2">
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full h-12 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 active:scale-[0.99] disabled:opacity-50"
+                  >
+                    {submitting ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Enviando Currículo...</span>
+                      </div>
+                    ) : (
+                      <span>Enviar Currículo</span>
+                    )}
+                  </button>
+                </div>
+
+              </div>
+
+            </form>
+          </div>
         )}
 
       </div>

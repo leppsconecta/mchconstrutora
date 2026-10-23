@@ -8,7 +8,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@machadoconstrutora.com.br').toLowerCase().trim();
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@construcoesmachado.com.br').toLowerCase().trim();
 
 const url = process.env.VITE_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -27,8 +27,8 @@ if (missing.length) {
   process.exit(1);
 }
 
-if (newPassword.length < 12) {
-  console.error('❌ A senha precisa ter pelo menos 12 caracteres (política de segurança).');
+if (newPassword.length < 8) {
+  console.error('❌ A senha precisa ter pelo menos 8 caracteres.');
   process.exit(1);
 }
 
@@ -52,17 +52,18 @@ if (!existing) {
   process.exit(1);
 }
 
-console.log(`Atualizando senha do usuário (ID: ${existing.id})...`);
+console.log(`Atualizando senha do usuário ${ADMIN_EMAIL} (ID: ${existing.id})...`);
 
 const { error: updErr } = await admin.auth.admin.updateUserById(existing.id, {
   password: newPassword,
   user_metadata: {
     ...existing.user_metadata,
-    must_change_password: false, // permite login imediato com a nova senha
+    name: process.env.ADMIN_NAME || 'adm',
+    must_change_password: false,
   },
   app_metadata: {
     ...existing.app_metadata,
-    machado_role: 'admin', // garante o papel de administrador
+    machado_role: 'admin',
   },
 });
 
@@ -72,5 +73,4 @@ if (updErr) {
 }
 
 console.log(`\n✅ Senha de "${ADMIN_EMAIL}" redefinida com sucesso!`);
-console.log('Você já pode fazer login no painel (/admin/login) com a nova senha.');
-console.log('\n🔒 RECOMENDAÇÃO: Remova ou limpe a senha do seu arquivo .env para manter a segurança.');
+console.log('Você já pode fazer login no painel (/admin/login) diretamente com a nova senha.');

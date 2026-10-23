@@ -230,6 +230,7 @@ export const SiteModule: React.FC = () => {
     };
   }>({});
   const [savingCard, setSavingCard] = useState<string | null>(null);
+  const isSavingRef = useRef(false);
 
   const [savingContacts, setSavingContacts] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
@@ -415,11 +416,17 @@ export const SiteModule: React.FC = () => {
     e.target.value = '';
   };
 
-  // Salvar mídia individualmente por card
+  // Salvar mídia individualmente por card com prevenção de clique duplo e organização em pastas
   const handleSaveCardMedia = async (
-    fieldKey: 'hero_construtora' | 'construtora_secao2' | 'hero_reformas' | 'reformas_secao2'
+    fieldKey: 'hero_home' | 'hero_construtora' | 'construtora_secao2' | 'hero_reformas' | 'reformas_secao2'
   ) => {
+    // Trava síncrona anti-double-click
+    if (isSavingRef.current || savingCard !== null) {
+      return;
+    }
+
     try {
+      isSavingRef.current = true;
       setSavingCard(fieldKey);
       const staged = stagedMedia[fieldKey];
 
@@ -428,14 +435,33 @@ export const SiteModule: React.FC = () => {
       let previousUrl = '';
       let payload: Partial<SiteConfig> = {};
 
+      // Roteamento para as pastas organizadas no bucket machado_construtora:
+      // - Home -> home/
+      // - Construtora -> construtora/
+      // - Reformas -> reformas/
+      let targetFolder = 'site';
+      if (fieldKey === 'hero_home') {
+        targetFolder = 'home';
+      } else if (fieldKey === 'hero_construtora' || fieldKey === 'construtora_secao2') {
+        targetFolder = 'construtora';
+      } else if (fieldKey === 'hero_reformas' || fieldKey === 'reformas_secao2') {
+        targetFolder = 'reformas';
+      }
+
       if (staged) {
-        // Envia o arquivo selecionado para o Supabase Storage (comprimindo imagens inteligentes)
+        // Envia o arquivo selecionado para a respectiva pasta do bucket machado_construtora
         const isVideo = staged.mediaType === 'video';
-        newUrl = await uploadImageToBucket(staged.file, 'site', !isVideo);
+        newUrl = await uploadImageToBucket(staged.file, targetFolder, !isVideo);
         mediaType = staged.mediaType;
       }
 
-      if (fieldKey === 'hero_construtora') {
+      if (fieldKey === 'hero_home') {
+        previousUrl = siteConfig.hero_home_media_url || '';
+        payload = {
+          hero_home_media_url: staged ? newUrl : mediaForm.hero_home_media_url,
+          hero_home_media_type: 'image',
+        };
+      } else if (fieldKey === 'hero_construtora') {
         previousUrl = siteConfig.hero_construtora_media_url || '';
         payload = {
           hero_construtora_media_url: staged ? newUrl : mediaForm.hero_construtora_media_url,
@@ -462,7 +488,7 @@ export const SiteModule: React.FC = () => {
         };
       }
 
-      // Deleta arquivo anterior do bucket se pertencia a ele
+      // Deleta arquivo anterior do bucket se pertencia a ele e foi substituído
       if (staged && previousUrl && previousUrl.includes(SUPABASE_BUCKET) && previousUrl !== newUrl) {
         await deleteImageFromBucket(previousUrl);
       }
@@ -480,6 +506,7 @@ export const SiteModule: React.FC = () => {
       if (staged) {
         setMediaForm(prev => ({
           ...prev,
+          ...(fieldKey === 'hero_home' ? { hero_home_media_url: newUrl, hero_home_media_type: 'image' } : {}),
           ...(fieldKey === 'hero_construtora' ? { hero_construtora_media_url: newUrl } : {}),
           ...(fieldKey === 'construtora_secao2' ? { construtora_secao2_media_url: newUrl } : {}),
           ...(fieldKey === 'hero_reformas' ? { hero_reformas_media_url: newUrl } : {}),
@@ -487,11 +514,12 @@ export const SiteModule: React.FC = () => {
         }));
       }
 
-      showToast('Mídia salva e publicada no site com sucesso!');
+      showToast(`Mídia salva na pasta "${targetFolder}" e publicada com sucesso!`);
     } catch (err: any) {
       console.error(err);
       showToast('Erro ao salvar mídia: ' + (err?.message || 'Tente novamente.'));
     } finally {
+      isSavingRef.current = false;
       setSavingCard(null);
     }
   };
@@ -666,37 +694,44 @@ export const SiteModule: React.FC = () => {
     }));
   };
 
-  // Handle Image Upload for Portfolio Item
+  // Handle Image Upload for Portfolio Item com proteção anti-double click
   const handleUploadImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (uploadingImage || isSavingRef.current) return;
+
     try {
       setUploadingImage(true);
-      showToast('Enviando imagem para o bucket machado_construtora...');
+      isSavingRef.current = true;
+      showToast('Enviando imagem para a pasta portfolio...');
 
-      // Upload direto para o bucket `machado_construtora`
+      // Upload direto ÚNICO para o bucket machado_construtora na pasta `portfolio`
       const publicUrl = await uploadImageToBucket(file, 'portfolio');
 
-      // Se já estiver editando um item salvo no banco, sincroniza via context
+      const newGallery = portfolioFormData.gallery ? [...portfolioFormData.gallery, publicUrl] : [publicUrl];
+      const newCover = portfolioFormData.image || publicUrl;
+
+      // Se já estiver editando um item salvo no banco, sincroniza com a URL pública
       if (editingItem?.id) {
-        await uploadPortfolioImage(editingItem.id, file, !portfolioFormData.image);
+        await updatePortfolioItem(editingItem.id, {
+          gallery: newGallery,
+          image: newCover
+        });
       }
 
-      setPortfolioFormData(prev => {
-        const newGallery = prev.gallery ? [...prev.gallery, publicUrl] : [publicUrl];
-        return {
-          ...prev,
-          image: prev.image || publicUrl,
-          gallery: newGallery
-        };
-      });
+      setPortfolioFormData(prev => ({
+        ...prev,
+        image: newCover,
+        gallery: newGallery
+      }));
 
       showToast('Imagem adicionada com sucesso ao portfólio!');
     } catch (err: any) {
       showToast('Erro no upload da imagem: ' + (err?.message || 'Falha ao enviar.'));
     } finally {
       setUploadingImage(false);
+      isSavingRef.current = false;
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -727,7 +762,7 @@ export const SiteModule: React.FC = () => {
     showToast('Imagem removida do portfólio e do storage.');
   };
 
-  // Save Portfolio Item (Create or Update)
+  // Save Portfolio Item (Create or Update) com trava anti-double click
   const handleSaveItemSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!portfolioFormData.title?.trim()) {
@@ -735,8 +770,11 @@ export const SiteModule: React.FC = () => {
       return;
     }
 
+    if (savingItem || isSavingRef.current) return;
+
     try {
       setSavingItem(true);
+      isSavingRef.current = true;
 
       const payload = {
         title: portfolioFormData.title,
@@ -764,6 +802,7 @@ export const SiteModule: React.FC = () => {
       showToast('Erro ao salvar no portfólio: ' + (err?.message || 'Tente novamente.'));
     } finally {
       setSavingItem(false);
+      isSavingRef.current = false;
     }
   };
 
@@ -1406,81 +1445,100 @@ export const SiteModule: React.FC = () => {
           TAB 4: PÁGINA INICIAL (HOME)
          ==================================================== */}
       {activeTab === 'home' && (
-        <form onSubmit={handleSaveMediaForm} className="space-y-6 animate-in fade-in">
+        <div className="space-y-6 animate-in fade-in">
           <input
             type="file"
             ref={homeFileInputRef}
-            onChange={(e) => handleUploadMediaFile('hero_home', e)}
+            onChange={(e) => handleSelectMediaFile('hero_home', e)}
             accept="image/*"
             className="hidden"
           />
 
-          <div className="flex justify-end bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
+          <div className="max-w-3xl">
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Hero da Página Inicial (Home)</h4>
+                      <p className="text-[11px] text-slate-400">Imagem de destaque principal na abertura do site</p>
+                    </div>
+                  </div>
 
-            <button
-              type="submit"
-              disabled={savingMedia}
-              className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
-            >
-              {savingMedia ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Salvando Home...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Salvar Alterações da Home</span>
-                </>
-              )}
-            </button>
-          </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                    Pasta: home/
+                  </span>
+                </div>
 
-          <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl max-w-3xl">
-            {/* Preview */}
-            <div>
-              <label className="text-xs font-medium text-slate-300 block mb-2">Pré-visualização do Hero</label>
-              <div className="w-full h-64 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
-                <img
-                  src={mediaForm.hero_home_media_url || '/hero-bg.jpg'}
-                  alt="Hero da Home"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {/* Container da Prévia: Mesmo tamanho proporcional dos demais cards */}
+                <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-xl flex items-center justify-center">
+                  {stagedMedia['hero_home'] && (
+                    <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-lg bg-amber-500/90 text-white font-mono text-[10px] font-bold shadow-lg backdrop-blur-sm flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span>Preview não salvo</span>
+                    </div>
+                  )}
+
+                  <img
+                    src={mediaForm.hero_home_media_url || '/hero-bg.jpg'}
+                    alt="Hero da Home Preview"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+
+                {/* Botões de Mídia */}
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => handleResetMedia('hero_home')}
+                    className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/20 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Restaurar Padrão</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => homeFileInputRef.current?.click()}
+                    className="w-full sm:w-auto px-4 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Alterar Imagem da Home</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* BOTÃO SALVAR SEMPRE ABAIXO DO CARD */}
+              <div className="pt-4 border-t border-white/10 mt-4">
+                <button
+                  type="button"
+                  onClick={() => handleSaveCardMedia('hero_home')}
+                  disabled={savingCard !== null}
+                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${
+                    stagedMedia['hero_home']
+                      ? 'bg-sky-500 hover:bg-sky-400 text-white shadow-sky-500/30 animate-pulse'
+                      : 'bg-white/10 hover:bg-white/15 text-slate-200 border border-white/10'
+                  }`}
+                >
+                  {savingCard === 'hero_home' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Salvando e publicando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>{stagedMedia['hero_home'] ? 'Salvar Alterações da Home' : 'Salvar Home'}</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
-
-            {/* Botões de Ação */}
-            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => handleResetMedia('hero_home')}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span>Restaurar Padrão da Home</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={uploadingMediaField === 'hero_home'}
-                onClick={() => homeFileInputRef.current?.click()}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
-              >
-                {uploadingMediaField === 'hero_home' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Comprimindo &amp; Enviando...</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4" />
-                    <span>Substituir Arquivo da Home</span>
-                  </>
-                )}
-              </button>
-            </div>
           </div>
-        </form>
+        </div>
       )}
 
       {/* ====================================================
@@ -1604,8 +1662,8 @@ export const SiteModule: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSaveCardMedia('hero_construtora')}
-                  disabled={savingCard === 'hero_construtora'}
-                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
+                  disabled={savingCard !== null}
+                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${
                     stagedMedia['hero_construtora']
                       ? 'bg-sky-500 hover:bg-sky-400 text-white shadow-sky-500/30 animate-pulse'
                       : 'bg-white/10 hover:bg-white/15 text-slate-200 border border-white/10'
@@ -1725,8 +1783,8 @@ export const SiteModule: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSaveCardMedia('construtora_secao2')}
-                  disabled={savingCard === 'construtora_secao2'}
-                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
+                  disabled={savingCard !== null}
+                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${
                     stagedMedia['construtora_secao2']
                       ? 'bg-sky-500 hover:bg-sky-400 text-white shadow-sky-500/30 animate-pulse'
                       : 'bg-white/10 hover:bg-white/15 text-slate-200 border border-white/10'
@@ -1771,9 +1829,9 @@ export const SiteModule: React.FC = () => {
             className="hidden"
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             {/* CARD SEÇÃO 1: HERO DE REFORMAS */}
-            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between">
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between h-full">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
@@ -1786,8 +1844,8 @@ export const SiteModule: React.FC = () => {
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
-                    Hero (480px)
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                    Seção 1 (Hero)
                   </span>
                 </div>
 
@@ -1822,41 +1880,26 @@ export const SiteModule: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Preview no tamanho exato do site: h-[260px] sm:h-[300px] lg:h-[480px] */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] text-slate-400">Prévia no tamanho exato do site:</span>
-                    {stagedMedia['hero_reformas'] ? (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[10px] font-semibold flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        Preview não salvo
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-mono text-[10px]">
-                        Ativo no site
-                      </span>
-                    )}
-                  </div>
+                {/* Container da Prévia: Mesmo tamanho exato (aspect-[4/3]) */}
+                <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-xl flex items-center justify-center">
+                  {stagedMedia['hero_reformas'] && (
+                    <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-lg bg-amber-500/90 text-white font-mono text-[10px] font-bold shadow-lg backdrop-blur-sm flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span>Preview não salvo</span>
+                    </div>
+                  )}
 
-                  <div className="w-full h-[260px] sm:h-[300px] lg:h-[480px] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-2xl">
-                    {mediaForm.hero_reformas_media_type === 'video' ? (
-                      <video
-                        key={mediaForm.hero_reformas_media_url}
-                        src={mediaForm.hero_reformas_media_url}
-                        controls
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover object-center"
-                      />
-                    ) : (
-                      <img
-                        src={mediaForm.hero_reformas_media_url}
-                        alt="Hero Reformas Preview"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-                  </div>
+                  {mediaForm.hero_reformas_media_type === 'video' ? (
+                    <VideoPreviewPlayer
+                      src={mediaForm.hero_reformas_media_url}
+                    />
+                  ) : (
+                    <img
+                      src={mediaForm.hero_reformas_media_url}
+                      alt="Hero Reformas Preview"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  )}
                 </div>
 
                 {/* Botões Hero */}
@@ -1886,8 +1929,8 @@ export const SiteModule: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSaveCardMedia('hero_reformas')}
-                  disabled={savingCard === 'hero_reformas'}
-                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
+                  disabled={savingCard !== null}
+                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${
                     stagedMedia['hero_reformas']
                       ? 'bg-sky-500 hover:bg-sky-400 text-white shadow-sky-500/30 animate-pulse'
                       : 'bg-white/10 hover:bg-white/15 text-slate-200 border border-white/10'
@@ -1909,7 +1952,7 @@ export const SiteModule: React.FC = () => {
             </div>
 
             {/* CARD SEÇÃO 2: REFORMAS - SERVIÇOS PREDIAIS & MANUTENÇÃO */}
-            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between">
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-7 space-y-5 shadow-xl flex flex-col justify-between h-full">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2.5">
@@ -1923,7 +1966,7 @@ export const SiteModule: React.FC = () => {
                   </div>
 
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Proporção 4:3
+                    Seção 2 (Serviços Prediais)
                   </span>
                 </div>
 
@@ -1958,41 +2001,26 @@ export const SiteModule: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Preview no tamanho exato do site: aspect-[4/3] */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] text-slate-400">Prévia no tamanho exato do site:</span>
-                    {stagedMedia['reformas_secao2'] ? (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[10px] font-semibold flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        Preview não salvo
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-mono text-[10px]">
-                        Ativo no site
-                      </span>
-                    )}
-                  </div>
+                {/* Container da Prévia: Mesmo tamanho exato (aspect-[4/3]) */}
+                <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-xl flex items-center justify-center">
+                  {stagedMedia['reformas_secao2'] && (
+                    <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-lg bg-amber-500/90 text-white font-mono text-[10px] font-bold shadow-lg backdrop-blur-sm flex items-center gap-1.5 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                      <span>Preview não salvo</span>
+                    </div>
+                  )}
 
-                  <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group shadow-2xl">
-                    {mediaForm.reformas_secao2_media_type === 'video' ? (
-                      <video
-                        key={mediaForm.reformas_secao2_media_url}
-                        src={mediaForm.reformas_secao2_media_url}
-                        controls
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover object-center"
-                      />
-                    ) : (
-                      <img
-                        src={mediaForm.reformas_secao2_media_url}
-                        alt="Seção 2 Reformas Preview"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                      />
-                    )}
-                  </div>
+                  {mediaForm.reformas_secao2_media_type === 'video' ? (
+                    <VideoPreviewPlayer
+                      src={mediaForm.reformas_secao2_media_url}
+                    />
+                  ) : (
+                    <img
+                      src={mediaForm.reformas_secao2_media_url}
+                      alt="Seção 2 Reformas Preview"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    />
+                  )}
                 </div>
 
                 {/* Botões 2ª Seção */}
@@ -2022,8 +2050,8 @@ export const SiteModule: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleSaveCardMedia('reformas_secao2')}
-                  disabled={savingCard === 'reformas_secao2'}
-                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 ${
+                  disabled={savingCard !== null}
+                  className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${
                     stagedMedia['reformas_secao2']
                       ? 'bg-sky-500 hover:bg-sky-400 text-white shadow-sky-500/30 animate-pulse'
                       : 'bg-white/10 hover:bg-white/15 text-slate-200 border border-white/10'
@@ -2211,9 +2239,9 @@ export const SiteModule: React.FC = () => {
                     />
                     <button
                       type="button"
-                      disabled={uploadingImage}
+                      disabled={uploadingImage || savingItem}
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer disabled:opacity-50"
+                      className="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                     >
                       {uploadingImage ? (
                         <>
@@ -2313,8 +2341,8 @@ export const SiteModule: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={savingItem}
-                  className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50"
+                  disabled={savingItem || uploadingImage}
+                  className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                 >
                   {savingItem ? (
                     <>
