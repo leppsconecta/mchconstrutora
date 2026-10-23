@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useSpring } from 'framer-motion';
 import { HardHat, Radio, Building2, ArrowRight } from 'lucide-react';
 import { Link } from '../components/Link';
@@ -9,15 +9,25 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useSiteConfig } from '../contexts/SiteConfigContext';
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { siteConfig } = useSiteConfig();
 
   const heroMediaUrl = siteConfig.hero_home_media_url || '/hero-bg.jpg';
   const isVideo = siteConfig.hero_home_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
 
-  // Parallax interativo com mouse suave para a Hero
+  // Parallax interativo com mouse suave para a Hero (desktop)
   const heroRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!heroRef.current) return;
@@ -51,9 +61,9 @@ export default function HomePage() {
         ref={heroRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#1B2639] group"
+        className="relative min-h-[100svh] sm:min-h-screen flex items-end sm:items-center justify-center overflow-hidden bg-[#1B2639] group"
       >
-        {/* MÍDIA DINÂMICA (IMAGEM COM PARALLAX OU VÍDEO EM LOOP) */}
+        {/* MÍDIA DINÂMICA (IMAGEM COM DESLIZAMENTO SUAVE NO MOBILE E PARALLAX NO DESKTOP, OU VÍDEO) */}
         {isVideo ? (
           <div className="absolute inset-0 overflow-hidden">
             <video
@@ -67,38 +77,79 @@ export default function HomePage() {
           </div>
         ) : (
           <motion.div
-            className="absolute inset-0 bg-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] ease-out"
+            className="absolute inset-0 bg-cover scale-115 sm:scale-105 sm:group-hover:scale-110 transition-transform duration-[3s] ease-out"
             style={{
               backgroundImage: `url(${heroMediaUrl})`,
-              backgroundPosition: 'right 30% center',
-              x: parallaxX,
-              y: parallaxY
+              backgroundPosition: 'center center',
+              x: isMobile ? undefined : parallaxX,
+              y: isMobile ? undefined : parallaxY
             }}
+            animate={isMobile ? {
+              x: ['4%', '-4%']
+            } : undefined}
+            transition={isMobile ? {
+              duration: 12,
+              repeat: Infinity,
+              repeatType: 'reverse',
+              ease: 'easeInOut'
+            } : undefined}
           />
         )}
         
-        {/* Overlay escuro em gradiente da esquerda para direita para destacar o texto */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1B2639]/95 via-[#1B2639]/40 to-transparent pointer-events-none" />
+        {/* Overlay escuro em gradiente: no mobile com reforço na base para perfeita legibilidade do texto */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1522]/95 via-[#0d1522]/60 to-transparent sm:bg-gradient-to-r sm:from-[#1B2639]/95 sm:via-[#1B2639]/40 sm:to-transparent pointer-events-none" />
 
-        {/* TEXTO SUBINDO (Sequência Escalada com Slide Up) */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-start mt-20 sm:mt-0">
+        {/* TEXTO (No mobile: posicionado próximo à base da imagem; no desktop: centralizado) */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-start pb-10 sm:pb-0 pt-24 sm:pt-0">
           <div className="max-w-3xl text-left">
-            {/* Frase de impacto */}
+            {/* Frase de impacto - Reduzida e em 2 linhas no mobile */}
             <motion.h1
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]"
+              className="text-2xl xs:text-[26px] sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-snug sm:leading-[1.15]"
             >
-              {t.home.heroTitle}
+              <span className="block sm:inline">
+                {language === 'pt' 
+                  ? 'Construindo valor, transformando espaços' 
+                  : (t.home.heroTitle.includes(',') ? t.home.heroTitle.split(',').slice(0, 2).join(',') : t.home.heroTitle)}
+              </span>{' '}
+              <span className="block sm:inline">
+                {language === 'pt' 
+                  ? 'e entregando resultados.' 
+                  : (t.home.heroTitle.includes(',') ? t.home.heroTitle.split(',').slice(2).join(',') : '')}
+              </span>
             </motion.h1>
 
-            {/* Texto de apoio */}
+            {/* Texto de apoio - Mobile: 2 linhas com botão "Ver mais" levando para /telecomunicacoes */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-3 block sm:hidden"
+            >
+              <p className="text-[13px] text-slate-200 leading-snug font-normal">
+                <span>
+                  {language === 'pt'
+                    ? 'Desenvolvimento de obras civis, reformas prediais e infraestrutura para telecomunicações... '
+                    : 'Infrastructure, civil construction and telecom solutions with engineering excellence... '}
+                </span>
+                <Link
+                  href="/telecomunicacoes"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-sky-500/25 hover:bg-sky-500/40 text-sky-300 hover:text-white border border-sky-400/40 text-[11px] font-bold whitespace-nowrap align-middle shadow-sm shadow-sky-500/20 active:scale-95 transition-all"
+                >
+                  <span>Ver mais</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </p>
+            </motion.div>
+
+            {/* Texto de apoio - Desktop (mantido integralmente) */}
             <motion.p
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-6 text-base sm:text-lg text-slate-200 font-normal leading-relaxed max-w-2xl"
+              className="hidden sm:block mt-6 text-base sm:text-lg text-slate-200 font-normal leading-relaxed max-w-2xl"
             >
               {t.home.heroSubtitle}
             </motion.p>
