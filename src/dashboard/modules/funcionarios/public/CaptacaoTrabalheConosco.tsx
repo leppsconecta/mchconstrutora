@@ -24,6 +24,7 @@ import {
   Download
 } from 'lucide-react';
 import { Funcionario, CargoItem, FormacaoCurso, TipoFormacao, CertificadoAnexo, EstadoCivil } from '../types';
+import { SeoHead } from '../../../../components/SeoHead';
 
 const ESTADO_CIVIL_OPCOES: EstadoCivil[] = [
   'Solteiro(a)',
@@ -539,6 +540,12 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0B111E] text-white py-4 sm:py-10 px-2 sm:px-6 lg:px-8">
+      <SeoHead
+        title="Cadastro de Colaboradores | Machado Construtora"
+        description="Formulário interno de captação e cadastro de colaboradores da Machado Construtora."
+        canonicalPath="/cadastro-funcionario"
+        noindex={true}
+      />
       <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
         
         {/* Logotipo Oficial Machado Centralizado (Sem link de voltar) */}

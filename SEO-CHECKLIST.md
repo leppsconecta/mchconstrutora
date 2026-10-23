@@ -63,14 +63,15 @@
 - [x] Organizar hierarquia rígida: H1 > H2 > H3 sem pular níveis e sem tags de heading aplicadas puramente para fins estéticos
 - [x] Corrigir eventuais H1s genéricos ou ausentes nas páginas de serviços
 
-### [ ] BLOCO 2: TAGS DE CADA PÁGINA (METADATA & HEAD)
-- [ ] Implementar componente dinâmico de Head/SEO para SPAs (Title, Meta Description, Canonical, OG, Twitter)
-- [ ] Titles únicos de até ~60 caracteres por página pública com branding da Machado Construtora
-- [ ] Meta Descriptions únicas de até ~155 caracteres com chamada para ação (CTA)
-- [ ] URL Canônica absoluta em cada página pública
-- [ ] Open Graph (og:title, og:description, og:image 1200x630, og:url, og:locale) e Twitter Cards
-- [ ] Configuração de `<html lang="pt-BR">` garantida
-- [ ] Validação de URLs limpas, sem acentos ou parâmetros desnecessários
+### [x] BLOCO 2: TAGS DE CADA PÁGINA (METADATA & HEAD)
+- [x] Implementar componente dinâmico de Head/SEO para SPAs (Title, Meta Description, Canonical, OG, Twitter)
+- [x] Titles únicos de até ~60 caracteres por página pública com branding da Machado Construtora
+- [x] Meta Descriptions únicas de até ~155 caracteres com chamada para ação (CTA)
+- [x] URL Canônica absoluta em cada página pública (`https://www.construcoesmachado.com.br`)
+- [x] Open Graph (og:title, og:description, og:image 1200x630, og:url, og:locale) e Twitter Cards
+- [x] Configuração de `<html lang="pt-BR">` garantida
+- [x] Configuração de `noindex, nofollow` em todas as rotas restritas/privadas (/admin/*, /admin/login, formulários internos)
+- [x] Validação de URLs limpas, sem acentos ou parâmetros desnecessários
 
 ### [ ] BLOCO 3: ROBOTS, SITEMAP E INDEXAÇÃO
 - [ ] Criação de `public/robots.txt` permitindo rotas públicas e bloqueando estritamente `/admin`, `/login`, `/dashboard`, etc.

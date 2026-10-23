@@ -8,6 +8,7 @@ import {
   X
 } from 'lucide-react';
 import { Link } from '../../components/Link';
+import { SeoHead } from '../../components/SeoHead';
 import { supabase, uploadImageToBucket } from '../../lib/supabase';
 
 const CARGOS_OPCOES = [
@@ -193,6 +194,12 @@ export default function TrabalheConoscoPage() {
 
   return (
     <div className="min-h-screen bg-[#0D1117] text-white selection:bg-sky-500 selection:text-white pb-24">
+      <SeoHead
+        title="Trabalhe Conosco | Cadastro de Currículo - Machado"
+        description="Envie seu currículo para o banco de talentos oficial da Machado Construtora. Oportunidades na construção civil e engenharia em Cajamar e SP."
+        canonicalPath="/trabalhe-conosco"
+        noindex={true}
+      />
       
       {/* Top Header com Botão de Voltar */}
       <header className="border-b border-white/10 bg-[#0F131A]/90 backdrop-blur-md sticky top-0 z-50">

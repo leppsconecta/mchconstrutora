@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { DashboardHeader } from './DashboardHeader';
+import { SeoHead } from '../../components/SeoHead';
 import { ConfirmDeleteProvider } from '../context/ConfirmDeleteContext';
 
 export const DashboardLayout: React.FC = () => {
@@ -10,6 +11,12 @@ export const DashboardLayout: React.FC = () => {
   return (
     <ConfirmDeleteProvider>
       <div className="min-h-screen bg-[#0B111E] text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
+      <SeoHead
+        title="Painel de Gestão | Machado Construtora"
+        description="Sistema interno de gestão integrada."
+        canonicalPath="/admin"
+        noindex={true}
+      />
       {/* Collapsed Sidebar with hover-expansion */}
       <Sidebar
         mobileOpen={mobileMenuOpen}

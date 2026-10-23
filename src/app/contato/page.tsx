@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin, Briefcase, ArrowRight } from 'lucide-react';
 import { Link } from '../../components/Link';
+import { SeoHead } from '../../components/SeoHead';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
 
@@ -31,6 +32,12 @@ export default function ContatoPage() {
 
   return (
     <div className="bg-white text-[#1B2639]">
+      <SeoHead
+        title="Contato e Orçamentos | Machado Construtora Cajamar SP"
+        description="Fale com a engenharia da Machado Construtora em Cajamar e SP. Atendimento para obras civis, telecomunicações e reformas. Solicite seu orçamento hoje!"
+        canonicalPath="/contato"
+        image="/casa-alto-padrao.jpg"
+      />
       {/* Conteúdo de Contato Clean */}
       <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">

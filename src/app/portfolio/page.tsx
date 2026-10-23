@@ -9,6 +9,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SeoHead } from '../../components/SeoHead';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
@@ -226,6 +227,12 @@ export default function PortfolioPage() {
 
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
+      <SeoHead
+        title="Portfólio de Obras e Empreendimentos | Machado Construtora"
+        description="Projetos entregues em construção civil de alto padrão, telecomunicações e reformas prediais em Cajamar e SP. Conheça as obras da Machado Construtora!"
+        canonicalPath="/portfolio"
+        image="/casa-alto-padrao.jpg"
+      />
       {/* =========================================================================
           HERO & CARROSSEL 3D EM CASCATA
           ========================================================================= */}

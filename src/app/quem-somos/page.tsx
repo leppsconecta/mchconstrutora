@@ -2,6 +2,7 @@ import React from 'react';
 import { Shield, Award, Users, ArrowRight, Radio, Building2, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
+import { SeoHead } from '../../components/SeoHead';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 const containerVariants = {
@@ -32,6 +33,12 @@ export default function QuemSomosPage() {
 
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
+      <SeoHead
+        title="Quem Somos | Machado Construtora e Incorporadora Cajamar"
+        description="Conheça a história, valores e estrutura técnica da Machado Construtora em Cajamar e SP. Equipe própria qualificada e rigor com normas CREA-SP e NR-18."
+        canonicalPath="/quem-somos"
+        image="/quem-somos-projetos.jpg"
+      />
 
       {/* Conteúdo Institucional Clean */}
       <section className="pt-8 pb-20 sm:pt-12 sm:pb-28 bg-white">

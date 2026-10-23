@@ -157,6 +157,7 @@ export default function App() {
               </Route>
 
               {/* Página Pública de Captação de Currículos / Trabalhe Conosco */}
+              <Route path="/trabalhe-conosco" element={<TrabalheConoscoPage />} />
               <Route path="/cadastro-funcionario" element={<CaptacaoTrabalheConosco />} />
               <Route path="/trabalhe-conosco-completo" element={<CaptacaoTrabalheConosco />} />
 

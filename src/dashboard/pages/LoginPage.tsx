@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Mail, Eye, EyeOff, AlertCircle, KeyRound } from 'lucide-react';
+import { SeoHead } from '../../components/SeoHead';
 import { useAuth } from '../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
@@ -61,6 +62,12 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#080D1A] text-slate-100 flex flex-col justify-center items-center px-4 py-8 relative overflow-hidden selection:bg-sky-500 selection:text-white">
+      <SeoHead
+        title="Acesso Restrito | Machado Construtora"
+        description="Painel administrativo interno da Machado Construtora."
+        canonicalPath="/admin/login"
+        noindex={true}
+      />
       {/* Background ambient lighting - tons de azul escuro e azul claro */}
       <div className="absolute top-[-20%] left-[-10%] w-[550px] h-[550px] bg-[#1B2639]/60 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[150px] pointer-events-none" />
