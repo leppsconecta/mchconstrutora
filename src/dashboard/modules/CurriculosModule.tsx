@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
   Trash2, 
@@ -7,7 +7,11 @@ import {
   CheckCircle2, 
   Phone, 
   Eye, 
-  MessageSquare 
+  MessageSquare,
+  RefreshCw,
+  X,
+  Save,
+  Loader2
 } from 'lucide-react';
 import { useConfirmDelete } from '../context/ConfirmDeleteContext';
 import { supabase, deleteImageFromBucket } from '../../lib/supabase';
@@ -110,36 +114,101 @@ export const CurriculosModule: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchTerm = searchParams.get('q') || '';
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Estado para Modal de Observação Interativo
+  const [selectedObsCandidate, setSelectedObsCandidate] = useState<Candidato | null>(null);
+  const [editingObsText, setEditingObsText] = useState('');
+  const [isSavingObs, setIsSavingObs] = useState(false);
+
+  // Toast / feedback message
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // Carregar do Supabase em tempo real com fallback para localStorage
+  const loadFromSupabase = useCallback(async (manual = false) => {
+    try {
+      if (manual) setIsSyncing(true);
+      const { data, error } = await supabase
+        .from('curriculos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn('Aviso ao carregar currículos do Supabase:', error);
+        if (manual) showToast('Não foi possível sincronizar com o banco.');
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setEmployees(prev => {
+          const dbIds = new Set(data.map((d: any) => d.id));
+          const existingOnlyLocal = prev.filter(p => !dbIds.has(p.id));
+          const combined = [...data, ...existingOnlyLocal];
+          try {
+            localStorage.setItem(STORAGE_KEY_CURRICULOS, JSON.stringify(combined));
+          } catch (e) {
+            console.error(e);
+          }
+          return combined;
+        });
+        if (manual) showToast('Currículos e observações sincronizados!');
+      } else if (manual) {
+        showToast('Nenhum currículo encontrado no banco de dados.');
+      }
+    } catch (err) {
+      console.warn('Aviso ao carregar currículos do Supabase:', err);
+    } finally {
+      if (manual) setIsSyncing(false);
+    }
+  }, []);
 
   // Reset page when search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  // Carregar do Supabase em tempo real com fallback para localStorage
+  // Carregar inicial e subscrever canais realtime e evento storage
   useEffect(() => {
-    async function loadFromSupabase() {
-      try {
-        const { data, error } = await supabase
-          .from('curriculos')
-          .select('*')
-          .order('created_at', { ascending: false });
+    loadFromSupabase(false);
 
-        if (!error && data && data.length > 0) {
-          setEmployees(prev => {
-            const dbIds = new Set(data.map((d: any) => d.id));
-            const existingOnlyLocal = prev.filter(p => !dbIds.has(p.id));
-            return [...data, ...existingOnlyLocal];
-          });
+    // Escuta em tempo real no Supabase
+    const channel = supabase
+      .channel('machado_curriculos_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'machado_construtora', table: 'curriculos' },
+        () => {
+          loadFromSupabase(false);
         }
-      } catch (err) {
-        console.warn('Aviso ao carregar currículos do Supabase:', err);
-      }
-    }
-    loadFromSupabase();
-  }, []);
+      )
+      .subscribe();
 
-  // Sync to localStorage
+    // Sincronização entre abas locais (quando formulário de trabalhe-conosco é enviado)
+    const handleStorageChange = () => {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY_CURRICULOS);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setEmployees(parsed);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [loadFromSupabase]);
+
+  // Sync to localStorage quando employees mudar
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_CURRICULOS, JSON.stringify(employees));
@@ -147,6 +216,60 @@ export const CurriculosModule: React.FC = () => {
       console.error(e);
     }
   }, [employees]);
+
+  // Abrir Modal de Observação
+  const handleOpenObsModal = (emp: Candidato) => {
+    setSelectedObsCandidate(emp);
+    setEditingObsText(emp.observations || '');
+  };
+
+  const handleCloseObsModal = () => {
+    setSelectedObsCandidate(null);
+    setEditingObsText('');
+    setIsSavingObs(false);
+  };
+
+  // Salvar Observação e Sincronizar com o Banco Supabase
+  const handleSaveObservation = async () => {
+    if (!selectedObsCandidate) return;
+    setIsSavingObs(true);
+
+    const trimmed = editingObsText.trim();
+    const candidateId = selectedObsCandidate.id;
+
+    // Atualiza estado local imediatamente
+    setEmployees(prev => {
+      const updated = prev.map(e => e.id === candidateId ? { ...e, observations: trimmed } : e);
+      try {
+        localStorage.setItem(STORAGE_KEY_CURRICULOS, JSON.stringify(updated));
+      } catch (err) {
+        console.error(err);
+      }
+      return updated;
+    });
+
+    // Atualiza no Supabase
+    try {
+      const { error } = await supabase
+        .from('curriculos')
+        .update({
+          observations: trimmed,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', candidateId);
+
+      if (error) {
+        console.warn('Aviso ao sincronizar observação com Supabase:', error);
+      }
+      showToast('Observação salva e sincronizada com sucesso!');
+    } catch (err) {
+      console.error('Erro ao salvar observação no banco:', err);
+      showToast('Observação gravada localmente.');
+    } finally {
+      setIsSavingObs(false);
+      handleCloseObsModal();
+    }
+  };
 
   // Update candidate status directly from table dropdown
   const handleUpdateStatus = async (id: string, newStatus: Candidato['status']) => {
@@ -158,14 +281,6 @@ export const CurriculosModule: React.FC = () => {
     } catch (e) {
       console.warn('Aviso ao atualizar status no banco:', e);
     }
-  };
-
-  // Toast / feedback message
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
   };
 
   // Filter employees
@@ -239,6 +354,32 @@ export const CurriculosModule: React.FC = () => {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* Barra Superior com Contagem e Botão Sincronizar Banco */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-1">
+        <div>
+          <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <span>Currículos Recebidos</span>
+            <span className="px-2 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-semibold">
+              {filteredEmployees.length}
+            </span>
+          </h2>
+          <p className="text-xs text-slate-400">
+            Cadastros captados no Trabalhe Conosco sincronizados em tempo real com o banco de dados.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => loadFromSupabase(true)}
+          disabled={isSyncing}
+          className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+          title="Sincronizar com o banco de dados Supabase"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 text-sky-400 ${isSyncing ? 'animate-spin' : ''}`} />
+          <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar Banco'}</span>
+        </button>
+      </div>
 
       {/* Table Container */}
       <div className="bg-[#101726]/90 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
@@ -349,16 +490,21 @@ export const CurriculosModule: React.FC = () => {
                       </select>
                     </td>
                     <td className="px-2 py-2.5 text-center">
-                      <div
-                        className={`p-1.5 rounded-lg border transition-all inline-flex items-center justify-center ${
+                      <button
+                        type="button"
+                        onClick={() => handleOpenObsModal(emp)}
+                        className={`p-1.5 rounded-lg border transition-all inline-flex items-center justify-center cursor-pointer ${
                           hasObs
-                            ? 'text-sky-400 bg-sky-500/15 border-sky-400/30 shadow-sm shadow-sky-500/10 cursor-help'
-                            : 'text-slate-600 bg-white/[0.02] border-white/5 cursor-default'
+                            ? 'text-sky-300 bg-sky-500/20 border-sky-400/40 hover:bg-sky-500/30 shadow-sm shadow-sky-500/10'
+                            : 'text-slate-500 hover:text-sky-300 bg-white/[0.02] hover:bg-white/10 border-white/5 hover:border-white/15'
                         }`}
-                        title={hasObs ? `Observação: ${emp.observations}` : 'Sem observações'}
+                        title={hasObs ? `Observações:\n${emp.observations}\n(Clique para visualizar ou editar)` : 'Adicionar observações'}
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
-                      </div>
+                        {hasObs && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-sky-400 ml-1 shrink-0 animate-pulse" />
+                        )}
+                      </button>
                     </td>
                     <td className="pl-2 pr-5 py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
@@ -442,6 +588,121 @@ export const CurriculosModule: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Interativo de Observações do Candidato */}
+      {selectedObsCandidate && (
+        <div 
+          className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={handleCloseObsModal}
+        >
+          <div 
+            className="w-full max-w-lg bg-[#101726] border border-white/15 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#0A0E17]/60">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
+                  <MessageSquare className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-white leading-tight">
+                    Observações do Candidato
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {selectedObsCandidate.name}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCloseObsModal}
+                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                title="Fechar"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              {/* Badges Rápidos de Informação */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/5 text-xs">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Cargo</span>
+                  <span className="font-semibold text-white truncate block" title={selectedObsCandidate.role}>
+                    {selectedObsCandidate.role}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Contato</span>
+                  <span className="font-semibold text-emerald-400 block font-mono">
+                    {selectedObsCandidate.phone || '-'}
+                  </span>
+                </div>
+                <div className="col-span-2 sm:col-span-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Status</span>
+                  <span className="font-semibold text-sky-300 block">
+                    {selectedObsCandidate.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Textarea de Observação */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-200 mb-1.5 flex items-center justify-between">
+                  <span>Mensagem Enviada / Observações</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Sincronizado com Supabase</span>
+                </label>
+                <textarea
+                  value={editingObsText}
+                  onChange={(e) => setEditingObsText(e.target.value)}
+                  rows={6}
+                  placeholder="Escreva aqui as observações sobre o candidato, feedback de entrevistas ou detalhes adicionais..."
+                  className="w-full bg-[#0A0E17] border border-white/15 rounded-xl p-3.5 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all resize-y"
+                  autoFocus
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 text-[11px] text-sky-300 flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                <span>As alterações salvas aqui atualizam o banco de dados em tempo real.</span>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3.5 border-t border-white/10 bg-[#0A0E17]/60 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={handleCloseObsModal}
+                disabled={isSavingObs}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveObservation}
+                disabled={isSavingObs}
+                className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isSavingObs ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Salvando no Banco...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Salvar Observação</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

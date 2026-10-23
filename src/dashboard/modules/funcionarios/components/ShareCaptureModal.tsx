@@ -18,7 +18,7 @@ export const ShareCaptureModal: React.FC<ShareCaptureModalProps> = ({
 
   if (!isOpen) return null;
 
-  const publicUrl = `${window.location.origin}/trabalhe-conosco`;
+  const publicUrl = `${window.location.origin}/cadastro-funcionario`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(publicUrl);
@@ -108,7 +108,7 @@ export const ShareCaptureModal: React.FC<ShareCaptureModalProps> = ({
 
         <div className="pt-2 flex items-center justify-between">
           <a
-            href="/trabalhe-conosco"
+            href="/cadastro-funcionario"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-sky-400 hover:text-sky-300 inline-flex items-center gap-1 font-medium transition-colors"

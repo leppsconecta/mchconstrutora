@@ -40,7 +40,7 @@ const FAIXAS_ETARIAS = [
   '+ de 60 anos'
 ];
 
-const INPUT_CLASS = "w-full h-11 bg-transparent border border-white/15 rounded-lg px-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 transition-colors";
+const INPUT_CLASS = "w-full h-11 bg-transparent border border-white/15 rounded-lg px-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all";
 
 export default function TrabalheConoscoPage() {
   const [formData, setFormData] = useState({
@@ -159,9 +159,12 @@ export default function TrabalheConoscoPage() {
 
       // 1. Sincronizar com o banco de dados Supabase (tabela machado_construtora.curriculos)
       try {
-        await supabase
+        const { error: insertErr } = await supabase
           .from('curriculos')
           .insert(newCandidateRecord);
+        if (insertErr) {
+          console.warn('Aviso no salvamento remoto Supabase:', insertErr);
+        }
       } catch (dbErr) {
         console.warn('Registro sincronizado localmente:', dbErr);
       }
@@ -173,6 +176,8 @@ export default function TrabalheConoscoPage() {
         const list = currentStored ? JSON.parse(currentStored) : [];
         list.unshift(newCandidateRecord);
         localStorage.setItem(storedKey, JSON.stringify(list));
+        // Disparar evento para que abas do dashboard abertas atualizem em tempo real
+        window.dispatchEvent(new Event('storage'));
       } catch (storageErr) {
         console.error('Erro no armazenamento local:', storageErr);
       }
@@ -202,7 +207,7 @@ export default function TrabalheConoscoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D1117] text-white selection:bg-red-500 selection:text-white pb-24">
+    <div className="min-h-screen bg-[#0D1117] text-white selection:bg-sky-500 selection:text-white pb-24">
       
       {/* Top Header com Botão de Voltar */}
       <header className="border-b border-white/10 bg-[#0F131A]/90 backdrop-blur-md sticky top-0 z-50">
@@ -333,10 +338,10 @@ export default function TrabalheConoscoPage() {
                       key={opt} 
                       className="flex items-center gap-2.5 cursor-pointer select-none group text-sm text-slate-200"
                     >
-                      <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                        isChecked ? 'border-[#E5232A]' : 'border-white/30 group-hover:border-white/50'
+                      <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                        isChecked ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-white/30 group-hover:border-white/50'
                       }`}>
-                        {isChecked && <span className="w-2 h-2 rounded-full bg-[#E5232A]" />}
+                        {isChecked && <span className="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50" />}
                       </span>
                       <input
                         type="radio"
@@ -366,10 +371,10 @@ export default function TrabalheConoscoPage() {
                       key={range} 
                       className="flex items-center gap-2.5 cursor-pointer select-none group text-sm text-slate-200"
                     >
-                      <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
-                        isChecked ? 'border-[#E5232A]' : 'border-white/30 group-hover:border-white/50'
+                      <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all shrink-0 ${
+                        isChecked ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-white/30 group-hover:border-white/50'
                       }`}>
-                        {isChecked && <span className="w-2 h-2 rounded-full bg-[#E5232A]" />}
+                        {isChecked && <span className="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50" />}
                       </span>
                       <input
                         type="radio"
@@ -426,7 +431,7 @@ export default function TrabalheConoscoPage() {
                   required
                   value={formData.role}
                   onChange={e => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full h-11 bg-[#121316] border border-white/15 rounded-lg px-4 pr-10 text-sm text-white focus:outline-none focus:border-white/40 transition-colors appearance-none cursor-pointer"
+                  className="w-full h-11 bg-[#121316] border border-white/15 rounded-lg px-4 pr-10 text-sm text-white focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all appearance-none cursor-pointer"
                 >
                   <option value="" disabled className="bg-[#121316] text-slate-500">
                     Selecione o cargo
@@ -443,17 +448,17 @@ export default function TrabalheConoscoPage() {
               </div>
             </div>
 
-            {/* Mensagem Adicional (sem asterisco, opcional) */}
+            {/* Mensagem Adicional / Observações (sem asterisco, opcional) */}
             <div>
               <label className="block text-sm font-medium text-slate-200 mb-2">
-                Mensagem Adicional
+                Mensagem Adicional / Observações
               </label>
               <textarea
                 value={formData.observations}
                 onChange={e => setFormData({ ...formData, observations: e.target.value })}
                 rows={4}
-                placeholder="Conte-nos um pouco sobre você, sobre suas experiências na área"
-                className="w-full bg-transparent border border-white/15 rounded-lg p-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 transition-colors resize-y"
+                placeholder="Conte-nos um pouco sobre você, sobre suas experiências na área ou observações adicionais..."
+                className="w-full bg-transparent border border-white/15 rounded-lg p-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500/25 transition-all resize-y"
               />
             </div>
 
@@ -503,12 +508,12 @@ export default function TrabalheConoscoPage() {
               </div>
             </div>
 
-            {/* Botão Enviar Currículo */}
+            {/* Botão Enviar Currículo em Azul Oficial do Projeto */}
             <div className="pt-2">
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full h-12 rounded-lg bg-[#E5232A] hover:bg-[#d01d24] text-white font-semibold text-sm transition-colors flex items-center justify-center cursor-pointer shadow-lg shadow-red-500/20 disabled:opacity-50"
+                className="w-full h-12 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm transition-all flex items-center justify-center cursor-pointer shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 active:scale-[0.99] disabled:opacity-50"
               >
                 {submitting ? (
                   <div className="flex items-center gap-2">
