@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
+import { SeoHead } from '../../components/SeoHead';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
@@ -111,6 +112,12 @@ export default function ReformasPage() {
 
   return (
     <div className="bg-white text-[#1B2639] selection:bg-[#1B2639] selection:text-white">
+      <SeoHead
+        title="Reformas Prediais e Corporativas B2B em Cajamar e SP"
+        description="Adequação e manutenção predial civil, elétrica e hidráulica para galpões, escritórios e condomínios em SP. Peça seu orçamento técnico sem compromisso!"
+        canonicalPath="/reformas"
+        image="/casa-alto-padrao.jpg"
+      />
 
       {/* HERO SECTION DE REFORMAS (REFERÊNCIA HERO DE CONSTRUTORA) */}
       <section className="relative flex flex-col lg:flex-row overflow-hidden bg-[#1B2639] lg:h-[480px]">
