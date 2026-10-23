@@ -543,6 +543,9 @@ export const CaptacaoTrabalheConosco: React.FC = () => {
         
         {/* Logotipo Oficial Machado Centralizado (Sem link de voltar) */}
         <div className="flex items-center justify-center py-1 sm:py-2">
+          <h1 className="sr-only">
+            Trabalhe Conosco | Cadastro de Colaboradores e Oportunidades - Machado Construtora e Incorporadora
+          </h1>
           <img
             src="/logos/logotipo_machado_header.png"
             alt="Machado Engenharia & Imobiliária"

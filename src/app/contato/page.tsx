@@ -41,9 +41,9 @@ export default function ContatoPage() {
                 <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block mb-2">
                   {t.contato.tag}
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#1B2639] tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#1B2639] tracking-tight">
                   {t.contato.title}
-                </h2>
+                </h1>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">
                   {t.contato.subtitle}
                 </p>

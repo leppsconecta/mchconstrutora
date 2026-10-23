@@ -50,9 +50,9 @@ export default function QuemSomosPage() {
 
             {/* Informações (Lado Direito) */}
             <div className="space-y-6 py-4">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1B2639] tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1B2639] tracking-tight leading-tight">
                 {t.quemSomos.mainTitle}
-              </h2>
+              </h1>
               <p className="text-base text-slate-600 leading-relaxed">
                 {t.quemSomos.introP1}
               </p>

@@ -217,6 +217,9 @@ export default function TrabalheConoscoPage() {
 
       {/* Container Principal do Formulário (Sem título da página, conforme solicitado) */}
       <div className="max-w-xl mx-auto px-6 pt-10 sm:pt-14">
+        <h1 className="sr-only">
+          Envio de Currículo e Trabalhe Conosco | Machado Construtora e Incorporadora
+        </h1>
 
         {/* FEEDBACK DE SUCESSO APÓS ENVIO */}
         {submitted ? (
