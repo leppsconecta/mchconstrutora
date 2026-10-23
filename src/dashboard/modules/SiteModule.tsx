@@ -19,11 +19,21 @@ import {
   Eye, 
   Clock, 
   Save,
-  Sparkles
+  Sparkles,
+  Facebook,
+  Instagram,
+  Linkedin
 } from 'lucide-react';
-import { useSiteConfig, PortfolioItem, SiteConfig } from '../../contexts/SiteConfigContext';
+import { useSiteConfig, PortfolioItem, SiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
 import { useConfirmDelete } from '../context/ConfirmDeleteContext';
 import { uploadImageToBucket } from '../../lib/supabase';
+
+// Ícone personalizado e responsivo do TikTok (não existente por padrão no lucide-react)
+const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .59.05.86.15V9.4a6.33 6.33 0 0 0-.86-.06A6.34 6.34 0 0 0 3.1 15.68a6.34 6.34 0 0 0 10.82 4.48c1.37-1.37 2.08-3.23 2.08-5.16V8.67a8.21 8.21 0 0 0 4.59 1.4V6.69z"/>
+  </svg>
+);
 
 const INPUT_CLASS = "w-full h-11 bg-[#0A0E17] border border-white/10 rounded-xl px-4 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 transition-all";
 const LABEL_CLASS = "text-xs font-medium text-slate-300 flex items-center gap-1.5 mb-1.5";
@@ -73,14 +83,11 @@ export const SiteModule: React.FC = () => {
     if (siteConfig) {
       setContactForm({
         email_principal: siteConfig.email_principal || '',
-        email_comercial: siteConfig.email_comercial || '',
-        email_rh: siteConfig.email_rh || '',
-        telefone_principal: siteConfig.telefone_principal || '',
-        telefone_secundario: siteConfig.telefone_secundario || '',
         whatsapp: siteConfig.whatsapp || '',
         horario_funcionamento: siteConfig.horario_funcionamento || '',
-        instagram_url: siteConfig.instagram_url || '',
         facebook_url: siteConfig.facebook_url || '',
+        tiktok_url: siteConfig.tiktok_url || '',
+        instagram_url: siteConfig.instagram_url || '',
         linkedin_url: siteConfig.linkedin_url || '',
       });
 
@@ -92,18 +99,18 @@ export const SiteModule: React.FC = () => {
         endereco_bairro: siteConfig.endereco_bairro || '',
         endereco_cidade: siteConfig.endereco_cidade || '',
         endereco_estado: siteConfig.endereco_estado || '',
-        google_maps_url: siteConfig.google_maps_url || '',
+        google_maps_url: siteConfig.google_maps_url || generateGoogleMapsEmbedUrl(siteConfig),
       });
     }
   }, [siteConfig]);
 
-  // Handle Save Contacts
+  // Handle Save Contacts & Social
   const handleSaveContacts = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setSavingContacts(true);
       await updateSiteConfig(contactForm);
-      showToast('Canais de contato atualizados com sucesso no banco!');
+      showToast('Canais de atendimento e redes sociais atualizados com sucesso!');
     } catch (err: any) {
       showToast('Erro ao salvar contatos: ' + (err?.message || 'Tente novamente.'));
     } finally {
@@ -145,13 +152,19 @@ export const SiteModule: React.FC = () => {
     }
   };
 
-  // Handle Save Address
+  // Handle Save Address (com geração 100% automática da URL do Google Maps)
   const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setSavingAddress(true);
-      await updateSiteConfig(addressForm);
-      showToast('Endereço e mapa atualizados com sucesso no banco!');
+      const autoUrl = generateGoogleMapsEmbedUrl(addressForm);
+      const payload = {
+        ...addressForm,
+        google_maps_url: autoUrl
+      };
+      await updateSiteConfig(payload);
+      setAddressForm(payload);
+      showToast('Endereço e mapa atualizados automaticamente com sucesso!');
     } catch (err: any) {
       showToast('Erro ao salvar endereço: ' + (err?.message || 'Tente novamente.'));
     } finally {
@@ -369,7 +382,7 @@ export const SiteModule: React.FC = () => {
           }`}
         >
           <Mail className="w-4 h-4" />
-          <span>E-mails &amp; Telefones</span>
+          <span>Contatos &amp; Redes Sociais</span>
         </button>
 
         <button
@@ -398,26 +411,27 @@ export const SiteModule: React.FC = () => {
       </div>
 
       {/* ====================================================
-          TAB 1: CONTATOS (EMAILS & TELEFONES)
+          TAB 1: CONTATOS & REDES SOCIAIS
          ==================================================== */}
       {activeTab === 'contatos' && (
         <form onSubmit={handleSaveContacts} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Bloco 1: E-mails */}
+            {/* Bloco 1: Canais de Atendimento Oficial */}
             <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
               <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
                 <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
                   <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-white">E-mails de Contato &amp; Notificações</h3>
-                  <p className="text-[11px] text-slate-400">Exibidos no rodapé, página de contato e formulários do site</p>
+                  <h3 className="text-sm font-semibold text-white">Canais de Atendimento Oficial</h3>
+                  <p className="text-[11px] text-slate-400">Exibidos no rodapé, página de contato e botão flutuante de atendimento</p>
                 </div>
               </div>
 
               <div>
                 <label className={LABEL_CLASS}>
-                  E-mail Principal / Geral (Atendimento)
+                  <Mail className="w-3.5 h-3.5 text-sky-400" />
+                  <span>E-mail Principal / Atendimento Geral</span>
                 </label>
                 <input
                   type="email"
@@ -427,91 +441,16 @@ export const SiteModule: React.FC = () => {
                   className={INPUT_CLASS}
                   required
                 />
-              </div>
-
-              <div>
-                <label className={LABEL_CLASS}>
-                  E-mail Comercial / Propostas de Obras
-                </label>
-                <input
-                  type="email"
-                  value={contactForm.email_comercial || ''}
-                  onChange={e => setContactForm(prev => ({ ...prev, email_comercial: e.target.value }))}
-                  placeholder="ex: comercial@mchengenharia.com.br"
-                  className={INPUT_CLASS}
-                />
-              </div>
-
-              <div>
-                <label className={LABEL_CLASS}>
-                  E-mail RH / Recrutamento &amp; Trabalhe Conosco
-                </label>
-                <input
-                  type="email"
-                  value={contactForm.email_rh || ''}
-                  onChange={e => setContactForm(prev => ({ ...prev, email_rh: e.target.value }))}
-                  placeholder="ex: rh@mchengenharia.com.br"
-                  className={INPUT_CLASS}
-                />
-              </div>
-
-              <div>
-                <label className={LABEL_CLASS}>
-                  Horário de Funcionamento
-                </label>
-                <input
-                  type="text"
-                  value={contactForm.horario_funcionamento || ''}
-                  onChange={e => setContactForm(prev => ({ ...prev, horario_funcionamento: e.target.value }))}
-                  placeholder="ex: Segunda a Sexta: 08h às 18h"
-                  className={INPUT_CLASS}
-                />
-              </div>
-            </div>
-
-            {/* Bloco 2: Telefones e WhatsApp */}
-            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
-              <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <Phone className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">Telefones &amp; WhatsApp Oficial</h3>
-                  <p className="text-[11px] text-slate-400">Canais de atendimento direto e botão flutuante de WhatsApp</p>
-                </div>
-              </div>
-
-              <div>
-                <label className={LABEL_CLASS}>
-                  Telefone Principal (Fixo / Central)
-                </label>
-                <input
-                  type="text"
-                  value={contactForm.telefone_principal || ''}
-                  onChange={e => setContactForm(prev => ({ ...prev, telefone_principal: e.target.value }))}
-                  placeholder="ex: (11) 96645-4023 ou (11) 4448-1234"
-                  className={INPUT_CLASS}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={LABEL_CLASS}>
-                  Telefone Secundário / Plantão de Vendas
-                </label>
-                <input
-                  type="text"
-                  value={contactForm.telefone_secundario || ''}
-                  onChange={e => setContactForm(prev => ({ ...prev, telefone_secundario: e.target.value }))}
-                  placeholder="ex: (11) 99999-8888"
-                  className={INPUT_CLASS}
-                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Canal central para recebimento de mensagens e orçamentos do site.
+                </p>
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                    Número do WhatsApp (com DDI e DDD, apenas números)
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>WhatsApp Oficial (DDI + DDD + Número)</span>
                   </label>
                   {contactForm.whatsapp && (
                     <a
@@ -533,21 +472,146 @@ export const SiteModule: React.FC = () => {
                   className={INPUT_CLASS}
                   required
                 />
-                <p className="text-[11px] text-slate-500 mt-1.5">
-                  O botão flutuante do site público abrirá automaticamente este contato.
+                <p className="text-[11px] text-slate-500 mt-1">
+                  O botão flutuante do site direcionará diretamente para este número de WhatsApp.
                 </p>
               </div>
 
-              {/* Redes Sociais */}
-              <div className="pt-2">
+              <div>
                 <label className={LABEL_CLASS}>
-                  Instagram URL
+                  <Clock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Horário de Atendimento / Funcionamento</span>
                 </label>
                 <input
                   type="text"
+                  value={contactForm.horario_funcionamento || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, horario_funcionamento: e.target.value }))}
+                  placeholder="ex: Segunda a Sexta: 08h às 18h"
+                  className={INPUT_CLASS}
+                />
+              </div>
+            </div>
+
+            {/* Bloco 2: Redes Sociais Oficiais */}
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
+              <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
+                  <Globe className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Redes Sociais Oficiais</h3>
+                  <p className="text-[11px] text-slate-400">Links para os perfis sociais exibidos na página de contato e no rodapé</p>
+                </div>
+              </div>
+
+              {/* Facebook */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    <Facebook className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Facebook URL</span>
+                  </label>
+                  {contactForm.facebook_url && (
+                    <a
+                      href={contactForm.facebook_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 font-mono"
+                    >
+                      <span>Abrir</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={contactForm.facebook_url || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, facebook_url: e.target.value }))}
+                  placeholder="https://facebook.com/machado.construtora"
+                  className={INPUT_CLASS}
+                />
+              </div>
+
+              {/* TikTok */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    <TikTokIcon className="w-3.5 h-3.5 text-pink-400" />
+                    <span>TikTok URL</span>
+                  </label>
+                  {contactForm.tiktok_url && (
+                    <a
+                      href={contactForm.tiktok_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-pink-400 hover:text-pink-300 flex items-center gap-1 font-mono"
+                    >
+                      <span>Abrir</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={contactForm.tiktok_url || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, tiktok_url: e.target.value }))}
+                  placeholder="https://tiktok.com/@machado_construtora"
+                  className={INPUT_CLASS}
+                />
+              </div>
+
+              {/* Instagram */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    <Instagram className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Instagram URL</span>
+                  </label>
+                  {contactForm.instagram_url && (
+                    <a
+                      href={contactForm.instagram_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono"
+                    >
+                      <span>Abrir</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
                   value={contactForm.instagram_url || ''}
                   onChange={e => setContactForm(prev => ({ ...prev, instagram_url: e.target.value }))}
-                  placeholder="ex: https://instagram.com/machado_construtora"
+                  placeholder="https://instagram.com/machado_construtora"
+                  className={INPUT_CLASS}
+                />
+              </div>
+
+              {/* LinkedIn */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    <Linkedin className="w-3.5 h-3.5 text-sky-400" />
+                    <span>LinkedIn URL</span>
+                  </label>
+                  {contactForm.linkedin_url && (
+                    <a
+                      href={contactForm.linkedin_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
+                    >
+                      <span>Abrir</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={contactForm.linkedin_url || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, linkedin_url: e.target.value }))}
+                  placeholder="https://linkedin.com/company/machado-construtora"
                   className={INPUT_CLASS}
                 />
               </div>
@@ -569,7 +633,7 @@ export const SiteModule: React.FC = () => {
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Salvar E-mails &amp; Telefones</span>
+                  <span>Salvar Contatos &amp; Redes</span>
                 </>
               )}
             </button>
@@ -696,19 +760,11 @@ export const SiteModule: React.FC = () => {
                 </div>
               </div>
 
-              <div>
-                <label className={LABEL_CLASS}>
-                  URL do Embed do Google Maps (iframe src)
-                </label>
-                <input
-                  type="text"
-                  value={addressForm.google_maps_url || ''}
-                  onChange={e => setAddressForm(prev => ({ ...prev, google_maps_url: e.target.value }))}
-                  placeholder="https://www.google.com/maps/embed?pb=..."
-                  className={INPUT_CLASS}
-                />
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Cole o link do iframe de compartilhamento do Google Maps para exibir o mapa interativo.
+              {/* Informação sobre o Embed Automático */}
+              <div className="p-4 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-300">
+                <span className="font-semibold block text-white mb-1">Localização e Mapa 100% Automáticos</span>
+                <p className="text-slate-400 text-[11px] leading-relaxed">
+                  O mapa interativo no site é traçado automaticamente a partir do endereço acima (Logradouro, Número, Bairro, Cidade e CEP). Não é necessário colar URLs de iframe manuais.
                 </p>
               </div>
             </div>
@@ -716,26 +772,24 @@ export const SiteModule: React.FC = () => {
             {/* Preview do Mapa e Resumo */}
             <div className="lg:col-span-5 bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
               <div>
-                <h4 className="text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">
-                  Pré-visualização do Mapa
-                </h4>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs uppercase font-mono tracking-wider text-slate-400">
+                    Pré-visualização do Mapa
+                  </h4>
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Gerado 100% Automático
+                  </span>
+                </div>
                 <div className="w-full h-64 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative">
-                  {addressForm.google_maps_url ? (
-                    <iframe
-                      src={addressForm.google_maps_url}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      loading="lazy"
-                      title="Google Maps Preview"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs p-4 text-center">
-                      <MapPin className="w-8 h-8 mb-2 opacity-50" />
-                      <span>Nenhum link de mapa configurado</span>
-                    </div>
-                  )}
+                  <iframe
+                    src={generateGoogleMapsEmbedUrl(addressForm)}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    title="Google Maps Automático"
+                  />
                 </div>
 
                 {/* Resumo formatado */}
@@ -751,7 +805,7 @@ export const SiteModule: React.FC = () => {
                     {addressForm.endereco_bairro || 'Bairro'} - {addressForm.endereco_cidade || 'Cidade'} / {addressForm.endereco_estado || 'UF'}
                   </p>
                   <p className="text-slate-500 font-mono text-[11px]">
-                    CEP: {addressForm.endereco_cep || '00000-000'}
+                    CEP: {addressForm.endereco_cep || '07790-840'}
                   </p>
                 </div>
               </div>
@@ -770,7 +824,7 @@ export const SiteModule: React.FC = () => {
                   ) : (
                     <>
                       <Save className="w-4 h-4" />
-                      <span>Salvar Endereço &amp; Localização</span>
+                      <span>Salvar Endereço &amp; Atualizar Mapa</span>
                     </>
                   )}
                 </button>

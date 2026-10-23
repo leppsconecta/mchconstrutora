@@ -10,6 +10,7 @@ import {
   MessageSquare 
 } from 'lucide-react';
 import { useConfirmDelete } from '../context/ConfirmDeleteContext';
+import { supabase, deleteImageFromBucket } from '../../lib/supabase';
 
 export interface Candidato {
   id: string;
@@ -114,6 +115,29 @@ export const CurriculosModule: React.FC = () => {
     setCurrentPage(1);
   }, [searchTerm]);
 
+  // Carregar do Supabase em tempo real com fallback para localStorage
+  useEffect(() => {
+    async function loadFromSupabase() {
+      try {
+        const { data, error } = await supabase
+          .from('curriculos')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          setEmployees(prev => {
+            const dbIds = new Set(data.map((d: any) => d.id));
+            const existingOnlyLocal = prev.filter(p => !dbIds.has(p.id));
+            return [...data, ...existingOnlyLocal];
+          });
+        }
+      } catch (err) {
+        console.warn('Aviso ao carregar currículos do Supabase:', err);
+      }
+    }
+    loadFromSupabase();
+  }, []);
+
   // Sync to localStorage
   useEffect(() => {
     try {
@@ -124,9 +148,15 @@ export const CurriculosModule: React.FC = () => {
   }, [employees]);
 
   // Update candidate status directly from table dropdown
-  const handleUpdateStatus = (id: string, newStatus: Candidato['status']) => {
+  const handleUpdateStatus = async (id: string, newStatus: Candidato['status']) => {
     setEmployees(prev => prev.map(emp => (emp.id === id ? { ...emp, status: newStatus } : emp)));
     showToast(`Status alterado para "${newStatus}".`);
+
+    try {
+      await supabase.from('curriculos').update({ status: newStatus }).eq('id', id);
+    } catch (e) {
+      console.warn('Aviso ao atualizar status no banco:', e);
+    }
   };
 
   // Toast / feedback message
@@ -165,16 +195,27 @@ export const CurriculosModule: React.FC = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredEmployees.slice(startIndex, startIndex + itemsPerPage);
 
-  // Delete employee
+  // Delete employee (e remove arquivo do storage se houver)
   const handleDeleteEmployee = (id: string, name: string) => {
+    const target = employees.find(e => e.id === id);
+
     confirmDelete({
       title: 'Excluir Candidato / Currículo',
-      message: 'Tem certeza que deseja excluir este cadastro? Esta ação não pode ser desfeita.',
+      message: 'Tem certeza que deseja excluir este cadastro? O arquivo de currículo também será removido do bucket.',
       itemName: name,
       confirmText: 'Excluir',
-      onConfirm: () => {
+      onConfirm: async () => {
         setEmployees(prev => prev.filter(emp => emp.id !== id));
         showToast('Cadastro excluído com sucesso.');
+
+        try {
+          if (target?.resume_url && target.resume_url !== '#') {
+            await deleteImageFromBucket(target.resume_url);
+          }
+          await supabase.from('curriculos').delete().eq('id', id);
+        } catch (e) {
+          console.warn('Aviso ao deletar do banco:', e);
+        }
       }
     });
   };

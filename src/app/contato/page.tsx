@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin, Briefcase, ArrowRight } from 'lucide-react';
+import { Link } from '../../components/Link';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { useSiteConfig } from '../../contexts/SiteConfigContext';
+import { useSiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
+
+// Ícone do TikTok
+const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .59.05.86.15V9.4a6.33 6.33 0 0 0-.86-.06A6.34 6.34 0 0 0 3.1 15.68a6.34 6.34 0 0 0 10.82 4.48c1.37-1.37 2.08-3.23 2.08-5.16V8.67a8.21 8.21 0 0 0 4.59 1.4V6.69z"/>
+  </svg>
+);
 
 export default function ContatoPage() {
   const { t } = useLanguage();
@@ -62,10 +70,10 @@ export default function ContatoPage() {
                   </div>
                 </div>
 
-                {/* Mapa Google Maps */}
+                {/* Mapa Google Maps 100% Automático */}
                 <div className="rounded-lg overflow-hidden border border-slate-200/60 h-48 w-full mt-4">
                   <iframe 
-                    src={siteConfig.google_maps_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3661.761794715783!2d-46.86469612399222!3d-23.396825578913395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cf1b9ad9b54d5d%3A0x6b3061dcaf7ebbc3!2sAv.%20dos%20Ip%C3%AAs%2C%20155%20-%20Portal%20dos%20Ip%C3%AAs%20(Polvilho)%2C%20Cajamar%20-%20SP%2C%2007790-840!5e0!3m2!1spt-BR!2sbr!4v1715802123456!5m2!1spt-BR!2sbr"} 
+                    src={siteConfig.google_maps_url || generateGoogleMapsEmbedUrl(siteConfig)} 
                     width="100%" 
                     height="100%" 
                     style={{ border: 0 }} 
@@ -77,41 +85,120 @@ export default function ContatoPage() {
                 </div>
               </div>
 
-              {/* Contatos Telefônicos e E-mail */}
+              {/* Contatos Oficiais: WhatsApp e E-mail */}
               <div className="space-y-4 text-sm text-slate-700">
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-[#1B2639]" />
-                  <span><strong>Telefone:</strong> {siteConfig.telefone_principal || '(11) 96645-4023'} {siteConfig.telefone_secundario ? `/ ${siteConfig.telefone_secundario}` : ''}</span>
+                  <span>
+                    <strong>WhatsApp:</strong>{' '}
+                    <a 
+                      href={`https://wa.me/${(siteConfig.whatsapp || '5511966454023').replace(/\D/g, '')}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:underline text-[#1B2639] font-medium"
+                    >
+                      {siteConfig.whatsapp || '(11) 96645-4023'}
+                    </a>
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-[#1B2639]" />
-                  <span><strong>E-mail:</strong> {siteConfig.email_principal || 'contato@mchengenharia.com.br'}</span>
+                  <span>
+                    <strong>E-mail:</strong>{' '}
+                    <a 
+                      href={`mailto:${siteConfig.email_principal || 'contato@mchengenharia.com.br'}`}
+                      className="hover:underline text-[#1B2639] font-medium"
+                    >
+                      {siteConfig.email_principal || 'contato@mchengenharia.com.br'}
+                    </a>
+                  </span>
                 </div>
-                {siteConfig.email_comercial && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-[#1B2639]" />
-                    <span><strong>Comercial:</strong> {siteConfig.email_comercial}</span>
+                {siteConfig.horario_funcionamento && (
+                  <div className="text-xs text-slate-500 pt-1">
+                    {siteConfig.horario_funcionamento}
                   </div>
                 )}
               </div>
 
               {/* Redes Sociais */}
-              <div className="pt-6 border-t border-slate-100 flex items-center gap-4">
-                <a 
-                  href={siteConfig.instagram_url || "#"} 
-                  target={siteConfig.instagram_url ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors" 
-                  aria-label="Instagram"
+              <div className="pt-6 border-t border-slate-100 flex items-center gap-3">
+                {siteConfig.facebook_url && (
+                  <a 
+                    href={siteConfig.facebook_url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1877F2] hover:text-white transition-colors" 
+                    aria-label="Facebook"
+                    title="Facebook Oficial"
+                  >
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                )}
+                {siteConfig.tiktok_url && (
+                  <a 
+                    href={siteConfig.tiktok_url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-black hover:text-white transition-colors" 
+                    aria-label="TikTok"
+                    title="TikTok Oficial"
+                  >
+                    <TikTokIcon className="w-5 h-5" />
+                  </a>
+                )}
+                {siteConfig.instagram_url && (
+                  <a 
+                    href={siteConfig.instagram_url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#E1306C] hover:text-white transition-colors" 
+                    aria-label="Instagram"
+                    title="Instagram Oficial"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                )}
+                {siteConfig.linkedin_url && (
+                  <a 
+                    href={siteConfig.linkedin_url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#0A66C2] hover:text-white transition-colors" 
+                    aria-label="LinkedIn"
+                    title="LinkedIn Oficial"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                )}
+              </div>
+
+              {/* Card Trabalhe Conosco / Envio de Currículo */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-[#1B2639] to-[#101726] text-white border border-white/10 shadow-xl space-y-4 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 -mr-6 -mt-6 w-28 h-28 rounded-full bg-cyan-500/10 blur-xl pointer-events-none group-hover:bg-cyan-500/20 transition-all" />
+                
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-cyan-400">
+                    <Briefcase className="w-4 h-4" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-400">
+                    Oportunidades &amp; Vagas
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-base font-bold text-white">Trabalhe Conosco</h3>
+                  <p className="text-xs text-slate-300 leading-relaxed mt-1">
+                    Quer fazer parte da equipe Machado Construtora? Cadastre seu currículo diretamente em nosso banco de talentos oficial.
+                  </p>
+                </div>
+
+                <Link
+                  href="/trabalhe-conosco"
+                  className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-[#1B2639] bg-white hover:bg-slate-100 transition-all shadow-md group/btn cursor-pointer"
                 >
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors" aria-label="Facebook">
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors" aria-label="LinkedIn">
-                  <Linkedin className="w-5 h-5" />
-                </a>
+                  <span>Cadastrar Currículo</span>
+                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
               </div>
             </div>
 

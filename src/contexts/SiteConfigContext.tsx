@@ -20,7 +20,26 @@ export interface SiteConfig {
   google_maps_url?: string;
   instagram_url?: string;
   facebook_url?: string;
+  tiktok_url?: string;
   linkedin_url?: string;
+}
+
+/**
+ * Gera automaticamente o link de incorporação (embed) do Google Maps
+ * baseado no endereço completo configurado.
+ */
+export function generateGoogleMapsEmbedUrl(config: Partial<SiteConfig>): string {
+  const parts = [
+    config.endereco_logradouro,
+    config.endereco_numero ? `nº ${config.endereco_numero}` : '',
+    config.endereco_bairro,
+    config.endereco_cidade,
+    config.endereco_estado,
+    config.endereco_cep ? `CEP ${config.endereco_cep}` : ''
+  ].filter(Boolean);
+
+  const query = parts.length > 0 ? parts.join(', ') : 'Cajamar, SP';
+  return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 }
 
 export interface PortfolioItem {
@@ -59,6 +78,7 @@ const DEFAULT_CONFIG: SiteConfig = {
   google_maps_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3661.761794715783!2d-46.86469612399222!3d-23.396825578913395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cf1b9ad9b54d5d%3A0x6b3061dcaf7ebbc3!2sAv.%20dos%20Ip%C3%AAs%2C%20155%20-%20Portal%20dos%20Ip%C3%AAs%20(Polvilho)%2C%20Cajamar%20-%20SP%2C%2007790-840!5e0!3m2!1spt-BR!2sbr!4v1715802123456!5m2!1spt-BR!2sbr',
   instagram_url: 'https://instagram.com/machado_construtora',
   facebook_url: '',
+  tiktok_url: '',
   linkedin_url: ''
 };
 

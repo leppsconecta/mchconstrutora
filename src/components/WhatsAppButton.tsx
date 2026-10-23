@@ -66,11 +66,11 @@ export const WhatsAppButton: React.FC = () => {
                 </div>
                 <div className="text-left">
                   <div className="text-xs font-bold text-[#1B2639]">WhatsApp</div>
-                  <div className="text-[11px] text-slate-500">{siteConfig.telefone_principal || '(11) 96645-4023'}</div>
+                  <div className="text-[11px] text-slate-500">{siteConfig.whatsapp || '(11) 96645-4023'}</div>
                 </div>
               </a>
               <button
-                onClick={(e) => handleCopy('(11) 96645-4023', 'whatsapp', e)}
+                onClick={(e) => handleCopy(siteConfig.whatsapp || '(11) 96645-4023', 'whatsapp', e)}
                 className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
                 title={`${t.whatsapp.copyLabel} WhatsApp`}
               >
@@ -81,7 +81,7 @@ export const WhatsAppButton: React.FC = () => {
             {/* E-mail (Somente Copia) */}
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <div 
-                onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
+                onClick={(e) => handleCopy(siteConfig.email_principal || 'contato@mchengenharia.com.br', 'email', e)}
                 className="flex items-center gap-3 flex-1 group/item cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">
@@ -89,11 +89,11 @@ export const WhatsAppButton: React.FC = () => {
                 </div>
                 <div className="text-left">
                   <div className="text-xs font-bold text-[#1B2639]">E-mail Corporativo</div>
-                  <div className="text-[11px] text-slate-500 truncate w-[130px]">contato@mchengenharia.com.br</div>
+                  <div className="text-[11px] text-slate-500 truncate w-[130px]">{siteConfig.email_principal || 'contato@mchengenharia.com.br'}</div>
                 </div>
               </div>
               <button
-                onClick={(e) => handleCopy('contato@mchengenharia.com.br', 'email', e)}
+                onClick={(e) => handleCopy(siteConfig.email_principal || 'contato@mchengenharia.com.br', 'email', e)}
                 className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
                 title={`${t.whatsapp.copyLabel} E-mail`}
               >
@@ -104,7 +104,7 @@ export const WhatsAppButton: React.FC = () => {
             {/* Endereço */}
             <div className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
               <a 
-                href="https://maps.google.com/?q=Av.+dos+Ipês,+155+-+Portal+dos+Ipês,+Cajamar+-+SP,+07790-840" 
+                href={`https://maps.google.com/?q=${encodeURIComponent(`${siteConfig.endereco_logradouro || 'Av. dos Ipês'}, ${siteConfig.endereco_numero || '155'} - ${siteConfig.endereco_bairro || 'Portal dos Ipês'}, ${siteConfig.endereco_cidade || 'Cajamar'} - ${siteConfig.endereco_estado || 'SP'}`)}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="flex items-center gap-3 flex-1 group/item"
@@ -114,11 +114,11 @@ export const WhatsAppButton: React.FC = () => {
                 </div>
                 <div className="text-left">
                   <div className="text-xs font-bold text-[#1B2639]">{t.contato.headquarters}</div>
-                  <div className="text-[11px] text-slate-500 line-clamp-1 w-[130px]">Cajamar - SP</div>
+                  <div className="text-[11px] text-slate-500 line-clamp-1 w-[130px]">{siteConfig.endereco_cidade || 'Cajamar'} - {siteConfig.endereco_estado || 'SP'}</div>
                 </div>
               </a>
               <button
-                onClick={(e) => handleCopy('Av. dos Ipês, 155 - 2º Andar - Portal dos Ipês, Cajamar - SP, 07790-840', 'endereco', e)}
+                onClick={(e) => handleCopy(`${siteConfig.endereco_logradouro || 'Av. dos Ipês'}, ${siteConfig.endereco_numero || '155'} - ${siteConfig.endereco_bairro || 'Portal dos Ipês'}, ${siteConfig.endereco_cidade || 'Cajamar'} - ${siteConfig.endereco_estado || 'SP'}, CEP ${siteConfig.endereco_cep || '07790-840'}`, 'endereco', e)}
                 className="p-2 text-slate-400 hover:text-[#1B2639] hover:bg-slate-200 rounded-md transition-colors ml-2"
                 title={`${t.whatsapp.copyLabel} ${t.contato.headquarters}`}
               >

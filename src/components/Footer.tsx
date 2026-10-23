@@ -1,9 +1,15 @@
 import React from 'react';
-import { MapPin, Phone, Mail } from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { Link } from './Link';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSiteConfig } from '../contexts/SiteConfigContext';
+
+const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .59.05.86.15V9.4a6.33 6.33 0 0 0-.86-.06A6.34 6.34 0 0 0 3.1 15.68a6.34 6.34 0 0 0 10.82 4.48c1.37-1.37 2.08-3.23 2.08-5.16V8.67a8.21 8.21 0 0 0 4.59 1.4V6.69z"/>
+  </svg>
+);
 
 export const Footer: React.FC = () => {
   const location = useLocation();
@@ -37,6 +43,58 @@ export const Footer: React.FC = () => {
             <div className="text-xs text-[#9F9F9F] space-y-1 font-mono pt-2">
               <div>{t.footer.creaActive}</div>
               <div>{t.footer.nrStandards}</div>
+            </div>
+
+            {/* Redes Sociais */}
+            <div className="pt-2 flex items-center gap-3">
+              {siteConfig.facebook_url && (
+                <a
+                  href={siteConfig.facebook_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#1877F2] transition-colors"
+                  aria-label="Facebook"
+                  title="Facebook Oficial"
+                >
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
+              {siteConfig.tiktok_url && (
+                <a
+                  href={siteConfig.tiktok_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-black transition-colors"
+                  aria-label="TikTok"
+                  title="TikTok Oficial"
+                >
+                  <TikTokIcon className="w-4 h-4" />
+                </a>
+              )}
+              {siteConfig.instagram_url && (
+                <a
+                  href={siteConfig.instagram_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#E1306C] transition-colors"
+                  aria-label="Instagram"
+                  title="Instagram Oficial"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {siteConfig.linkedin_url && (
+                <a
+                  href={siteConfig.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#0A66C2] transition-colors"
+                  aria-label="LinkedIn"
+                  title="LinkedIn Oficial"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -110,7 +168,7 @@ export const Footer: React.FC = () => {
               <div className="pt-2 flex flex-col gap-1.5 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-[#9F9F9F]" />
-                  <span>{siteConfig.telefone_principal || t.footer.phoneLabel}</span>
+                  <span>{siteConfig.whatsapp || t.footer.phoneLabel}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#9F9F9F]" />

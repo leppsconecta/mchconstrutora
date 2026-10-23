@@ -32,6 +32,7 @@ import FinanceiroModule from './dashboard/modules/FinanceiroModule';
 import CurriculosModule from './dashboard/modules/CurriculosModule';
 import FuncionariosModule from './dashboard/modules/FuncionariosModule';
 import SiteModule from './dashboard/modules/SiteModule';
+import TrabalheConoscoPage from './app/trabalhe-conosco/page';
 import { CaptacaoTrabalheConosco } from './dashboard/modules/funcionarios/public/CaptacaoTrabalheConosco';
 import { SiteConfigProvider } from './contexts/SiteConfigContext';
 
@@ -155,8 +156,9 @@ export default function App() {
                 <Route path="/projetos" element={<Navigate to="/portfolio" replace />} />
               </Route>
 
-              {/* Página Pública de Captação / Trabalhe Conosco */}
-              <Route path="/trabalhe-conosco" element={<CaptacaoTrabalheConosco />} />
+              {/* Página Pública de Captação de Currículos / Trabalhe Conosco */}
+              <Route path="/trabalhe-conosco" element={<TrabalheConoscoPage />} />
+              <Route path="/trabalhe-conosco-completo" element={<CaptacaoTrabalheConosco />} />
 
               {/* =========================================
                   AUTENTICAÇÃO / LOGIN
