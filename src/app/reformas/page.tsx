@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,6 +53,11 @@ const stepCardVariants = {
 
 export default function ReformasPage() {
   const { t } = useLanguage();
+  const { siteConfig } = useSiteConfig();
+
+  const heroMediaUrl = siteConfig.hero_reformas_media_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80';
+  const isHeroVideo = siteConfig.hero_reformas_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
+  const secao2ImgUrl = siteConfig.reformas_secao2_img_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80';
 
   const maintenanceServices = [
     {
@@ -136,13 +142,24 @@ export default function ReformasPage() {
           </div>
         </div>
 
-        {/* Lado Direito: Mídia de Destaque de Reforma (40%) */}
+        {/* Lado Direito: Mídia de Destaque de Reforma (Vídeo ou Imagem) (40%) */}
         <div className="relative w-full lg:w-[40%] h-[260px] sm:h-[300px] lg:h-full border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden group">
-          <img 
-            src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80"
-            alt="Reformas e Manutenção Predial Machado"
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[4s] ease-out"
-          />
+          {isHeroVideo ? (
+            <video 
+              src={heroMediaUrl}
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="w-full h-full object-cover object-center"
+            />
+          ) : (
+            <img 
+              src={heroMediaUrl}
+              alt="Reformas e Manutenção Predial Machado"
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[4s] ease-out"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#1B2639]/50 via-transparent to-transparent lg:bg-gradient-to-l lg:from-transparent lg:to-[#1B2639]/30 pointer-events-none" />
         </div>
       </section>
@@ -208,7 +225,7 @@ export default function ReformasPage() {
             >
               <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group border border-slate-100 flex">
                 <img
-                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80"
+                  src={secao2ImgUrl}
                   alt="Serviços prediais e manutenção técnica especializada"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />

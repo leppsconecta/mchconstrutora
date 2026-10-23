@@ -20,6 +20,7 @@ export interface Candidato {
   status: 'Ativo' | 'Em Análise' | 'Aprovado' | 'Banco de Talentos' | 'Desativado';
   phone: string;
   gender: 'Masculino' | 'Feminino' | 'Outro';
+  age_range?: string;
   city?: string;
   neighborhood?: string;
   observations?: string;
@@ -282,6 +283,11 @@ export const CurriculosModule: React.FC = () => {
                       <div className="text-xs sm:text-sm font-semibold text-white group-hover:text-sky-300 transition-colors truncate" title={emp.name}>
                         {formatDisplayName(emp.name)}
                       </div>
+                      {emp.age_range && (
+                        <div className="text-[10px] text-slate-400 font-mono leading-tight">
+                          {emp.age_range}
+                        </div>
+                      )}
                     </td>
                     <td className="px-2 py-2.5 text-center">
                       <span
@@ -292,7 +298,7 @@ export const CurriculosModule: React.FC = () => {
                             ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20'
                             : 'text-slate-500'
                         }`}
-                        title={emp.gender || 'Não informado'}
+                        title={`${emp.gender || 'Não informado'}${emp.age_range ? ` • Faixa: ${emp.age_range}` : ''}`}
                       >
                         {genderLetter}
                       </span>

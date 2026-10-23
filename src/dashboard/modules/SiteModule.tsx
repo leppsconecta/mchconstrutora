@@ -22,11 +22,18 @@ import {
   Sparkles,
   Facebook,
   Instagram,
-  Linkedin
+  Linkedin,
+  Video,
+  Film,
+  RefreshCw,
+  Layers,
+  Play,
+  Building2,
+  Hammer
 } from 'lucide-react';
 import { useSiteConfig, PortfolioItem, SiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
 import { useConfirmDelete } from '../context/ConfirmDeleteContext';
-import { uploadImageToBucket } from '../../lib/supabase';
+import { uploadImageToBucket, deleteImageFromBucket, SUPABASE_BUCKET } from '../../lib/supabase';
 
 // Ícone personalizado e responsivo do TikTok (não existente por padrão no lucide-react)
 const TikTokIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
@@ -61,15 +68,41 @@ export const SiteModule: React.FC = () => {
 
   const { confirmDelete } = useConfirmDelete();
 
-  // Active Tab: 'contatos' | 'endereco' | 'portfolio'
-  const [activeTab, setActiveTab] = useState<'contatos' | 'endereco' | 'portfolio'>('contatos');
+  // Active Tab: 'contatos' | 'endereco' | 'portfolio' | 'home' | 'construtora' | 'reformas'
+  const [activeTab, setActiveTab] = useState<'contatos' | 'endereco' | 'portfolio' | 'home' | 'construtora' | 'reformas'>('contatos');
 
-  // Form States for Contacts and Address
+  // Form States for Contacts, Address, and Page Media
   const [contactForm, setContactForm] = useState<Partial<SiteConfig>>({});
   const [addressForm, setAddressForm] = useState<Partial<SiteConfig>>({});
+  const [mediaForm, setMediaForm] = useState<{
+    hero_home_media_url: string;
+    hero_home_media_type: 'image' | 'video';
+    hero_construtora_media_url: string;
+    hero_construtora_media_type: 'image' | 'video';
+    hero_reformas_media_url: string;
+    hero_reformas_media_type: 'image' | 'video';
+    reformas_secao2_img_url: string;
+  }>({
+    hero_home_media_url: '/hero-bg.jpg',
+    hero_home_media_type: 'image',
+    hero_construtora_media_url: 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4',
+    hero_construtora_media_type: 'video',
+    hero_reformas_media_url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80',
+    hero_reformas_media_type: 'image',
+    reformas_secao2_img_url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
+  });
+
   const [savingContacts, setSavingContacts] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
+  const [savingMedia, setSavingMedia] = useState(false);
+  const [uploadingMediaField, setUploadingMediaField] = useState<string | null>(null);
   const [loadingCep, setLoadingCep] = useState(false);
+
+  // Hidden file input refs for each hero/section
+  const homeFileInputRef = useRef<HTMLInputElement>(null);
+  const construtoraFileInputRef = useRef<HTMLInputElement>(null);
+  const reformasFileInputRef = useRef<HTMLInputElement>(null);
+  const secao2FileInputRef = useRef<HTMLInputElement>(null);
 
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -100,6 +133,16 @@ export const SiteModule: React.FC = () => {
         endereco_cidade: siteConfig.endereco_cidade || '',
         endereco_estado: siteConfig.endereco_estado || '',
         google_maps_url: siteConfig.google_maps_url || generateGoogleMapsEmbedUrl(siteConfig),
+      });
+
+      setMediaForm({
+        hero_home_media_url: siteConfig.hero_home_media_url || '/hero-bg.jpg',
+        hero_home_media_type: (siteConfig.hero_home_media_type as 'image' | 'video') || 'image',
+        hero_construtora_media_url: siteConfig.hero_construtora_media_url || 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4',
+        hero_construtora_media_type: (siteConfig.hero_construtora_media_type as 'image' | 'video') || 'video',
+        hero_reformas_media_url: siteConfig.hero_reformas_media_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80',
+        hero_reformas_media_type: (siteConfig.hero_reformas_media_type as 'image' | 'video') || 'image',
+        reformas_secao2_img_url: siteConfig.reformas_secao2_img_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
       });
     }
   }, [siteConfig]);
@@ -169,6 +212,158 @@ export const SiteModule: React.FC = () => {
       showToast('Erro ao salvar endereço: ' + (err?.message || 'Tente novamente.'));
     } finally {
       setSavingAddress(false);
+    }
+  };
+
+  // ==========================================
+  // HEROES & PAGE MEDIA MANAGEMENT
+  // ==========================================
+  const handleUploadMediaFile = async (
+    fieldKey: 'hero_home' | 'hero_construtora' | 'hero_reformas' | 'reformas_secao2',
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingMediaField(fieldKey);
+      const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov|mkv|avi)$/i.test(file.name);
+      
+      // Regra de compressão: imagens passam pela compressão inteligente WebP Full HD (0.82), vídeos sobem diretamente
+      const shouldCompress = !isVideo;
+      const newUrl = await uploadImageToBucket(file, 'site', shouldCompress);
+
+      let previousUrl = '';
+      let updatedPayload: Partial<SiteConfig> = {};
+
+      if (fieldKey === 'hero_home') {
+        previousUrl = mediaForm.hero_home_media_url;
+        updatedPayload = {
+          hero_home_media_url: newUrl,
+          hero_home_media_type: isVideo ? 'video' : 'image'
+        };
+        setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+      } else if (fieldKey === 'hero_construtora') {
+        previousUrl = mediaForm.hero_construtora_media_url;
+        updatedPayload = {
+          hero_construtora_media_url: newUrl,
+          hero_construtora_media_type: isVideo ? 'video' : 'image'
+        };
+        setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+      } else if (fieldKey === 'hero_reformas') {
+        previousUrl = mediaForm.hero_reformas_media_url;
+        updatedPayload = {
+          hero_reformas_media_url: newUrl,
+          hero_reformas_media_type: isVideo ? 'video' : 'image'
+        };
+        setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+      } else if (fieldKey === 'reformas_secao2') {
+        previousUrl = mediaForm.reformas_secao2_img_url;
+        updatedPayload = {
+          reformas_secao2_img_url: newUrl
+        };
+        setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+      }
+
+      // Regra do bucket: deletar arquivo substituído se ele pertencia ao bucket
+      if (previousUrl && previousUrl.includes(SUPABASE_BUCKET)) {
+        await deleteImageFromBucket(previousUrl);
+      }
+
+      // Salvar imediatamente no banco de dados e sincronizar o front
+      await updateSiteConfig(updatedPayload);
+      showToast('Mídia enviada e sincronizada com o site em tempo real!');
+    } catch (err: any) {
+      console.error('Erro no upload de mídia:', err);
+      showToast('Erro ao realizar upload da mídia: ' + (err?.message || 'Tente novamente.'));
+    } finally {
+      setUploadingMediaField(null);
+      e.target.value = '';
+    }
+  };
+
+  const handleResetMedia = (
+    fieldKey: 'hero_home' | 'hero_construtora' | 'hero_reformas' | 'reformas_secao2'
+  ) => {
+    let defaultUrl = '';
+    let defaultType: 'image' | 'video' = 'image';
+    let previousUrl = '';
+    let fieldLabel = '';
+
+    if (fieldKey === 'hero_home') {
+      fieldLabel = 'Hero da Home';
+      defaultUrl = '/hero-bg.jpg';
+      defaultType = 'image';
+      previousUrl = mediaForm.hero_home_media_url;
+    } else if (fieldKey === 'hero_construtora') {
+      fieldLabel = 'Hero da Construtora';
+      defaultUrl = 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4';
+      defaultType = 'video';
+      previousUrl = mediaForm.hero_construtora_media_url;
+    } else if (fieldKey === 'hero_reformas') {
+      fieldLabel = 'Hero de Reformas';
+      defaultUrl = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80';
+      defaultType = 'image';
+      previousUrl = mediaForm.hero_reformas_media_url;
+    } else if (fieldKey === 'reformas_secao2') {
+      fieldLabel = 'Imagem da 2ª Seção de Reformas';
+      defaultUrl = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80';
+      previousUrl = mediaForm.reformas_secao2_img_url;
+    }
+
+    confirmDelete({
+      title: `Restaurar padrão: ${fieldLabel}`,
+      message: `Deseja remover a mídia personalizada e restaurar o arquivo padrão original? O arquivo enviado do storage será apagado.`,
+      itemName: fieldLabel,
+      confirmText: 'Restaurar Padrão',
+      onConfirm: async () => {
+        try {
+          if (previousUrl && previousUrl.includes(SUPABASE_BUCKET)) {
+            await deleteImageFromBucket(previousUrl);
+          }
+
+          let updatedPayload: Partial<SiteConfig> = {};
+          if (fieldKey === 'hero_home') {
+            updatedPayload = { hero_home_media_url: defaultUrl, hero_home_media_type: defaultType };
+            setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+          } else if (fieldKey === 'hero_construtora') {
+            updatedPayload = { hero_construtora_media_url: defaultUrl, hero_construtora_media_type: defaultType };
+            setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+          } else if (fieldKey === 'hero_reformas') {
+            updatedPayload = { hero_reformas_media_url: defaultUrl, hero_reformas_media_type: defaultType };
+            setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+          } else if (fieldKey === 'reformas_secao2') {
+            updatedPayload = { reformas_secao2_img_url: defaultUrl };
+            setMediaForm(prev => ({ ...prev, ...updatedPayload }));
+          }
+
+          await updateSiteConfig(updatedPayload);
+          showToast('Mídia restaurada com sucesso!');
+        } catch (err: any) {
+          showToast('Erro ao restaurar mídia: ' + (err?.message || 'Tente novamente.'));
+        }
+      }
+    });
+  };
+
+  const handleSaveMediaForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSavingMedia(true);
+      await updateSiteConfig({
+        hero_home_media_url: mediaForm.hero_home_media_url,
+        hero_home_media_type: mediaForm.hero_home_media_type,
+        hero_construtora_media_url: mediaForm.hero_construtora_media_url,
+        hero_construtora_media_type: mediaForm.hero_construtora_media_type,
+        hero_reformas_media_url: mediaForm.hero_reformas_media_url,
+        hero_reformas_media_type: mediaForm.hero_reformas_media_type,
+        reformas_secao2_img_url: mediaForm.reformas_secao2_img_url,
+      });
+      showToast('Configurações de mídias salvas com sucesso!');
+    } catch (err: any) {
+      showToast('Erro ao salvar mídias: ' + (err?.message || 'Tente novamente.'));
+    } finally {
+      setSavingMedia(false);
     }
   };
 
@@ -382,7 +577,7 @@ export const SiteModule: React.FC = () => {
           }`}
         >
           <Mail className="w-4 h-4" />
-          <span>Contatos &amp; Redes Sociais</span>
+          <span>Contatos</span>
         </button>
 
         <button
@@ -394,7 +589,7 @@ export const SiteModule: React.FC = () => {
           }`}
         >
           <MapPin className="w-4 h-4" />
-          <span>Endereço &amp; Localização</span>
+          <span>Local</span>
         </button>
 
         <button
@@ -407,6 +602,42 @@ export const SiteModule: React.FC = () => {
         >
           <Briefcase className="w-4 h-4" />
           <span>Portfólio ({portfolio.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('home')}
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeTab === 'home'
+              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Globe className="w-4 h-4" />
+          <span>Home</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('construtora')}
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeTab === 'construtora'
+              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Building2 className="w-4 h-4" />
+          <span>Construtora</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('reformas')}
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeTab === 'reformas'
+              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Hammer className="w-4 h-4" />
+          <span>Reformas</span>
         </button>
       </div>
 
@@ -940,6 +1171,633 @@ export const SiteModule: React.FC = () => {
             })}
           </div>
         </div>
+      )}
+
+      {/* ====================================================
+          TAB 4: PÁGINA INICIAL (HOME)
+         ==================================================== */}
+      {activeTab === 'home' && (
+        <form onSubmit={handleSaveMediaForm} className="space-y-6 animate-in fade-in">
+          <input
+            type="file"
+            ref={homeFileInputRef}
+            onChange={(e) => handleUploadMediaFile('hero_home', e)}
+            accept="image/*,video/mp4,video/webm,video/quicktime"
+            className="hidden"
+          />
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Globe className="w-5 h-5 text-sky-400" />
+                <h3 className="text-base font-bold text-white">Hero da Página Inicial (Home)</h3>
+              </div>
+              <p className="text-xs text-slate-400 max-w-2xl">
+                Configure a mídia de abertura exibida no topo da página principal. Você pode optar por uma imagem fotográfica de alta definição com efeito parallax ou um vídeo institucional em loop contínuo.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingMedia}
+              className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
+            >
+              {savingMedia ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Salvando Home...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Salvar Alterações da Home</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl max-w-3xl">
+            {/* Seletor de Tipo */}
+            <div className="flex items-center justify-between gap-2 pb-4 border-b border-white/10">
+              <div>
+                <label className="text-sm font-semibold text-white block">Formato da Mídia do Hero</label>
+                <p className="text-xs text-slate-400">Escolha se deseja exibir uma imagem com parallax ou um vídeo de fundo</p>
+              </div>
+
+              <div className="flex items-center p-1 bg-[#0A0E17] border border-white/10 rounded-xl gap-1">
+                <button
+                  type="button"
+                  onClick={() => setMediaForm(prev => ({ ...prev, hero_home_media_type: 'image' }))}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    mediaForm.hero_home_media_type === 'image'
+                      ? 'bg-sky-500 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>Imagem</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMediaForm(prev => ({ ...prev, hero_home_media_type: 'video' }))}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    mediaForm.hero_home_media_type === 'video'
+                      ? 'bg-sky-500 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Video className="w-3.5 h-3.5" />
+                  <span>Vídeo</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Preview Ao Vivo */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-medium text-slate-300">Pré-visualização do Hero</label>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300">
+                  {mediaForm.hero_home_media_type === 'video' ? 'Modo Vídeo Ativo' : 'Modo Imagem Ativa'}
+                </span>
+              </div>
+
+              <div className="w-full h-64 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
+                {mediaForm.hero_home_media_type === 'video' ? (
+                  <video
+                    key={mediaForm.hero_home_media_url}
+                    src={mediaForm.hero_home_media_url}
+                    controls
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={mediaForm.hero_home_media_url || '/hero-bg.jpg'}
+                    alt="Hero da Home"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Input de URL e Ações */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={LABEL_CLASS}>URL Direta da Mídia</label>
+                {mediaForm.hero_home_media_url && (
+                  <a
+                    href={mediaForm.hero_home_media_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
+                  >
+                    <span>Abrir arquivo</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+              <input
+                type="text"
+                value={mediaForm.hero_home_media_url}
+                onChange={e => setMediaForm(prev => ({ ...prev, hero_home_media_url: e.target.value }))}
+                placeholder="/hero-bg.jpg ou https://..."
+                className={INPUT_CLASS}
+              />
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-300">
+              <span className="font-semibold block text-white mb-0.5">Regra de Otimização &amp; Bucket</span>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Imagens enviadas passam por compressão inteligente Canvas WebP (máx. 1920px a 82%), reduzindo peso para carregamento instantâneo. Arquivos anteriores no storage são deletados automaticamente para não ocupar espaço desnecessário.
+              </p>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => handleResetMedia('hero_home')}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Restaurar Padrão da Home</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={uploadingMediaField === 'hero_home'}
+                onClick={() => homeFileInputRef.current?.click()}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {uploadingMediaField === 'hero_home' ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Comprimindo &amp; Enviando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    <span>Substituir Arquivo da Home</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* ====================================================
+          TAB 5: PÁGINA CONSTRUTORA (/CONSTRUTORA)
+         ==================================================== */}
+      {activeTab === 'construtora' && (
+        <form onSubmit={handleSaveMediaForm} className="space-y-6 animate-in fade-in">
+          <input
+            type="file"
+            ref={construtoraFileInputRef}
+            onChange={(e) => handleUploadMediaFile('hero_construtora', e)}
+            accept="image/*,video/mp4,video/webm,video/quicktime"
+            className="hidden"
+          />
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Building2 className="w-5 h-5 text-sky-400" />
+                <h3 className="text-base font-bold text-white">Hero da Construtora (/construtora)</h3>
+              </div>
+              <p className="text-xs text-slate-400 max-w-2xl">
+                Gerencie a mídia recortada exibida na lateral direita (40%) do Hero da página de Construtora. Alterne livremente entre vídeo MP4 institucional e imagem de alta resolução.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingMedia}
+              className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
+            >
+              {savingMedia ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Salvando Construtora...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Salvar Alterações de Construtora</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl max-w-3xl">
+            {/* Seletor de Tipo */}
+            <div className="flex items-center justify-between gap-2 pb-4 border-b border-white/10">
+              <div>
+                <label className="text-sm font-semibold text-white block">Tipo de Mídia do Hero</label>
+                <p className="text-xs text-slate-400">Atualmente configurado para vídeo institucional recortado</p>
+              </div>
+
+              <div className="flex items-center p-1 bg-[#0A0E17] border border-white/10 rounded-xl gap-1">
+                <button
+                  type="button"
+                  onClick={() => setMediaForm(prev => ({ ...prev, hero_construtora_media_type: 'video' }))}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    mediaForm.hero_construtora_media_type === 'video'
+                      ? 'bg-sky-500 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Video className="w-3.5 h-3.5" />
+                  <span>Vídeo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMediaForm(prev => ({ ...prev, hero_construtora_media_type: 'image' }))}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    mediaForm.hero_construtora_media_type === 'image'
+                      ? 'bg-sky-500 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>Imagem</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Preview Ao Vivo */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-medium text-slate-300">Pré-visualização da Lateral do Hero (40%)</label>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300">
+                  {mediaForm.hero_construtora_media_type === 'video' ? 'Vídeo Ativo' : 'Imagem Ativa'}
+                </span>
+              </div>
+
+              <div className="w-full h-64 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
+                {mediaForm.hero_construtora_media_type === 'video' ? (
+                  <video
+                    key={mediaForm.hero_construtora_media_url}
+                    src={mediaForm.hero_construtora_media_url}
+                    controls
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={mediaForm.hero_construtora_media_url}
+                    alt="Hero Construtora"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Input de URL e Ações */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className={LABEL_CLASS}>URL da Mídia (ou Envie um Arquivo)</label>
+                {mediaForm.hero_construtora_media_url && (
+                  <a
+                    href={mediaForm.hero_construtora_media_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
+                  >
+                    <span>Abrir arquivo</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+              <input
+                type="text"
+                value={mediaForm.hero_construtora_media_url}
+                onChange={e => setMediaForm(prev => ({ ...prev, hero_construtora_media_url: e.target.value }))}
+                placeholder="https://..."
+                className={INPUT_CLASS}
+              />
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => handleResetMedia('hero_construtora')}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Restaurar Padrão da Construtora</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={uploadingMediaField === 'hero_construtora'}
+                onClick={() => construtoraFileInputRef.current?.click()}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {uploadingMediaField === 'hero_construtora' ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Processando &amp; Enviando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    <span>Substituir Arquivo da Construtora</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* ====================================================
+          TAB 6: PÁGINA REFORMAS (/REFORMAS)
+         ==================================================== */}
+      {activeTab === 'reformas' && (
+        <form onSubmit={handleSaveMediaForm} className="space-y-6 animate-in fade-in">
+          <input
+            type="file"
+            ref={reformasFileInputRef}
+            onChange={(e) => handleUploadMediaFile('hero_reformas', e)}
+            accept="image/*,video/mp4,video/webm,video/quicktime"
+            className="hidden"
+          />
+          <input
+            type="file"
+            ref={secao2FileInputRef}
+            onChange={(e) => handleUploadMediaFile('reformas_secao2', e)}
+            accept="image/*"
+            className="hidden"
+          />
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Hammer className="w-5 h-5 text-sky-400" />
+                <h3 className="text-base font-bold text-white">Gestão da Página de Reformas (/reformas)</h3>
+              </div>
+              <p className="text-xs text-slate-400 max-w-2xl">
+                Altere a mídia do <strong>Hero de Reformas</strong> (imagem ou vídeo) e a fotografia técnica da <strong>2ª Seção (Serviços Prediais &amp; Manutenção)</strong> com compressão automática WebP.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingMedia}
+              className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer shrink-0 disabled:opacity-50"
+            >
+              {savingMedia ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Salvando Reformas...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Salvar Alterações de Reformas</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {/* BLOCO 1: HERO DE REFORMAS */}
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">1. Hero de Reformas (Lateral 40%)</h4>
+                      <p className="text-[11px] text-slate-400">Mídia recortada da seção de abertura</p>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                    Hero
+                  </span>
+                </div>
+
+                {/* Seletor de Tipo */}
+                <div className="flex items-center justify-between gap-2">
+                  <label className="text-xs font-semibold text-slate-300">Tipo de Mídia:</label>
+                  <div className="flex items-center p-1 bg-[#0A0E17] border border-white/10 rounded-xl gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setMediaForm(prev => ({ ...prev, hero_reformas_media_type: 'image' }))}
+                      className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        mediaForm.hero_reformas_media_type === 'image'
+                          ? 'bg-sky-500 text-white shadow-sm'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <ImageIcon className="w-3.5 h-3.5" />
+                      <span>Imagem</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMediaForm(prev => ({ ...prev, hero_reformas_media_type: 'video' }))}
+                      className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        mediaForm.hero_reformas_media_type === 'video'
+                          ? 'bg-sky-500 text-white shadow-sm'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Video className="w-3.5 h-3.5" />
+                      <span>Vídeo</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Preview */}
+                <div className="w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
+                  {mediaForm.hero_reformas_media_type === 'video' ? (
+                    <video
+                      key={mediaForm.hero_reformas_media_url}
+                      src={mediaForm.hero_reformas_media_url}
+                      controls
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={mediaForm.hero_reformas_media_url}
+                      alt="Hero Reformas"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  )}
+                  <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/10">
+                    {mediaForm.hero_reformas_media_type === 'video' ? 'Vídeo Ativo' : 'Imagem Ativa'}
+                  </div>
+                </div>
+
+                {/* URL Direta */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className={LABEL_CLASS}>URL da Mídia do Hero</label>
+                    {mediaForm.hero_reformas_media_url && (
+                      <a
+                        href={mediaForm.hero_reformas_media_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
+                      >
+                        <span>Abrir</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={mediaForm.hero_reformas_media_url}
+                    onChange={e => setMediaForm(prev => ({ ...prev, hero_reformas_media_url: e.target.value }))}
+                    placeholder="https://..."
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+
+              {/* Botões Hero */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleResetMedia('hero_reformas')}
+                  className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Restaurar Padrão</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={uploadingMediaField === 'hero_reformas'}
+                  onClick={() => reformasFileInputRef.current?.click()}
+                  className="px-4 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {uploadingMediaField === 'hero_reformas' ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Enviando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Substituir Hero</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* BLOCO 2: REFORMAS - 2ª SEÇÃO (SERVIÇOS PREDIAIS) */}
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                      <Layers className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">2. Imagem da 2ª Seção (Serviços Prediais)</h4>
+                      <p className="text-[11px] text-slate-400">Foto técnica ilustrando os serviços especializados</p>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    WebP Full HD
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
+                  <span className="font-semibold block text-white mb-0.5">Compressão Automática Ativa</span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Fotos são redimensionadas para até 1920x1920 e comprimidas para WebP (~150KB), garantindo nitidez e rapidez.
+                  </p>
+                </div>
+
+                {/* Preview */}
+                <div className="w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
+                  <img
+                    src={mediaForm.reformas_secao2_img_url}
+                    alt="2ª Seção de Reformas"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/10">
+                    Foto da 2ª Seção
+                  </div>
+                </div>
+
+                {/* URL Direta */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className={LABEL_CLASS}>URL da Imagem da 2ª Seção</label>
+                    {mediaForm.reformas_secao2_img_url && (
+                      <a
+                        href={mediaForm.reformas_secao2_img_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
+                      >
+                        <span>Abrir</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={mediaForm.reformas_secao2_img_url}
+                    onChange={e => setMediaForm(prev => ({ ...prev, reformas_secao2_img_url: e.target.value }))}
+                    placeholder="https://..."
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+
+              {/* Botões 2ª Seção */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleResetMedia('reformas_secao2')}
+                  className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Restaurar Padrão</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={uploadingMediaField === 'reformas_secao2'}
+                  onClick={() => secao2FileInputRef.current?.click()}
+                  className="px-4 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {uploadingMediaField === 'reformas_secao2' ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Comprimindo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Substituir Foto</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </form>
       )}
 
       {/* ====================================================

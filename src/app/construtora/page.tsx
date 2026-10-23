@@ -10,6 +10,7 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,6 +38,10 @@ const stepCardVariants = {
 
 export default function ConstrutoraPage() {
   const { t } = useLanguage();
+  const { siteConfig } = useSiteConfig();
+
+  const heroMediaUrl = siteConfig.hero_construtora_media_url || 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4';
+  const isVideo = siteConfig.hero_construtora_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
 
   const steps = [
     {
@@ -98,16 +103,24 @@ export default function ConstrutoraPage() {
           </div>
         </div>
 
-        {/* Lado Direito: Vídeo Recortado (40%) */}
-        <div className="relative w-full lg:w-[40%] h-[260px] sm:h-[300px] lg:h-full border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
-          <video 
-            src="https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/mchconstrutora_imobiliaria/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4"
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
-            className="w-full h-full object-cover object-center"
-          />
+        {/* Lado Direito: Mídia do Hero (Vídeo ou Imagem) (40%) */}
+        <div className="relative w-full lg:w-[40%] h-[260px] sm:h-[300px] lg:h-full border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden group">
+          {isVideo ? (
+            <video 
+              src={heroMediaUrl}
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="w-full h-full object-cover object-center"
+            />
+          ) : (
+            <img 
+              src={heroMediaUrl}
+              alt="Construtora Machado"
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[4s] ease-out"
+            />
+          )}
           <div className="absolute inset-0 bg-[#1B2639]/10 pointer-events-none" />
         </div>
       </section>

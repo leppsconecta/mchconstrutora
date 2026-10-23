@@ -4,11 +4,14 @@ import { HardHat, Radio, Building2, ArrowRight } from 'lucide-react';
 import { Link } from '../components/Link';
 import { Marquee } from '../components/Marquee';
 import { useLanguage } from '../contexts/LanguageContext';
-
-const heroImage = '/hero-bg.jpg';
+import { useSiteConfig } from '../contexts/SiteConfigContext';
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const { siteConfig } = useSiteConfig();
+
+  const heroMediaUrl = siteConfig.hero_home_media_url || '/hero-bg.jpg';
+  const isVideo = siteConfig.hero_home_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
 
   // Parallax interativo com mouse suave para a Hero
   const heroRef = useRef<HTMLDivElement>(null);
@@ -41,19 +44,32 @@ export default function HomePage() {
         onMouseLeave={handleMouseLeave}
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#1B2639] group"
       >
-        {/* IMAGEM ESTÁTICA ÚNICA COM LEVE ZOOM AO PASSAR O MOUSE E PARALLAX */}
-        <motion.div
-          className="absolute inset-0 bg-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] ease-out"
-          style={{
-            backgroundImage: `url(${heroImage})`,
-            backgroundPosition: 'right 30% center',
-            x: parallaxX,
-            y: parallaxY
-          }}
-        />
+        {/* MÍDIA DINÂMICA (IMAGEM COM PARALLAX OU VÍDEO EM LOOP) */}
+        {isVideo ? (
+          <div className="absolute inset-0 overflow-hidden">
+            <video
+              src={heroMediaUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover object-center scale-105"
+            />
+          </div>
+        ) : (
+          <motion.div
+            className="absolute inset-0 bg-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] ease-out"
+            style={{
+              backgroundImage: `url(${heroMediaUrl})`,
+              backgroundPosition: 'right 30% center',
+              x: parallaxX,
+              y: parallaxY
+            }}
+          />
+        )}
         
         {/* Overlay escuro em gradiente da esquerda para direita para destacar o texto */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1B2639]/95 via-[#1B2639]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1B2639]/95 via-[#1B2639]/40 to-transparent pointer-events-none" />
 
         {/* TEXTO SUBINDO (Sequência Escalada com Slide Up) */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-start mt-20 sm:mt-0">
