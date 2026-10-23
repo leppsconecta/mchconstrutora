@@ -176,7 +176,10 @@ export default function ReformasPage() {
           ) : (
             <img 
               src={heroMediaUrl}
-              alt="Reformas e Manutenção Predial Machado"
+              alt="Reformas prediais corporativas e manutenção técnica B2B - Machado Construtora"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[4s] ease-out"
             />
           )}
@@ -246,7 +249,9 @@ export default function ReformasPage() {
               <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group border border-slate-100 flex">
                 <img
                   src={secao2ImgUrl}
-                  alt="Serviços prediais e manutenção técnica especializada"
+                  alt="Serviços prediais e manutenção técnica especializada em Cajamar e SP - Machado Construtora"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>

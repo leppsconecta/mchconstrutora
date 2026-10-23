@@ -252,7 +252,9 @@ export default function HomePage() {
               <div className="relative w-full h-full min-h-[360px] sm:min-h-[420px] lg:min-h-0 rounded-2xl overflow-hidden shadow-2xl group border border-white/10 flex">
                 <img
                   src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80"
-                  alt="Planejamento de Obra"
+                  alt="Planejamento técnico de engenharia e gestão de obras civis em Cajamar - Machado Construtora"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-90"
                 />
                 <div className="absolute inset-0 bg-[#1B2639]/10 mix-blend-multiply group-hover:bg-transparent transition-colors duration-[1.5s]" />

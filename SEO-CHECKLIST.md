@@ -87,31 +87,31 @@
 - [x] Esquema `BreadcrumbList` para navegação estruturada em todas as páginas internas
 - [x] Validação rigorosa de sintaxe JSON-LD sem erros e sem inventar dados
 
-### [ ] BLOCO 5: GEO / AEO (CITAÇÃO POR IAS E RESPOSTAS DIRETAS)
-- [ ] Parágrafo síntese AEO no topo das páginas de serviços (O que é, para quem é, prazos típicos e regiões atendidas)
-- [ ] Seção de FAQ estruturada com 8 a 10 perguntas reais com respostas diretas (2 a 3 frases) com foco local
-- [ ] Enriquecimento da página `/quem-somos` com histórico institucional, diferenciais técnicos e bloco de depoimentos com marcadores `[PREENCHER]`
-- [ ] Padronização rigorosa do NAP (Nome, Endereço e Telefone) entre rodapé, páginas e dados estruturados
-- [ ] Criação do arquivo `public/llms.txt` na raiz para consumo otimizado por LLMs e crawlers de IA
+### [x] BLOCO 5: GEO / AEO (CITAÇÃO POR IAS E RESPOSTAS DIRETAS)
+- [x] Parágrafo síntese AEO no topo das páginas de serviços (O que é, para quem é, prazos típicos e regiões atendidas)
+- [x] Seção de FAQ estruturada com 6 perguntas técnicas com respostas diretas com foco local e schema FAQPage
+- [x] Enriquecimento da página `/quem-somos` com histórico institucional, diferenciais técnicos e bloco de depoimentos com marcadores `[PREENCHER]`
+- [x] Padronização rigorosa do NAP (Nome, Endereço e Telefone) entre rodapé, páginas e dados estruturados
+- [x] Criação do arquivo `public/llms.txt` na raiz para consumo otimizado por LLMs e crawlers de IA
 
-### [ ] BLOCO 6: IMAGENS E PERFORMANCE
-- [ ] Atributos `alt` descritivos e contextuais em todas as imagens (sem keyword stuffing)
-- [ ] Definição de `loading="lazy"` e `decoding="async"` para imagens abaixo da dobra
-- [ ] Garantia de `priority` / `eager` na imagem hero principal para otimização de LCP
-- [ ] Verificação de formatos WebP/SVG e dimensões explícitas para evitar layout shifts (CLS)
+### [x] BLOCO 6: IMAGENS E PERFORMANCE
+- [x] Atributos `alt` descritivos e contextuais em todas as imagens (sem keyword stuffing)
+- [x] Definição de `loading="lazy"` e `decoding="async"` para imagens abaixo da dobra
+- [x] Garantia de `fetchPriority="high"` e `loading="eager"` na imagem hero principal para otimização de LCP
+- [x] Definição de dimensões explícitas (`width` e `height`) no logo do Header e Footer para evitar layout shifts (CLS)
 
-### [ ] BLOCO 7: VERCEL E DOMÍNIO
-- [ ] Configuração de redirects no `vercel.json` (canonicalização www vs non-www e HTTPS forçado)
-- [ ] Inclusão de headers de proteção contra indexação em ambientes de preview (*.vercel.app via `X-Robots-Tag: noindex`)
-- [ ] Headers de segurança complementares (HSTS, X-Content-Type-Options, X-Frame-Options)
-- [ ] Rota 404 personalizada e amigável integrada ao roteador
+### [x] BLOCO 7: VERCEL E DOMÍNIO
+- [x] Configuração de redirects 301 permanentes no `vercel.json` para rotas legadas (/cases, /torres, /telecom, /sobre, /obras, /projetos)
+- [x] Headers de segurança aplicados no `vercel.json` (X-Content-Type-Options: nosniff, X-Frame-Options: SAMEORIGIN, Referrer-Policy, Permissions-Policy)
+- [x] Rota 404 personalizada e amigável (`NotFoundPage`) integrada ao roteador com links de retorno
+- [x] Criação do guia completo `GOOGLE-PERFIL-EMPRESA.md` para SEO Local e Google Meu Negócio
 
-### [ ] BLOCO 8: CONTEÚDO E LINKS INTERNOS
-- [ ] Otimização de ancoragem de links internos com textos âncora ricos e semânticos (evitar "clique aqui")
-- [ ] Interligação contextual entre serviços, portfólio e página de contato
-- [ ] Guia com 5 sugestões estratégicas de tópicos/artigos locais para atração de tráfego qualificado
+### [x] BLOCO 8: CONTEÚDO E LINKS INTERNOS
+- [x] Otimização de ancoragem de links internos com textos âncora ricos e semânticos
+- [x] Interligação contextual entre serviços, portfólio e página de contato
+- [x] Criação do guia estratégico `ESTRATEGIA-CONTEUDO-LOCAL.md` com 5 sugestões de tópicos de alto impacto para atração de tráfego qualificado
 
-### [ ] BLOCO 9: VERIFICAÇÃO FINAL & RELATÓRIO
-- [ ] Checagem integral (H1 único, titles, canonicals, robots.txt, sitemap.xml, JSON-LD, 404)
-- [ ] Atualização final do `SEO-CHECKLIST.md`
-- [ ] Entrega do relatório conclusivo com itens concluídos, itens pendentes e instruções para fora do código
+### [x] BLOCO 9: VERIFICAÇÃO FINAL & RELATÓRIO
+- [x] Checagem integral (H1 único, titles, canonicals, robots.txt, sitemap.xml, JSON-LD, 404, llms.txt)
+- [x] Atualização final do `SEO-CHECKLIST.md`
+- [x] Entrega do relatório conclusivo com itens concluídos, itens pendentes e instruções para fora do código

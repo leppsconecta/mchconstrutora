@@ -54,7 +54,9 @@ export default function QuemSomosPage() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl min-h-[400px] lg:h-full group">
                <img
                   src="/quem-somos-projetos.jpg"
-                  alt="Projetos técnicos, plantas de engenharia e planejamento sobre a mesa - Machado"
+                  alt="Projetos técnicos, plantas de engenharia e planejamento sobre a mesa - Machado Construtora"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out"
                />
                <div className="absolute inset-0 bg-[#1B2639]/10 group-hover:bg-transparent transition-colors duration-[2s]" />
@@ -152,6 +154,46 @@ export default function QuemSomosPage() {
               </p>
             </motion.div>
           </motion.div>
+
+          {/* Bloco de Avaliações e Depoimentos de Clientes (Campos preservados para preenchimento oficial) */}
+          <div className="mt-16 space-y-6">
+            <div className="text-center max-w-xl mx-auto space-y-2">
+              <span className="text-xs uppercase tracking-widest text-[#9F9F9F] font-semibold block">
+                Reconhecimento &amp; Confiança
+              </span>
+              <h3 className="text-2xl font-bold text-[#1B2639]">
+                O que dizem sobre nossa entrega técnica
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-3">
+                <div className="flex items-center gap-1 text-amber-400">
+                  {'★'.repeat(5)}
+                </div>
+                <p className="text-sm text-slate-600 italic leading-relaxed">
+                  "[PREENCHER: Depoimento do cliente residencial sobre a construção turnkey em Cajamar/SP]"
+                </p>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <span className="font-semibold text-[#1B2639]">[PREENCHER: Nome do Proprietário]</span>
+                  <span>[PREENCHER: Residencial / Cajamar - SP]</span>
+                </div>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-3">
+                <div className="flex items-center gap-1 text-amber-400">
+                  {'★'.repeat(5)}
+                </div>
+                <p className="text-sm text-slate-600 italic leading-relaxed">
+                  "[PREENCHER: Avaliação de cliente corporativo sobre adequação predial B2B ou base de telecom]"
+                </p>
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <span className="font-semibold text-[#1B2639]">[PREENCHER: Nome da Empresa / Gestor de Obras]</span>
+                  <span>[PREENCHER: Segmento / Grande SP]</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Sede e Atendimento */}
           <div className="mt-16 p-8 sm:p-10 rounded-2xl bg-[#F8F9FA] border border-slate-200/60 flex flex-col md:flex-row gap-8 items-center justify-between">

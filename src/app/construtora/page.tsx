@@ -137,7 +137,10 @@ export default function ConstrutoraPage() {
           ) : (
             <img 
               src={heroMediaUrl}
-              alt="Construtora Machado"
+              alt="Obras e casas de alto padrão turnkey - Machado Construtora em Cajamar e SP"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[4s] ease-out"
             />
           )}
@@ -161,7 +164,9 @@ export default function ConstrutoraPage() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group">
                 <img
                   src="/casa-alto-padrao.jpg"
-                  alt="Casa de alto padrão construída pela Machado"
+                  alt="Casa de alto padrão residencial construída pela Machado Construtora em Cajamar"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>

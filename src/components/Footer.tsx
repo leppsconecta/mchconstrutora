@@ -34,6 +34,10 @@ export const Footer: React.FC = () => {
               <img
                 src="/logos/logotipo_machado_header.png"
                 alt="Machado Construtora &amp; Incorporadora"
+                width={180}
+                height={40}
+                loading="lazy"
+                decoding="async"
                 className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>

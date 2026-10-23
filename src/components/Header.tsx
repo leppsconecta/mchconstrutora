@@ -58,6 +58,8 @@ export const Header: React.FC = () => {
               <img
                 src="/logos/logotipo_machado_header.png"
                 alt="Machado Construtora &amp; Incorporadora"
+                width={180}
+                height={40}
                 className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
