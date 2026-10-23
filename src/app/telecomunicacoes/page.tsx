@@ -2,6 +2,7 @@ import React from 'react';
 import { Signal, Zap, ShieldCheck, ArrowRight, HardHat, Hammer, Users } from 'lucide-react';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
+import { getBreadcrumbSchema, getServiceSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function TelecomunicacoesPage() {
@@ -14,6 +15,18 @@ export default function TelecomunicacoesPage() {
         description="Fundações profundas, lajes maciças e infraestrutura civil para torres e antenas de telecomunicações no Brasil. Fale com nossa equipe de engenharia!"
         canonicalPath="/telecomunicacoes"
         image="/imagem_torre.png"
+        jsonLd={[
+          getBreadcrumbSchema([
+            { name: 'Início', path: '/' },
+            { name: 'Telecomunicações', path: '/telecomunicacoes' }
+          ]),
+          getServiceSchema({
+            name: 'Infraestrutura Civil para Telecomunicações e Torres',
+            description: 'Execução de fundações profundas, lajes maciças, reforços estruturais e adequações para sustentação de torres de telecomunicações.',
+            path: '/telecomunicacoes',
+            serviceType: 'Infraestrutura de Telecomunicações'
+          })
+        ]}
       />
       {/* Split Hero Section */}
       <section className="relative flex flex-col lg:flex-row overflow-hidden bg-[#1B2639] lg:h-[500px] border-b border-white/10">

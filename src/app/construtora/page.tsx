@@ -10,6 +10,7 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
+import { getBreadcrumbSchema, getServiceSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
@@ -78,6 +79,18 @@ export default function ConstrutoraPage() {
         description="Execução completa de residências e obras civis do terreno à entrega de chaves em Cajamar e SP. Mão de obra própria e CREA-SP. Conheça nossos projetos!"
         canonicalPath="/construtora"
         image="/casa-alto-padrao.jpg"
+        jsonLd={[
+          getBreadcrumbSchema([
+            { name: 'Início', path: '/' },
+            { name: 'Construtora', path: '/construtora' }
+          ]),
+          getServiceSchema({
+            name: 'Construção Civil Residencial Turnkey e Incorporação',
+            description: 'Execução integral de residências e obras civis do terreno à entrega das chaves com equipe própria e acompanhamento técnico CREA-SP.',
+            path: '/construtora',
+            serviceType: 'Construção Civil'
+          })
+        ]}
       />
 
       {/* HERO SECTION COM VÍDEO REAL DO PROJETO CALIANDRAS 2 (MACHADO) */}

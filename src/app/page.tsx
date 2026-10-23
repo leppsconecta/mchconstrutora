@@ -4,6 +4,7 @@ import { HardHat, Radio, Building2, ArrowRight } from 'lucide-react';
 import { Link } from '../components/Link';
 import { Marquee } from '../components/Marquee';
 import { SeoHead } from '../components/SeoHead';
+import { getLocalBusinessSchema } from '../lib/schemas';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSiteConfig } from '../contexts/SiteConfigContext';
 
@@ -41,6 +42,7 @@ export default function HomePage() {
         description="Construtora e incorporadora em Cajamar e SP. Obras civis turnkey, infraestrutura de telecom e reformas prediais B2B. Solicite sua proposta agora!"
         canonicalPath="/"
         image="/casa-alto-padrao.jpg"
+        jsonLd={getLocalBusinessSchema()}
       />
       {/* =========================================================================
           2. HERO SECTION COM FOTOGRAFIA DA BASE DE TORRE

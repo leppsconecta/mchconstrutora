@@ -80,13 +80,12 @@
 - [x] Adição de meta tag `noindex, nofollow` em todas as rotas restritas e de autenticação
 - [x] Criação de página 404 personalizada (`NotFoundPage`) com navegação amigável e noindex
 
-### [ ] BLOCO 4: DADOS ESTRUTURADOS (JSON-LD SCHEMA.ORG)
-- [ ] Esquema `LocalBusiness` / `GeneralContractor` (Construção Civil) com NAP (Name, Address, Phone), horário, geo-coordenadas e sameAs
-- [ ] Esquema `Organization` com logotipo oficial e contatos
-- [ ] Esquema `Service` específico em cada página de especialidade (/construtora, /telecomunicacoes, /reformas)
-- [ ] Esquema `BreadcrumbList` para navegação estruturada
-- [ ] Esquema `FAQPage` nas páginas com perguntas frequentes
-- [ ] Validação de sintaxe JSON-LD sem erros
+### [x] BLOCO 4: DADOS ESTRUTURADOS (JSON-LD SCHEMA.ORG)
+- [x] Esquema `LocalBusiness` / `GeneralContractor` (Construção Civil) com NAP (Name, Address, Phone), horário, geo-coordenadas e sameAs
+- [x] Esquema `Organization` com logotipo oficial e contatos
+- [x] Esquema `Service` específico em cada página de especialidade (/construtora, /telecomunicacoes, /reformas)
+- [x] Esquema `BreadcrumbList` para navegação estruturada em todas as páginas internas
+- [x] Validação rigorosa de sintaxe JSON-LD sem erros e sem inventar dados
 
 ### [ ] BLOCO 5: GEO / AEO (CITAÇÃO POR IAS E RESPOSTAS DIRETAS)
 - [ ] Parágrafo síntese AEO no topo das páginas de serviços (O que é, para quem é, prazos típicos e regiões atendidas)

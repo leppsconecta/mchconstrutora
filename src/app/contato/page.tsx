@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin, Briefcase, ArrowRight } from 'lucide-react';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
+import { getBreadcrumbSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig, generateGoogleMapsEmbedUrl } from '../../contexts/SiteConfigContext';
 
@@ -37,6 +38,10 @@ export default function ContatoPage() {
         description="Fale com a engenharia da Machado Construtora em Cajamar e SP. Atendimento para obras civis, telecomunicações e reformas. Solicite seu orçamento hoje!"
         canonicalPath="/contato"
         image="/casa-alto-padrao.jpg"
+        jsonLd={getBreadcrumbSchema([
+          { name: 'Início', path: '/' },
+          { name: 'Contato', path: '/contato' }
+        ])}
       />
       {/* Conteúdo de Contato Clean */}
       <section className="py-20 sm:py-28 bg-white">

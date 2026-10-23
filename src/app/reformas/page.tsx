@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
+import { getBreadcrumbSchema, getServiceSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
@@ -117,6 +118,18 @@ export default function ReformasPage() {
         description="Adequação e manutenção predial civil, elétrica e hidráulica para galpões, escritórios e condomínios em SP. Peça seu orçamento técnico sem compromisso!"
         canonicalPath="/reformas"
         image="/casa-alto-padrao.jpg"
+        jsonLd={[
+          getBreadcrumbSchema([
+            { name: 'Início', path: '/' },
+            { name: 'Reformas Prediais', path: '/reformas' }
+          ]),
+          getServiceSchema({
+            name: 'Reformas Prediais e Manutenção Corporativa B2B',
+            description: 'Adequação completa de galpões, condomínios e imóveis comerciais, abrangendo civil, elétrica, hidráulica e acabamento.',
+            path: '/reformas',
+            serviceType: 'Reformas Prediais e Corporativas'
+          })
+        ]}
       />
 
       {/* HERO SECTION DE REFORMAS (REFERÊNCIA HERO DE CONSTRUTORA) */}

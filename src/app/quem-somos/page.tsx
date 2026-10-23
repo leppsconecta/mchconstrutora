@@ -3,6 +3,7 @@ import { Shield, Award, Users, ArrowRight, Radio, Building2, Home } from 'lucide
 import { motion } from 'framer-motion';
 import { Link } from '../../components/Link';
 import { SeoHead } from '../../components/SeoHead';
+import { getBreadcrumbSchema } from '../../lib/schemas';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 const containerVariants = {
@@ -38,6 +39,10 @@ export default function QuemSomosPage() {
         description="Conheça a história, valores e estrutura técnica da Machado Construtora em Cajamar e SP. Equipe própria qualificada e rigor com normas CREA-SP e NR-18."
         canonicalPath="/quem-somos"
         image="/quem-somos-projetos.jpg"
+        jsonLd={getBreadcrumbSchema([
+          { name: 'Início', path: '/' },
+          { name: 'Quem Somos', path: '/quem-somos' }
+        ])}
       />
 
       {/* Conteúdo Institucional Clean */}
