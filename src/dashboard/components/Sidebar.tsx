@@ -7,7 +7,8 @@ import {
   Files, 
   Wallet, 
   GraduationCap, 
-  Users
+  Users,
+  Globe
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -50,6 +51,11 @@ export const navigationItems = [
     name: 'Funcionários',
     path: '/admin/funcionarios',
     icon: Users,
+  },
+  {
+    name: 'Site',
+    path: '/admin/site',
+    icon: Globe,
   },
 ];
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send, CheckCircle2, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useSiteConfig } from '../../contexts/SiteConfigContext';
 
 export default function ContatoPage() {
   const { t } = useLanguage();
+  const { siteConfig } = useSiteConfig();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
@@ -48,10 +50,14 @@ export default function ContatoPage() {
                       {t.contato.headquarters}
                     </span>
                     <div className="text-base font-bold text-[#1B2639] mt-0.5">
-                      {t.contato.addressLine1}
+                      {siteConfig.endereco_logradouro 
+                        ? `${siteConfig.endereco_logradouro}, ${siteConfig.endereco_numero || 'S/N'}${siteConfig.endereco_complemento ? ' - ' + siteConfig.endereco_complemento : ''}` 
+                        : t.contato.addressLine1}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {t.contato.addressLine2}
+                      {siteConfig.endereco_cidade 
+                        ? `${siteConfig.endereco_bairro ? siteConfig.endereco_bairro + ', ' : ''}${siteConfig.endereco_cidade} - ${siteConfig.endereco_estado || 'SP'}, CEP ${siteConfig.endereco_cep || '07790-840'}` 
+                        : t.contato.addressLine2}
                     </div>
                   </div>
                 </div>
@@ -59,7 +65,7 @@ export default function ContatoPage() {
                 {/* Mapa Google Maps */}
                 <div className="rounded-lg overflow-hidden border border-slate-200/60 h-48 w-full mt-4">
                   <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3661.761794715783!2d-46.86469612399222!3d-23.396825578913395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cf1b9ad9b54d5d%3A0x6b3061dcaf7ebbc3!2sAv.%20dos%20Ip%C3%AAs%2C%20155%20-%20Portal%20dos%20Ip%C3%AAs%20(Polvilho)%2C%20Cajamar%20-%20SP%2C%2007790-840!5e0!3m2!1spt-BR!2sbr!4v1715802123456!5m2!1spt-BR!2sbr" 
+                    src={siteConfig.google_maps_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3661.761794715783!2d-46.86469612399222!3d-23.396825578913395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cf1b9ad9b54d5d%3A0x6b3061dcaf7ebbc3!2sAv.%20dos%20Ip%C3%AAs%2C%20155%20-%20Portal%20dos%20Ip%C3%AAs%20(Polvilho)%2C%20Cajamar%20-%20SP%2C%2007790-840!5e0!3m2!1spt-BR!2sbr!4v1715802123456!5m2!1spt-BR!2sbr"} 
                     width="100%" 
                     height="100%" 
                     style={{ border: 0 }} 
@@ -75,17 +81,29 @@ export default function ContatoPage() {
               <div className="space-y-4 text-sm text-slate-700">
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-[#1B2639]" />
-                  <span><strong>Telefone:</strong> (11) 96645-4023</span>
+                  <span><strong>Telefone:</strong> {siteConfig.telefone_principal || '(11) 96645-4023'} {siteConfig.telefone_secundario ? `/ ${siteConfig.telefone_secundario}` : ''}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-[#1B2639]" />
-                  <span><strong>E-mail:</strong> contato@mchengenharia.com.br</span>
+                  <span><strong>E-mail:</strong> {siteConfig.email_principal || 'contato@mchengenharia.com.br'}</span>
                 </div>
+                {siteConfig.email_comercial && (
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-[#1B2639]" />
+                    <span><strong>Comercial:</strong> {siteConfig.email_comercial}</span>
+                  </div>
+                )}
               </div>
 
               {/* Redes Sociais */}
               <div className="pt-6 border-t border-slate-100 flex items-center gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors" aria-label="Instagram">
+                <a 
+                  href={siteConfig.instagram_url || "#"} 
+                  target={siteConfig.instagram_url ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors" 
+                  aria-label="Instagram"
+                >
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a href="#" className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1B2639] hover:bg-[#1B2639] hover:text-white transition-colors" aria-label="Facebook">

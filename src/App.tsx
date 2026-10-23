@@ -13,7 +13,7 @@ import ConstrutoraPage from './app/construtora/page';
 import ReformasPage from './app/reformas/page';
 import TelecomunicacoesPage from './app/telecomunicacoes/page';
 import ImobiliariaPage from './app/imobiliaria/page';
-import CasesPage from './app/cases/page';
+import PortfolioPage from './app/portfolio/page';
 import QuemSomosPage from './app/quem-somos/page';
 import ContatoPage from './app/contato/page';
 
@@ -31,7 +31,9 @@ import ArquivosModule from './dashboard/modules/ArquivosModule';
 import FinanceiroModule from './dashboard/modules/FinanceiroModule';
 import CurriculosModule from './dashboard/modules/CurriculosModule';
 import FuncionariosModule from './dashboard/modules/FuncionariosModule';
+import SiteModule from './dashboard/modules/SiteModule';
 import { CaptacaoTrabalheConosco } from './dashboard/modules/funcionarios/public/CaptacaoTrabalheConosco';
+import { SiteConfigProvider } from './contexts/SiteConfigContext';
 
 /**
  * Scroll to top on every route transition
@@ -122,70 +124,74 @@ export default function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
-        <BrowserRouter>
-          <SmoothScrollSetup />
-          <ScrollToTop />
+        <SiteConfigProvider>
+          <BrowserRouter>
+            <SmoothScrollSetup />
+            <ScrollToTop />
 
-          <Routes>
-            {/* =========================================
-                ROTAS PÚBLICAS / INSTITUCIONAL
-               ========================================= */}
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/telecomunicacoes" element={<TelecomunicacoesPage />} />
-              <Route path="/reformas" element={<ReformasPage />} />
-              <Route path="/construtora" element={<ConstrutoraPage />} />
-              <Route path="/cases" element={<CasesPage />} />
-              <Route path="/quem-somos" element={<QuemSomosPage />} />
-              <Route path="/contato" element={<ContatoPage />} />
+            <Routes>
+              {/* =========================================
+                  ROTAS PÚBLICAS / INSTITUCIONAL
+                 ========================================= */}
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/telecomunicacoes" element={<TelecomunicacoesPage />} />
+                <Route path="/reformas" element={<ReformasPage />} />
+                <Route path="/construtora" element={<ConstrutoraPage />} />
+                <Route path="/portfolio" element={<PortfolioPage />} />
+                <Route path="/quem-somos" element={<QuemSomosPage />} />
+                <Route path="/contato" element={<ContatoPage />} />
 
-              {/* Rotas legadas, atalhos e compatibilidade do site */}
-              <Route path="/torres" element={<Navigate to="/telecomunicacoes" replace />} />
-              <Route path="/telecom" element={<Navigate to="/telecomunicacoes" replace />} />
-              <Route path="/torres-telecom" element={<Navigate to="/telecomunicacoes" replace />} />
-              <Route path="/imobiliaria" element={<ImobiliariaPage />} />
-              <Route path="/imoveis" element={<Navigate to="/imobiliaria" replace />} />
-              <Route path="/sobre" element={<Navigate to="/quem-somos" replace />} />
-              <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
-              <Route path="/obras" element={<Navigate to="/construtora" replace />} />
-              <Route path="/projetos" element={<Navigate to="/cases" replace />} />
-            </Route>
-
-            {/* Página Pública de Captação / Trabalhe Conosco */}
-            <Route path="/trabalhe-conosco" element={<CaptacaoTrabalheConosco />} />
-
-            {/* =========================================
-                AUTENTICAÇÃO / LOGIN
-               ========================================= */}
-            <Route path="/admin/login" element={<LoginPage />} />
-            <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-
-            {/* =========================================
-                PAINEL DE CONTROLE / DASHBOARD (PROTEGIDO)
-               ========================================= */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/admin" element={<DashboardLayout />}>
-                <Route index element={<Navigate to="/admin/projetos" replace />} />
-                <Route path="projetos" element={<ProjetosModule />} />
-                <Route path="clientes" element={<ClientesModule />} />
-                <Route path="crm-leads" element={<CrmLeadsModule />} />
-                <Route path="arquivos" element={<ArquivosModule />} />
-                <Route path="financeiro" element={<FinanceiroModule />} />
-                <Route path="curriculos" element={<CurriculosModule />} />
-                <Route path="funcionarios" element={<FuncionariosModule />} />
+                {/* Rotas legadas, atalhos e compatibilidade do site */}
+                <Route path="/cases" element={<Navigate to="/portfolio" replace />} />
+                <Route path="/torres" element={<Navigate to="/telecomunicacoes" replace />} />
+                <Route path="/telecom" element={<Navigate to="/telecomunicacoes" replace />} />
+                <Route path="/torres-telecom" element={<Navigate to="/telecomunicacoes" replace />} />
+                <Route path="/imobiliaria" element={<ImobiliariaPage />} />
+                <Route path="/imoveis" element={<Navigate to="/imobiliaria" replace />} />
+                <Route path="/sobre" element={<Navigate to="/quem-somos" replace />} />
+                <Route path="/sobre-nos" element={<Navigate to="/quem-somos" replace />} />
+                <Route path="/obras" element={<Navigate to="/construtora" replace />} />
+                <Route path="/projetos" element={<Navigate to="/portfolio" replace />} />
               </Route>
 
-              {/* Atalhos para o dashboard */}
-              <Route path="/dashboard" element={<Navigate to="/admin/projetos" replace />} />
-              <Route path="/dashboard/*" element={<Navigate to="/admin/projetos" replace />} />
-            </Route>
+              {/* Página Pública de Captação / Trabalhe Conosco */}
+              <Route path="/trabalhe-conosco" element={<CaptacaoTrabalheConosco />} />
 
-            {/* =========================================
-                FALLBACK
-               ========================================= */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
+              {/* =========================================
+                  AUTENTICAÇÃO / LOGIN
+                 ========================================= */}
+              <Route path="/admin/login" element={<LoginPage />} />
+              <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+
+              {/* =========================================
+                  PAINEL DE CONTROLE / DASHBOARD (PROTEGIDO)
+                 ========================================= */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/admin" element={<DashboardLayout />}>
+                  <Route index element={<Navigate to="/admin/projetos" replace />} />
+                  <Route path="projetos" element={<ProjetosModule />} />
+                  <Route path="clientes" element={<ClientesModule />} />
+                  <Route path="crm-leads" element={<CrmLeadsModule />} />
+                  <Route path="arquivos" element={<ArquivosModule />} />
+                  <Route path="financeiro" element={<FinanceiroModule />} />
+                  <Route path="curriculos" element={<CurriculosModule />} />
+                  <Route path="funcionarios" element={<FuncionariosModule />} />
+                  <Route path="site" element={<SiteModule />} />
+                </Route>
+
+                {/* Atalhos para o dashboard */}
+                <Route path="/dashboard" element={<Navigate to="/admin/projetos" replace />} />
+                <Route path="/dashboard/*" element={<Navigate to="/admin/projetos" replace />} />
+              </Route>
+
+              {/* =========================================
+                  FALLBACK
+                 ========================================= */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </SiteConfigProvider>
       </LanguageProvider>
     </AuthProvider>
   );

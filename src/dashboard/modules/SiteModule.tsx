@@ -1,0 +1,1181 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Globe, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Briefcase, 
+  Plus, 
+  Upload, 
+  Trash2, 
+  Check, 
+  CheckCircle2, 
+  Loader2, 
+  Search, 
+  Image as ImageIcon, 
+  Star, 
+  ExternalLink, 
+  X, 
+  Eye, 
+  Clock, 
+  Save,
+  Sparkles
+} from 'lucide-react';
+import { useSiteConfig, PortfolioItem, SiteConfig } from '../../contexts/SiteConfigContext';
+import { useConfirmDelete } from '../context/ConfirmDeleteContext';
+import { uploadImageToBucket } from '../../lib/supabase';
+
+const INPUT_CLASS = "w-full h-11 bg-[#0A0E17] border border-white/10 rounded-xl px-4 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 transition-all";
+const LABEL_CLASS = "text-xs font-medium text-slate-300 flex items-center gap-1.5 mb-1.5";
+
+const CATEGORIAS_PADRAO = [
+  'Construção Civil',
+  'Telecomunicações',
+  'Reformas Prediais',
+  'Incorporação Imobiliária',
+  'Engenharia Corporativa'
+];
+
+export const SiteModule: React.FC = () => {
+  const { 
+    siteConfig, 
+    portfolio, 
+    loading, 
+    updateSiteConfig, 
+    addPortfolioItem, 
+    updatePortfolioItem, 
+    deletePortfolioItem, 
+    uploadPortfolioImage, 
+    removePortfolioImage 
+  } = useSiteConfig();
+
+  const { confirmDelete } = useConfirmDelete();
+
+  // Active Tab: 'contatos' | 'endereco' | 'portfolio'
+  const [activeTab, setActiveTab] = useState<'contatos' | 'endereco' | 'portfolio'>('contatos');
+
+  // Form States for Contacts and Address
+  const [contactForm, setContactForm] = useState<Partial<SiteConfig>>({});
+  const [addressForm, setAddressForm] = useState<Partial<SiteConfig>>({});
+  const [savingContacts, setSavingContacts] = useState(false);
+  const [savingAddress, setSavingAddress] = useState(false);
+  const [loadingCep, setLoadingCep] = useState(false);
+
+  // Toast feedback
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // Sync initial state from siteConfig
+  useEffect(() => {
+    if (siteConfig) {
+      setContactForm({
+        email_principal: siteConfig.email_principal || '',
+        email_comercial: siteConfig.email_comercial || '',
+        email_rh: siteConfig.email_rh || '',
+        telefone_principal: siteConfig.telefone_principal || '',
+        telefone_secundario: siteConfig.telefone_secundario || '',
+        whatsapp: siteConfig.whatsapp || '',
+        horario_funcionamento: siteConfig.horario_funcionamento || '',
+        instagram_url: siteConfig.instagram_url || '',
+        facebook_url: siteConfig.facebook_url || '',
+        linkedin_url: siteConfig.linkedin_url || '',
+      });
+
+      setAddressForm({
+        endereco_cep: siteConfig.endereco_cep || '',
+        endereco_logradouro: siteConfig.endereco_logradouro || '',
+        endereco_numero: siteConfig.endereco_numero || '',
+        endereco_complemento: siteConfig.endereco_complemento || '',
+        endereco_bairro: siteConfig.endereco_bairro || '',
+        endereco_cidade: siteConfig.endereco_cidade || '',
+        endereco_estado: siteConfig.endereco_estado || '',
+        google_maps_url: siteConfig.google_maps_url || '',
+      });
+    }
+  }, [siteConfig]);
+
+  // Handle Save Contacts
+  const handleSaveContacts = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSavingContacts(true);
+      await updateSiteConfig(contactForm);
+      showToast('Canais de contato atualizados com sucesso no banco!');
+    } catch (err: any) {
+      showToast('Erro ao salvar contatos: ' + (err?.message || 'Tente novamente.'));
+    } finally {
+      setSavingContacts(false);
+    }
+  };
+
+  // Handle CEP Search
+  const handleBuscarCep = async () => {
+    const rawCep = (addressForm.endereco_cep || '').replace(/\D/g, '');
+    if (rawCep.length !== 8) {
+      showToast('Informe um CEP válido com 8 dígitos.');
+      return;
+    }
+
+    try {
+      setLoadingCep(true);
+      const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
+      const data = await res.json();
+
+      if (data.erro) {
+        showToast('CEP não encontrado na base dos Correios.');
+        return;
+      }
+
+      setAddressForm(prev => ({
+        ...prev,
+        endereco_logradouro: data.logradouro || prev.endereco_logradouro,
+        endereco_bairro: data.bairro || prev.endereco_bairro,
+        endereco_cidade: data.localidade || prev.endereco_cidade,
+        endereco_estado: data.uf || prev.endereco_estado
+      }));
+
+      showToast('Endereço preenchido via CEP!');
+    } catch (e) {
+      showToast('Erro ao consultar CEP.');
+    } finally {
+      setLoadingCep(false);
+    }
+  };
+
+  // Handle Save Address
+  const handleSaveAddress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSavingAddress(true);
+      await updateSiteConfig(addressForm);
+      showToast('Endereço e mapa atualizados com sucesso no banco!');
+    } catch (err: any) {
+      showToast('Erro ao salvar endereço: ' + (err?.message || 'Tente novamente.'));
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  // ==========================================
+  // PORTFOLIO MODAL & IMAGE MANAGEMENT
+  // ==========================================
+  const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
+  const [portfolioFormData, setPortfolioFormData] = useState<Partial<PortfolioItem>>({
+    title: '',
+    category: 'Construção Civil',
+    location: '',
+    timeframe: '',
+    description: '',
+    image: '',
+    gallery: [],
+    highlights: [],
+    order_index: 1,
+    is_active: true
+  });
+
+  const [newHighlight, setNewHighlight] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [savingItem, setSavingItem] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Open modal to create portfolio item
+  const handleOpenNewItem = () => {
+    setEditingItem(null);
+    setPortfolioFormData({
+      title: '',
+      category: 'Construção Civil',
+      location: '',
+      timeframe: '',
+      description: '',
+      image: '',
+      gallery: [],
+      highlights: [],
+      order_index: portfolio.length + 1,
+      is_active: true
+    });
+    setIsPortfolioModalOpen(true);
+  };
+
+  // Open modal to edit existing portfolio item
+  const handleOpenEditItem = (item: PortfolioItem) => {
+    setEditingItem(item);
+    setPortfolioFormData({
+      ...item,
+      gallery: Array.isArray(item.gallery) ? [...item.gallery] : [],
+      highlights: Array.isArray(item.highlights) ? [...item.highlights] : []
+    });
+    setIsPortfolioModalOpen(true);
+  };
+
+  // Add highlight bullet
+  const handleAddHighlight = () => {
+    if (!newHighlight.trim()) return;
+    setPortfolioFormData(prev => ({
+      ...prev,
+      highlights: [...(prev.highlights || []), newHighlight.trim()]
+    }));
+    setNewHighlight('');
+  };
+
+  // Remove highlight bullet
+  const handleRemoveHighlight = (idx: number) => {
+    setPortfolioFormData(prev => ({
+      ...prev,
+      highlights: (prev.highlights || []).filter((_, i) => i !== idx)
+    }));
+  };
+
+  // Handle Image Upload for Portfolio Item
+  const handleUploadImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingImage(true);
+      showToast('Enviando imagem para o bucket machado_construtora...');
+
+      // Upload direto para o bucket `machado_construtora`
+      const publicUrl = await uploadImageToBucket(file, 'portfolio');
+
+      // Se já estiver editando um item salvo no banco, sincroniza via context
+      if (editingItem?.id) {
+        await uploadPortfolioImage(editingItem.id, file, !portfolioFormData.image);
+      }
+
+      setPortfolioFormData(prev => {
+        const newGallery = prev.gallery ? [...prev.gallery, publicUrl] : [publicUrl];
+        return {
+          ...prev,
+          image: prev.image || publicUrl,
+          gallery: newGallery
+        };
+      });
+
+      showToast('Imagem adicionada com sucesso ao portfólio!');
+    } catch (err: any) {
+      showToast('Erro no upload da imagem: ' + (err?.message || 'Falha ao enviar.'));
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  // Set an image from gallery as main cover
+  const handleSetAsCover = (imageUrl: string) => {
+    setPortfolioFormData(prev => ({ ...prev, image: imageUrl }));
+    if (editingItem?.id) {
+      updatePortfolioItem(editingItem.id, { image: imageUrl });
+    }
+    showToast('Imagem definida como capa principal!');
+  };
+
+  // Remove an image from gallery
+  const handleRemoveImage = async (imageUrl: string) => {
+    const newGallery = (portfolioFormData.gallery || []).filter(url => url !== imageUrl);
+    const newCover = portfolioFormData.image === imageUrl ? (newGallery[0] || '') : portfolioFormData.image;
+
+    setPortfolioFormData(prev => ({
+      ...prev,
+      gallery: newGallery,
+      image: newCover
+    }));
+
+    if (editingItem?.id) {
+      await removePortfolioImage(editingItem.id, imageUrl);
+    }
+    showToast('Imagem removida do portfólio e do storage.');
+  };
+
+  // Save Portfolio Item (Create or Update)
+  const handleSaveItemSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!portfolioFormData.title?.trim()) {
+      showToast('O título do projeto é obrigatório.');
+      return;
+    }
+
+    try {
+      setSavingItem(true);
+
+      const payload = {
+        title: portfolioFormData.title,
+        category: portfolioFormData.category || 'Construção Civil',
+        location: portfolioFormData.location || '',
+        timeframe: portfolioFormData.timeframe || '',
+        description: portfolioFormData.description || '',
+        image: portfolioFormData.image || (portfolioFormData.gallery?.[0] || ''),
+        gallery: portfolioFormData.gallery || [],
+        highlights: portfolioFormData.highlights || [],
+        order_index: Number(portfolioFormData.order_index) || 1,
+        is_active: portfolioFormData.is_active ?? true
+      };
+
+      if (editingItem?.id) {
+        await updatePortfolioItem(editingItem.id, payload);
+        showToast('Projeto do portfólio atualizado com sucesso no site!');
+      } else {
+        await addPortfolioItem(payload);
+        showToast('Novo projeto publicado no portfólio do site!');
+      }
+
+      setIsPortfolioModalOpen(false);
+    } catch (err: any) {
+      showToast('Erro ao salvar no portfólio: ' + (err?.message || 'Tente novamente.'));
+    } finally {
+      setSavingItem(false);
+    }
+  };
+
+  // Delete Portfolio Item
+  const handleDeleteItem = (item: PortfolioItem) => {
+    confirmDelete({
+      title: 'Excluir Projeto do Portfólio',
+      message: 'Tem certeza que deseja excluir este projeto? Todas as imagens associadas no bucket serão excluídas automaticamente.',
+      itemName: item.title,
+      confirmText: 'Excluir do Portfólio',
+      onConfirm: async () => {
+        try {
+          await deletePortfolioItem(item.id);
+          showToast(`Projeto "${item.title}" excluído com sucesso.`);
+        } catch (err: any) {
+          showToast('Erro ao excluir projeto: ' + (err?.message || 'Tente novamente.'));
+        }
+      }
+    });
+  };
+
+  return (
+    <div className="space-y-6 w-full max-w-7xl mx-auto pb-16">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-[120] px-4 py-3 rounded-xl bg-[#101726] border border-sky-400/40 text-sky-300 text-xs sm:text-sm font-medium shadow-2xl flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-5">
+          <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Navegação por Abas Limpa e Direta (sem o banner) */}
+      <div className="flex items-center gap-2 pb-2 border-b border-white/10 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('contatos')}
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeTab === 'contatos'
+              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Mail className="w-4 h-4" />
+          <span>E-mails &amp; Telefones</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('endereco')}
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeTab === 'endereco'
+              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <MapPin className="w-4 h-4" />
+          <span>Endereço &amp; Localização</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('portfolio')}
+          className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            activeTab === 'portfolio'
+              ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20'
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          <Briefcase className="w-4 h-4" />
+          <span>Portfólio ({portfolio.length})</span>
+        </button>
+      </div>
+
+      {/* ====================================================
+          TAB 1: CONTATOS (EMAILS & TELEFONES)
+         ==================================================== */}
+      {activeTab === 'contatos' && (
+        <form onSubmit={handleSaveContacts} className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Bloco 1: E-mails */}
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
+              <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">E-mails de Contato &amp; Notificações</h3>
+                  <p className="text-[11px] text-slate-400">Exibidos no rodapé, página de contato e formulários do site</p>
+                </div>
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  E-mail Principal / Geral (Atendimento)
+                </label>
+                <input
+                  type="email"
+                  value={contactForm.email_principal || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, email_principal: e.target.value }))}
+                  placeholder="ex: contato@mchengenharia.com.br"
+                  className={INPUT_CLASS}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  E-mail Comercial / Propostas de Obras
+                </label>
+                <input
+                  type="email"
+                  value={contactForm.email_comercial || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, email_comercial: e.target.value }))}
+                  placeholder="ex: comercial@mchengenharia.com.br"
+                  className={INPUT_CLASS}
+                />
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  E-mail RH / Recrutamento &amp; Trabalhe Conosco
+                </label>
+                <input
+                  type="email"
+                  value={contactForm.email_rh || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, email_rh: e.target.value }))}
+                  placeholder="ex: rh@mchengenharia.com.br"
+                  className={INPUT_CLASS}
+                />
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  Horário de Funcionamento
+                </label>
+                <input
+                  type="text"
+                  value={contactForm.horario_funcionamento || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, horario_funcionamento: e.target.value }))}
+                  placeholder="ex: Segunda a Sexta: 08h às 18h"
+                  className={INPUT_CLASS}
+                />
+              </div>
+            </div>
+
+            {/* Bloco 2: Telefones e WhatsApp */}
+            <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
+              <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Telefones &amp; WhatsApp Oficial</h3>
+                  <p className="text-[11px] text-slate-400">Canais de atendimento direto e botão flutuante de WhatsApp</p>
+                </div>
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  Telefone Principal (Fixo / Central)
+                </label>
+                <input
+                  type="text"
+                  value={contactForm.telefone_principal || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, telefone_principal: e.target.value }))}
+                  placeholder="ex: (11) 96645-4023 ou (11) 4448-1234"
+                  className={INPUT_CLASS}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  Telefone Secundário / Plantão de Vendas
+                </label>
+                <input
+                  type="text"
+                  value={contactForm.telefone_secundario || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, telefone_secundario: e.target.value }))}
+                  placeholder="ex: (11) 99999-8888"
+                  className={INPUT_CLASS}
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                    Número do WhatsApp (com DDI e DDD, apenas números)
+                  </label>
+                  {contactForm.whatsapp && (
+                    <a
+                      href={`https://wa.me/${contactForm.whatsapp.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-mono"
+                    >
+                      <span>Testar link</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={contactForm.whatsapp || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, whatsapp: e.target.value }))}
+                  placeholder="ex: 5511966454023"
+                  className={INPUT_CLASS}
+                  required
+                />
+                <p className="text-[11px] text-slate-500 mt-1.5">
+                  O botão flutuante do site público abrirá automaticamente este contato.
+                </p>
+              </div>
+
+              {/* Redes Sociais */}
+              <div className="pt-2">
+                <label className={LABEL_CLASS}>
+                  Instagram URL
+                </label>
+                <input
+                  type="text"
+                  value={contactForm.instagram_url || ''}
+                  onChange={e => setContactForm(prev => ({ ...prev, instagram_url: e.target.value }))}
+                  placeholder="ex: https://instagram.com/machado_construtora"
+                  className={INPUT_CLASS}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Botão de Salvar Contatos */}
+          <div className="flex items-center justify-end gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={savingContacts}
+              className="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50"
+            >
+              {savingContacts ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Salvando no banco de dados...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Salvar E-mails &amp; Telefones</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* ====================================================
+          TAB 2: ENDEREÇO & LOCALIZAÇÃO
+         ==================================================== */}
+      {activeTab === 'endereco' && (
+        <form onSubmit={handleSaveAddress} className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Bloco do Endereço */}
+            <div className="lg:col-span-7 bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
+              <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
+                <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Endereço da Sede &amp; Escritório</h3>
+                  <p className="text-[11px] text-slate-400">Endereço oficial exibido no rodapé e na página de contato</p>
+                </div>
+              </div>
+
+              {/* CEP com Busca ViaCEP */}
+              <div>
+                <label className={LABEL_CLASS}>
+                  CEP (Busca automática de endereço)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={addressForm.endereco_cep || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_cep: e.target.value }))}
+                    placeholder="07790-840"
+                    maxLength={9}
+                    className={INPUT_CLASS}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleBuscarCep}
+                    disabled={loadingCep}
+                    className="px-4 bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer"
+                  >
+                    {loadingCep ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                    <span>Buscar CEP</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-2">
+                  <label className={LABEL_CLASS}>Logradouro / Avenida / Rua</label>
+                  <input
+                    type="text"
+                    value={addressForm.endereco_logradouro || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_logradouro: e.target.value }))}
+                    placeholder="Av. dos Ipês"
+                    className={INPUT_CLASS}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Número</label>
+                  <input
+                    type="text"
+                    value={addressForm.endereco_numero || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_numero: e.target.value }))}
+                    placeholder="155"
+                    className={INPUT_CLASS}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={LABEL_CLASS}>Complemento / Sala</label>
+                  <input
+                    type="text"
+                    value={addressForm.endereco_complemento || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_complemento: e.target.value }))}
+                    placeholder="Sala 204, Galpão A"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Bairro</label>
+                  <input
+                    type="text"
+                    value={addressForm.endereco_bairro || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_bairro: e.target.value }))}
+                    placeholder="Portal dos Ipês (Polvilho)"
+                    className={INPUT_CLASS}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-2">
+                  <label className={LABEL_CLASS}>Cidade</label>
+                  <input
+                    type="text"
+                    value={addressForm.endereco_cidade || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_cidade: e.target.value }))}
+                    placeholder="Cajamar"
+                    className={INPUT_CLASS}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Estado (UF)</label>
+                  <input
+                    type="text"
+                    value={addressForm.endereco_estado || ''}
+                    onChange={e => setAddressForm(prev => ({ ...prev, endereco_estado: e.target.value }))}
+                    placeholder="SP"
+                    maxLength={2}
+                    className={INPUT_CLASS}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>
+                  URL do Embed do Google Maps (iframe src)
+                </label>
+                <input
+                  type="text"
+                  value={addressForm.google_maps_url || ''}
+                  onChange={e => setAddressForm(prev => ({ ...prev, google_maps_url: e.target.value }))}
+                  placeholder="https://www.google.com/maps/embed?pb=..."
+                  className={INPUT_CLASS}
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Cole o link do iframe de compartilhamento do Google Maps para exibir o mapa interativo.
+                </p>
+              </div>
+            </div>
+
+            {/* Preview do Mapa e Resumo */}
+            <div className="lg:col-span-5 bg-[#101726]/90 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+              <div>
+                <h4 className="text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">
+                  Pré-visualização do Mapa
+                </h4>
+                <div className="w-full h-64 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative">
+                  {addressForm.google_maps_url ? (
+                    <iframe
+                      src={addressForm.google_maps_url}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      title="Google Maps Preview"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs p-4 text-center">
+                      <MapPin className="w-8 h-8 mb-2 opacity-50" />
+                      <span>Nenhum link de mapa configurado</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Resumo formatado */}
+                <div className="mt-4 p-4 rounded-xl bg-[#0A0E17]/60 border border-white/5 space-y-1 text-xs">
+                  <span className="text-[10px] uppercase font-mono text-sky-400 block font-semibold">
+                    Como será exibido no site:
+                  </span>
+                  <p className="text-white font-medium">
+                    {addressForm.endereco_logradouro || 'Logradouro'}, {addressForm.endereco_numero || 'S/N'}
+                    {addressForm.endereco_complemento ? ` - ${addressForm.endereco_complemento}` : ''}
+                  </p>
+                  <p className="text-slate-400">
+                    {addressForm.endereco_bairro || 'Bairro'} - {addressForm.endereco_cidade || 'Cidade'} / {addressForm.endereco_estado || 'UF'}
+                  </p>
+                  <p className="text-slate-500 font-mono text-[11px]">
+                    CEP: {addressForm.endereco_cep || '00000-000'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={savingAddress}
+                  className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {savingAddress ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Salvando Endereço...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Salvar Endereço &amp; Localização</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* ====================================================
+          TAB 3: PORTFÓLIO (COM ADICIONAR IMAGENS)
+         ==================================================== */}
+      {activeTab === 'portfolio' && (
+        <div className="space-y-6">
+          {/* Top Bar with Add Button */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-4 rounded-2xl">
+            <div>
+              <h3 className="text-base font-bold text-white">Projetos do Portfólio Publicados</h3>
+              <p className="text-xs text-slate-400">
+                Gerencie as obras exibidas no site público, adicione fotos em alta resolução e organize as galerias.
+              </p>
+            </div>
+            <button
+              onClick={handleOpenNewItem}
+              className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Novo Projeto</span>
+            </button>
+          </div>
+
+          {/* Portfolio Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {portfolio.map((item) => {
+              const galleryCount = item.gallery?.length || (item.image ? 1 : 0);
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-[#101726]/90 border border-white/10 rounded-2xl overflow-hidden shadow-xl hover:border-sky-500/30 transition-all flex flex-col group"
+                >
+                  {/* Item Cover Image */}
+                  <div className="relative h-48 w-full bg-[#0A0E17] overflow-hidden">
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-600">
+                        <ImageIcon className="w-8 h-8 mb-1" />
+                        <span className="text-xs">Sem foto de capa</span>
+                      </div>
+                    )}
+
+                    {/* Category Badge */}
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#0A0E17]/80 backdrop-blur-md border border-white/10 text-[11px] font-semibold text-sky-400">
+                      {item.category}
+                    </div>
+
+                    {/* Gallery Count Badge */}
+                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-md bg-[#0A0E17]/80 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5 text-sky-400" />
+                      <span>{galleryCount} foto{galleryCount !== 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+
+                  {/* Item Info */}
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <h4 className="text-sm sm:text-base font-bold text-white line-clamp-2 leading-snug group-hover:text-sky-300 transition-colors">
+                        {item.title}
+                      </h4>
+                      {item.location && (
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                          <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                          <span className="truncate">{item.location}</span>
+                        </div>
+                      )}
+                      {item.timeframe && (
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                          <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                          <span className="truncate">{item.timeframe}</span>
+                        </div>
+                      )}
+                      <p className="text-xs text-slate-400 line-clamp-2 pt-1 leading-relaxed">
+                        {item.description || 'Sem descrição cadastrada.'}
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => handleOpenEditItem(item)}
+                        className="flex-1 py-2 rounded-xl bg-white/5 hover:bg-sky-500/20 text-slate-200 hover:text-sky-300 border border-white/10 hover:border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      >
+                        <ImageIcon className="w-3.5 h-3.5 text-sky-400" />
+                        <span>Editar &amp; Imagens</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteItem(item)}
+                        className="w-9 h-9 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-white/10 hover:border-rose-500/30 flex items-center justify-center transition-all cursor-pointer"
+                        title="Excluir do portfólio"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ====================================================
+          MODAL: EDITAR / CRIAR NO PORTFÓLIO & ADICIONAR IMAGENS
+         ==================================================== */}
+      {isPortfolioModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+          <div className="bg-[#101726] border border-white/15 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#0A0E17]/60 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    {editingItem ? 'Editar Projeto & Galeria de Imagens' : 'Novo Projeto no Portfólio'}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Cadastre informações e faça upload de fotos para o bucket <strong>machado_construtora</strong>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsPortfolioModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSaveItemSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Título & Categoria */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-2">
+                  <label className={LABEL_CLASS}>Título do Projeto *</label>
+                  <input
+                    type="text"
+                    value={portfolioFormData.title || ''}
+                    onChange={e => setPortfolioFormData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="ex: Construção de Torre Autoportante para Telecom (48m)"
+                    className={INPUT_CLASS}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Categoria *</label>
+                  <select
+                    value={portfolioFormData.category || 'Construção Civil'}
+                    onChange={e => setPortfolioFormData(prev => ({ ...prev, category: e.target.value }))}
+                    className="w-full h-11 bg-[#0A0E17] border border-white/10 rounded-xl px-3 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-400 transition-all cursor-pointer"
+                  >
+                    {CATEGORIAS_PADRAO.map(cat => (
+                      <option key={cat} value={cat} className="bg-[#101726] text-white">
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Localização & Prazo */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={LABEL_CLASS}>Localização</label>
+                  <input
+                    type="text"
+                    value={portfolioFormData.location || ''}
+                    onChange={e => setPortfolioFormData(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="ex: Cajamar - SP (Rodovia Anhanguera)"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Prazo de Entrega / Tempo de Obra</label>
+                  <input
+                    type="text"
+                    value={portfolioFormData.timeframe || ''}
+                    onChange={e => setPortfolioFormData(prev => ({ ...prev, timeframe: e.target.value }))}
+                    placeholder="ex: 45 dias da fundação à entrega"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+
+              {/* Descrição */}
+              <div>
+                <label className={LABEL_CLASS}>Descrição Técnica da Obra</label>
+                <textarea
+                  rows={3}
+                  value={portfolioFormData.description || ''}
+                  onChange={e => setPortfolioFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Descreva o escopo da obra, diferenciais técnicos e métodos construtivos utilizados..."
+                  className="w-full bg-[#0A0E17] border border-white/10 rounded-xl p-3.5 text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/20 transition-all resize-none"
+                />
+              </div>
+
+              {/* Destaques Técnicos (Highlights) */}
+              <div>
+                <label className={LABEL_CLASS}>Destaques / Pontos Fortes (Bullets)</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={newHighlight}
+                    onChange={e => setNewHighlight(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddHighlight(); } }}
+                    placeholder="ex: Estrutura em concreto armado com vãos livres..."
+                    className={INPUT_CLASS}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddHighlight}
+                    className="px-4 bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 rounded-xl text-xs font-semibold flex items-center gap-1 shrink-0 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Adicionar</span>
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {(portfolioFormData.highlights || []).map((h, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#0A0E17] border border-white/5 text-xs text-slate-300"
+                    >
+                      <span className="flex-1 truncate pr-2">• {h}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveHighlight(idx)}
+                        className="text-slate-500 hover:text-rose-400 transition-colors p-1 cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* =========================================================
+                  SEÇÃO DE UPLOAD E GALERIA DE IMAGENS DO PORTFÓLIO
+                 ========================================================= */}
+              <div className="pt-4 border-t border-white/10 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-sky-400" />
+                      <span>Galeria de Imagens do Portfólio</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-400">
+                      Adicione fotos reais da obra. Os arquivos serão salvos diretamente no bucket <strong>machado_construtora</strong>.
+                    </p>
+                  </div>
+
+                  {/* Input File Oculto e Botão de Upload */}
+                  <div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleUploadImageFile}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      disabled={uploadingImage}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Enviando foto...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          <span>Adicionar Imagem</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Grid de Imagens da Galeria */}
+                {(portfolioFormData.gallery && portfolioFormData.gallery.length > 0) ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    {portfolioFormData.gallery.map((imgUrl, idx) => {
+                      const isCover = portfolioFormData.image === imgUrl;
+
+                      return (
+                        <div
+                          key={idx}
+                          className={`group relative h-28 rounded-xl overflow-hidden border transition-all ${
+                            isCover ? 'border-sky-400 ring-2 ring-sky-400/30' : 'border-white/10 hover:border-white/30'
+                          }`}
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`Foto ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+
+                          {/* Badge de Capa */}
+                          {isCover && (
+                            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-sky-500 text-white text-[10px] font-bold tracking-wider uppercase shadow-md flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-current" />
+                              Capa
+                            </span>
+                          )}
+
+                          {/* Overlay com Ações */}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
+                            {!isCover && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetAsCover(imgUrl)}
+                                className="p-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white transition-colors cursor-pointer"
+                                title="Definir como capa"
+                              >
+                                <Star className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            <a
+                              href={imgUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
+                              title="Ver em tamanho real"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(imgUrl)}
+                              className="p-1.5 rounded-lg bg-rose-500/80 hover:bg-rose-500 text-white transition-colors cursor-pointer"
+                              title="Remover foto"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="border border-dashed border-white/15 rounded-xl p-8 text-center bg-[#0A0E17]/40">
+                    <ImageIcon className="w-8 h-8 text-slate-500 mx-auto mb-2 opacity-60" />
+                    <p className="text-xs text-slate-400">Nenhuma imagem adicionada a este projeto.</p>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Clique no botão &quot;Adicionar Imagem&quot; acima para enviar arquivos do seu computador.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer / Save */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsPortfolioModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingItem}
+                  className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {savingItem ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Salvando no Portfólio...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>{editingItem ? 'Atualizar Projeto' : 'Publicar no Portfólio'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SiteModule;

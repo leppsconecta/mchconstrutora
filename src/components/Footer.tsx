@@ -3,10 +3,12 @@ import { MapPin, Phone, Mail } from 'lucide-react';
 import { Link } from './Link';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useSiteConfig } from '../contexts/SiteConfigContext';
 
 export const Footer: React.FC = () => {
   const location = useLocation();
   const { t } = useLanguage();
+  const { siteConfig } = useSiteConfig();
 
   if (location.pathname !== '/') {
     return null;
@@ -65,7 +67,7 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/cases" className="hover:text-white transition-colors">
+                <Link href="/portfolio" className="hover:text-white transition-colors">
                   {t.nav.cases}
                 </Link>
               </li>
@@ -92,19 +94,27 @@ export const Footer: React.FC = () => {
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#9F9F9F] shrink-0 mt-1" />
                 <div>
-                  <div className="text-white font-medium">{t.footer.officeAddress}</div>
-                  <div className="text-xs text-[#9F9F9F]">{t.footer.officeCity}</div>
+                  <div className="text-white font-medium">
+                    {siteConfig.endereco_logradouro 
+                      ? `${siteConfig.endereco_logradouro}, ${siteConfig.endereco_numero || 'S/N'}${siteConfig.endereco_complemento ? ' - ' + siteConfig.endereco_complemento : ''}` 
+                      : t.footer.officeAddress}
+                  </div>
+                  <div className="text-xs text-[#9F9F9F]">
+                    {siteConfig.endereco_cidade 
+                      ? `${siteConfig.endereco_bairro ? siteConfig.endereco_bairro + ', ' : ''}${siteConfig.endereco_cidade} - ${siteConfig.endereco_estado || 'SP'}, CEP ${siteConfig.endereco_cep || '07790-840'}` 
+                      : t.footer.officeCity}
+                  </div>
                 </div>
               </div>
 
               <div className="pt-2 flex flex-col gap-1.5 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-[#9F9F9F]" />
-                  <span>{t.footer.phoneLabel}</span>
+                  <span>{siteConfig.telefone_principal || t.footer.phoneLabel}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-[#9F9F9F]" />
-                  <span>{t.footer.emailLabel}</span>
+                  <span>{siteConfig.email_principal || t.footer.emailLabel}</span>
                 </div>
               </div>
             </div>

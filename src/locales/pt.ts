@@ -14,7 +14,7 @@ export const pt: Translations = {
     telecom: 'Telecomunicações',
     reformas: 'Reformas',
     construtora: 'Construtora',
-    cases: 'Cases',
+    cases: 'Portfólio',
     quemSomos: 'Quem Somos',
     contato: 'Contato',
     openMenu: 'Abrir menu',

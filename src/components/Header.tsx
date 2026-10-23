@@ -32,7 +32,7 @@ export const Header: React.FC = () => {
     { label: t.nav.telecom, href: '/telecomunicacoes', isHighlight: true },
     { label: t.nav.reformas, href: '/reformas' },
     { label: t.nav.construtora, href: '/construtora' },
-    { label: t.nav.cases, href: '/cases' },
+    { label: t.nav.cases, href: '/portfolio' },
     { label: t.nav.quemSomos, href: '/quem-somos' },
     { label: t.nav.contato, href: '/contato' }
   ];
