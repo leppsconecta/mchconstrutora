@@ -59,7 +59,8 @@ export default function ReformasPage() {
 
   const heroMediaUrl = siteConfig.hero_reformas_media_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80';
   const isHeroVideo = siteConfig.hero_reformas_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
-  const secao2ImgUrl = siteConfig.reformas_secao2_img_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80';
+  const secao2MediaUrl = siteConfig.reformas_secao2_media_url || siteConfig.reformas_secao2_img_url || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80';
+  const isSecao2Video = siteConfig.reformas_secao2_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(secao2MediaUrl);
 
   const maintenanceServices = [
     {
@@ -247,13 +248,24 @@ export default function ReformasPage() {
               className="lg:col-span-6 flex"
             >
               <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group border border-slate-100 flex">
-                <img
-                  src={secao2ImgUrl}
-                  alt="Serviços prediais e manutenção técnica especializada em Cajamar e SP - Machado Construtora"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
+                {isSecao2Video ? (
+                  <video
+                    src={secao2MediaUrl}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                ) : (
+                  <img
+                    src={secao2MediaUrl}
+                    alt="Serviços prediais e manutenção técnica especializada em Cajamar e SP - Machado Construtora"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                )}
               </div>
             </motion.div>
 

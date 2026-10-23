@@ -45,6 +45,9 @@ export default function ConstrutoraPage() {
   const heroMediaUrl = siteConfig.hero_construtora_media_url || 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/machado_construtora/site/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4';
   const isVideo = siteConfig.hero_construtora_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(heroMediaUrl);
 
+  const secao2MediaUrl = siteConfig.construtora_secao2_media_url || '/casa-alto-padrao.jpg';
+  const isSecao2Video = siteConfig.construtora_secao2_media_type === 'video' || /\.(mp4|webm|mov|mkv)$/i.test(secao2MediaUrl);
+
   const steps = [
     {
       step: '01',
@@ -162,13 +165,24 @@ export default function ConstrutoraPage() {
               className="lg:col-span-6"
             >
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group">
-                <img
-                  src="/casa-alto-padrao.jpg"
-                  alt="Casa de alto padrão residencial construída pela Machado Construtora em Cajamar"
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
+                {isSecao2Video ? (
+                  <video
+                    src={secao2MediaUrl}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                ) : (
+                  <img
+                    src={secao2MediaUrl}
+                    alt="Construção de alto padrão residencial pela Machado Construtora em Cajamar"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                )}
               </div>
             </motion.div>
 

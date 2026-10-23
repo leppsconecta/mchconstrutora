@@ -27,9 +27,13 @@ export interface SiteConfig {
   hero_home_media_type?: 'image' | 'video';
   hero_construtora_media_url?: string;
   hero_construtora_media_type?: 'image' | 'video';
+  construtora_secao2_media_url?: string;
+  construtora_secao2_media_type?: 'image' | 'video';
   hero_reformas_media_url?: string;
   hero_reformas_media_type?: 'image' | 'video';
   reformas_secao2_img_url?: string;
+  reformas_secao2_media_url?: string;
+  reformas_secao2_media_type?: 'image' | 'video';
 }
 
 /**
@@ -92,9 +96,13 @@ const DEFAULT_CONFIG: SiteConfig = {
   hero_home_media_type: 'image',
   hero_construtora_media_url: 'https://txlvjukmjjfjufwkkrzm.supabase.co/storage/v1/object/public/machado_construtora/site/Projeto%202%20-%20Caliandras%202%20-%20Machado.mp4',
   hero_construtora_media_type: 'video',
+  construtora_secao2_media_url: '/casa-alto-padrao.jpg',
+  construtora_secao2_media_type: 'image',
   hero_reformas_media_url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1600&q=80',
   hero_reformas_media_type: 'image',
-  reformas_secao2_img_url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80'
+  reformas_secao2_img_url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
+  reformas_secao2_media_url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
+  reformas_secao2_media_type: 'image'
 };
 
 interface SiteConfigContextType {
