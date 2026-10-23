@@ -228,6 +228,12 @@ export const SiteModule: React.FC = () => {
     try {
       setUploadingMediaField(fieldKey);
       const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov|mkv|avi)$/i.test(file.name);
+
+      // A Home aceita apenas imagem
+      if (fieldKey === 'hero_home' && (isVideo || !file.type.startsWith('image/'))) {
+        showToast('A Home aceita apenas imagem (JPG, PNG, WebP).');
+        return;
+      }
       
       // Regra de compressão: imagens passam pela compressão inteligente WebP Full HD (0.82), vídeos sobem diretamente
       const shouldCompress = !isVideo;
@@ -240,7 +246,7 @@ export const SiteModule: React.FC = () => {
         previousUrl = mediaForm.hero_home_media_url;
         updatedPayload = {
           hero_home_media_url: newUrl,
-          hero_home_media_type: isVideo ? 'video' : 'image'
+          hero_home_media_type: 'image'
         };
         setMediaForm(prev => ({ ...prev, ...updatedPayload }));
       } else if (fieldKey === 'hero_construtora') {
@@ -352,7 +358,7 @@ export const SiteModule: React.FC = () => {
       setSavingMedia(true);
       await updateSiteConfig({
         hero_home_media_url: mediaForm.hero_home_media_url,
-        hero_home_media_type: mediaForm.hero_home_media_type,
+        hero_home_media_type: 'image',
         hero_construtora_media_url: mediaForm.hero_construtora_media_url,
         hero_construtora_media_type: mediaForm.hero_construtora_media_type,
         hero_reformas_media_url: mediaForm.hero_reformas_media_url,
@@ -1182,20 +1188,11 @@ export const SiteModule: React.FC = () => {
             type="file"
             ref={homeFileInputRef}
             onChange={(e) => handleUploadMediaFile('hero_home', e)}
-            accept="image/*,video/mp4,video/webm,video/quicktime"
+            accept="image/*"
             className="hidden"
           />
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Globe className="w-5 h-5 text-sky-400" />
-                <h3 className="text-base font-bold text-white">Hero da Página Inicial (Home)</h3>
-              </div>
-              <p className="text-xs text-slate-400 max-w-2xl">
-                Configure a mídia de abertura exibida no topo da página principal. Você pode optar por uma imagem fotográfica de alta definição com efeito parallax ou um vídeo institucional em loop contínuo.
-              </p>
-            </div>
+          <div className="flex justify-end bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
 
             <button
               type="submit"
@@ -1217,101 +1214,16 @@ export const SiteModule: React.FC = () => {
           </div>
 
           <div className="bg-[#101726]/90 border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl max-w-3xl">
-            {/* Seletor de Tipo */}
-            <div className="flex items-center justify-between gap-2 pb-4 border-b border-white/10">
-              <div>
-                <label className="text-sm font-semibold text-white block">Formato da Mídia do Hero</label>
-                <p className="text-xs text-slate-400">Escolha se deseja exibir uma imagem com parallax ou um vídeo de fundo</p>
-              </div>
-
-              <div className="flex items-center p-1 bg-[#0A0E17] border border-white/10 rounded-xl gap-1">
-                <button
-                  type="button"
-                  onClick={() => setMediaForm(prev => ({ ...prev, hero_home_media_type: 'image' }))}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    mediaForm.hero_home_media_type === 'image'
-                      ? 'bg-sky-500 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <ImageIcon className="w-3.5 h-3.5" />
-                  <span>Imagem</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMediaForm(prev => ({ ...prev, hero_home_media_type: 'video' }))}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    mediaForm.hero_home_media_type === 'video'
-                      ? 'bg-sky-500 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Video className="w-3.5 h-3.5" />
-                  <span>Vídeo</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Preview Ao Vivo */}
+            {/* Preview */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-medium text-slate-300">Pré-visualização do Hero</label>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300">
-                  {mediaForm.hero_home_media_type === 'video' ? 'Modo Vídeo Ativo' : 'Modo Imagem Ativa'}
-                </span>
-              </div>
-
+              <label className="text-xs font-medium text-slate-300 block mb-2">Pré-visualização do Hero</label>
               <div className="w-full h-64 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
-                {mediaForm.hero_home_media_type === 'video' ? (
-                  <video
-                    key={mediaForm.hero_home_media_url}
-                    src={mediaForm.hero_home_media_url}
-                    controls
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src={mediaForm.hero_home_media_url || '/hero-bg.jpg'}
-                    alt="Hero da Home"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                )}
+                <img
+                  src={mediaForm.hero_home_media_url || '/hero-bg.jpg'}
+                  alt="Hero da Home"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
-            </div>
-
-            {/* Input de URL e Ações */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className={LABEL_CLASS}>URL Direta da Mídia</label>
-                {mediaForm.hero_home_media_url && (
-                  <a
-                    href={mediaForm.hero_home_media_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
-                  >
-                    <span>Abrir arquivo</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </div>
-              <input
-                type="text"
-                value={mediaForm.hero_home_media_url}
-                onChange={e => setMediaForm(prev => ({ ...prev, hero_home_media_url: e.target.value }))}
-                placeholder="/hero-bg.jpg ou https://..."
-                className={INPUT_CLASS}
-              />
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-300">
-              <span className="font-semibold block text-white mb-0.5">Regra de Otimização &amp; Bucket</span>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Imagens enviadas passam por compressão inteligente Canvas WebP (máx. 1920px a 82%), reduzindo peso para carregamento instantâneo. Arquivos anteriores no storage são deletados automaticamente para não ocupar espaço desnecessário.
-              </p>
             </div>
 
             {/* Botões de Ação */}
@@ -1361,16 +1273,7 @@ export const SiteModule: React.FC = () => {
             className="hidden"
           />
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Building2 className="w-5 h-5 text-sky-400" />
-                <h3 className="text-base font-bold text-white">Hero da Construtora (/construtora)</h3>
-              </div>
-              <p className="text-xs text-slate-400 max-w-2xl">
-                Gerencie a mídia recortada exibida na lateral direita (40%) do Hero da página de Construtora. Alterne livremente entre vídeo MP4 institucional e imagem de alta resolução.
-              </p>
-            </div>
+          <div className="flex justify-end bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
 
             <button
               type="submit"
@@ -1457,31 +1360,6 @@ export const SiteModule: React.FC = () => {
               </div>
             </div>
 
-            {/* Input de URL e Ações */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className={LABEL_CLASS}>URL da Mídia (ou Envie um Arquivo)</label>
-                {mediaForm.hero_construtora_media_url && (
-                  <a
-                    href={mediaForm.hero_construtora_media_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
-                  >
-                    <span>Abrir arquivo</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </div>
-              <input
-                type="text"
-                value={mediaForm.hero_construtora_media_url}
-                onChange={e => setMediaForm(prev => ({ ...prev, hero_construtora_media_url: e.target.value }))}
-                placeholder="https://..."
-                className={INPUT_CLASS}
-              />
-            </div>
-
             {/* Botões de Ação */}
             <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
               <button
@@ -1536,16 +1414,7 @@ export const SiteModule: React.FC = () => {
             className="hidden"
           />
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Hammer className="w-5 h-5 text-sky-400" />
-                <h3 className="text-base font-bold text-white">Gestão da Página de Reformas (/reformas)</h3>
-              </div>
-              <p className="text-xs text-slate-400 max-w-2xl">
-                Altere a mídia do <strong>Hero de Reformas</strong> (imagem ou vídeo) e a fotografia técnica da <strong>2ª Seção (Serviços Prediais &amp; Manutenção)</strong> com compressão automática WebP.
-              </p>
-            </div>
+          <div className="flex justify-end bg-[#101726]/60 border border-white/10 p-5 rounded-2xl">
 
             <button
               type="submit"
@@ -1641,31 +1510,6 @@ export const SiteModule: React.FC = () => {
                     {mediaForm.hero_reformas_media_type === 'video' ? 'Vídeo Ativo' : 'Imagem Ativa'}
                   </div>
                 </div>
-
-                {/* URL Direta */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className={LABEL_CLASS}>URL da Mídia do Hero</label>
-                    {mediaForm.hero_reformas_media_url && (
-                      <a
-                        href={mediaForm.hero_reformas_media_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
-                      >
-                        <span>Abrir</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
-                  </div>
-                  <input
-                    type="text"
-                    value={mediaForm.hero_reformas_media_url}
-                    onChange={e => setMediaForm(prev => ({ ...prev, hero_reformas_media_url: e.target.value }))}
-                    placeholder="https://..."
-                    className={INPUT_CLASS}
-                  />
-                </div>
               </div>
 
               {/* Botões Hero */}
@@ -1719,13 +1563,6 @@ export const SiteModule: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
-                  <span className="font-semibold block text-white mb-0.5">Compressão Automática Ativa</span>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    Fotos são redimensionadas para até 1920x1920 e comprimidas para WebP (~150KB), garantindo nitidez e rapidez.
-                  </p>
-                </div>
-
                 {/* Preview */}
                 <div className="w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-[#0A0E17] relative group">
                   <img
@@ -1736,31 +1573,6 @@ export const SiteModule: React.FC = () => {
                   <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-[10px] font-mono text-white border border-white/10">
                     Foto da 2ª Seção
                   </div>
-                </div>
-
-                {/* URL Direta */}
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className={LABEL_CLASS}>URL da Imagem da 2ª Seção</label>
-                    {mediaForm.reformas_secao2_img_url && (
-                      <a
-                        href={mediaForm.reformas_secao2_img_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[11px] text-sky-400 hover:text-sky-300 flex items-center gap-1 font-mono"
-                      >
-                        <span>Abrir</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
-                  </div>
-                  <input
-                    type="text"
-                    value={mediaForm.reformas_secao2_img_url}
-                    onChange={e => setMediaForm(prev => ({ ...prev, reformas_secao2_img_url: e.target.value }))}
-                    placeholder="https://..."
-                    className={INPUT_CLASS}
-                  />
                 </div>
               </div>
 
