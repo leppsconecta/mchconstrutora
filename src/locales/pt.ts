@@ -76,7 +76,7 @@ export const pt: Translations = {
     filterAll: 'Todos os Projetos',
     filterTelecom: 'Telecomunicações',
     filterCivil: 'Construção Civil',
-    filterReformas: 'Reformas Prediais',
+    filterReformas: 'Reformas',
     viewDetails: 'Ver Detalhes do Projeto',
     modalClose: 'Fechar',
     highlightsTitle: 'Destaques Técnicos & Conformidade',

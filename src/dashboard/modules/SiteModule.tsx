@@ -169,7 +169,7 @@ const LABEL_CLASS = "text-xs font-medium text-slate-300 flex items-center gap-1.
 const CATEGORIAS_PADRAO = [
   'Construção Civil',
   'Telecomunicações',
-  'Reformas Prediais',
+  'Reformas',
   'Incorporação Imobiliária',
   'Engenharia Corporativa'
 ];

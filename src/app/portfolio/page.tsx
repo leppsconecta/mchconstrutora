@@ -119,21 +119,19 @@ export default function PortfolioPage() {
     setCurrentIndex((prev) => (prev + 1) % projects.length);
   };
 
-  // Navegação no Modal
+  // Navegação no Modal (alterna entre as fotos da galeria do projeto atual)
   const handleModalPrev = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!selectedProject) return;
-    const currentIdx = projects.findIndex((p) => p.id === selectedProject.id);
-    const prevIdx = (currentIdx - 1 + projects.length) % projects.length;
-    setSelectedProjectId(projects[prevIdx].id);
+    const gallery = selectedProject.gallery?.length ? selectedProject.gallery : [selectedProject.image];
+    setSelectedImageIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
   };
 
   const handleModalNext = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!selectedProject) return;
-    const currentIdx = projects.findIndex((p) => p.id === selectedProject.id);
-    const nextIdx = (currentIdx + 1) % projects.length;
-    setSelectedProjectId(projects[nextIdx].id);
+    const gallery = selectedProject.gallery?.length ? selectedProject.gallery : [selectedProject.image];
+    setSelectedImageIndex((prev) => (prev + 1) % gallery.length);
   };
 
   // Navegação por teclado
