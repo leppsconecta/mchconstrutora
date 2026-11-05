@@ -508,27 +508,31 @@ export default function PortfolioPage() {
                     </div>
                   )}
 
-                  {/* Seta Voltar na Imagem */}
-                  <button
-                    onClick={handleModalPrev}
-                    aria-label="Anterior"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm shadow-md transition-transform hover:scale-110 active:scale-95 border border-white/20 cursor-pointer"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
+                  {/* Seta Voltar na Imagem do Projeto */}
+                  {selectedProject.gallery && selectedProject.gallery.length > 1 && (
+                    <button
+                      onClick={handleModalPrev}
+                      aria-label="Imagem Anterior"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm shadow-md transition-transform hover:scale-110 active:scale-95 border border-white/20 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                  )}
 
-                  {/* Seta Próximo na Imagem */}
-                  <button
-                    onClick={handleModalNext}
-                    aria-label="Próximo"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm shadow-md transition-transform hover:scale-110 active:scale-95 border border-white/20 cursor-pointer"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
+                  {/* Seta Próximo na Imagem do Projeto */}
+                  {selectedProject.gallery && selectedProject.gallery.length > 1 && (
+                    <button
+                      onClick={handleModalNext}
+                      aria-label="Próxima Imagem"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center backdrop-blur-sm shadow-md transition-transform hover:scale-110 active:scale-95 border border-white/20 cursor-pointer"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  )}
 
-                  {/* Indicador de Número */}
+                  {/* Indicador de Número da Imagem */}
                   <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-mono border border-white/10 pointer-events-none">
-                    {projects.findIndex((p) => p.id === selectedProject.id) + 1} / {projects.length}
+                    {selectedImageIndex + 1} / {(selectedProject.gallery && selectedProject.gallery.length > 0) ? selectedProject.gallery.length : 1}
                   </div>
                 </div>
               </div>
